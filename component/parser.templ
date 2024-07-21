@@ -1,0 +1,18 @@
+package component
+
+import "wikinow/ast"
+import "wikinow/parser"
+
+templ Parser(document ast.Node) {
+	@Layout() {
+		switch doc := document.(type) {
+			case *ast.Document:
+				for _, node := range doc.Children {
+					switch node := node.(type) {
+						case *parser.Header:
+							@Header(node)
+					}
+				}
+		}
+	}
+}

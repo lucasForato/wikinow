@@ -3,7 +3,7 @@ package cmd
 import (
 	"net/http"
 	"path"
-	"wikinow/components"
+	"wikinow/component"
 	"wikinow/parser"
 	"wikinow/utils"
 
@@ -58,9 +58,9 @@ func handler(ctx echo.Context) error {
 	path := handlePath(ctx)
 	lines := utils.ReadMarkdown(path)
 	tree := parser.NewAstTree(lines)
-	tree.Print(0)
+  tree.Print(0)
 
-	return Render(ctx, http.StatusOK, components.Layout())
+	return Render(ctx, http.StatusOK, component.Parser(tree))
 }
 
 func handlePath(ctx echo.Context) string {

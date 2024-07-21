@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"regexp"
 )
 
@@ -18,6 +19,8 @@ func ParseHeader(content string, parent Node) []Node {
 
 	lastIndex := 0
 	for _, match := range segments {
+    fmt.Println(match)
+
 		if match[0] > lastIndex {
 			paragraph := new(Paragraph)
 			paragraph.Parent = parent
@@ -27,7 +30,7 @@ func ParseHeader(content string, parent Node) []Node {
 
 		bold := new(Bold)
 		bold.Parent = parent
-		bold.Content = content[match[2]:match[3]]
+		bold.Content = content[match[2]+2:match[3]-2]
 		nodes = append(nodes, bold)
 
 		lastIndex = match[1]
