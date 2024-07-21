@@ -5,6 +5,7 @@ import (
 	"wikinow/utils"
 )
 
+// These are used all the time, so I am simplifying the imports
 type Node = ast.Node
 type Container = ast.Container
 type Document = ast.Document
