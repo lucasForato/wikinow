@@ -3,8 +3,8 @@ package cmd
 import (
 	"net/http"
 	"path"
-	"wikinow/ast"
 	"wikinow/components"
+	"wikinow/parser"
 	"wikinow/utils"
 
 	"github.com/a-h/templ"
@@ -57,7 +57,7 @@ func Render(ctx echo.Context, statusCode int, t templ.Component) error {
 func handler(ctx echo.Context) error {
 	path := handlePath(ctx)
 	lines := utils.ReadMarkdown(path)
-	tree := ast.NewAstTree(lines)
+	tree := parser.NewAstTree(lines)
 	tree.Print(0)
 
 	return Render(ctx, http.StatusOK, components.Layout())

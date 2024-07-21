@@ -40,7 +40,7 @@ func ParseHeader(content string, parent Node) []Node {
 
 	// Add paragraph node for text after last bold text
 	if lastIndex < len(content) {
-		paragraph := new(tag.Paragraph)
+		paragraph := new(Paragraph)
 		paragraph.Parent = parent
 		paragraph.Content = content[lastIndex:]
 		nodes = append(nodes, paragraph)
