@@ -3,11 +3,10 @@ package parser
 import (
 	"fmt"
 	"strings"
-	"wikinow/ast"
 )
 
 type Link struct {
-	ast.Leaf
+	Leaf
 	Url string
 }
 

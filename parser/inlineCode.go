@@ -3,11 +3,10 @@ package parser
 import (
 	"fmt"
 	"strings"
-	"wikinow/ast"
 )
 
 type InlineCode struct {
-	ast.Leaf
+	Leaf
 }
 
 func (ic *InlineCode) Print(spaces int) {

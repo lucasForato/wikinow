@@ -3,11 +3,10 @@ package parser
 import (
 	"fmt"
 	"strings"
-	"wikinow/ast"
 )
 
 type Bold struct {
-	ast.Leaf
+	Leaf
 }
 
 func (b *Bold) Print(spaces int) {

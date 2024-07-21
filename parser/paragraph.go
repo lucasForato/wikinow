@@ -3,11 +3,10 @@ package parser
 import (
 	"fmt"
 	"strings"
-	"wikinow/ast"
 )
 
 type Paragraph struct {
-	ast.Container
+	Container
 
 	Content string
 }

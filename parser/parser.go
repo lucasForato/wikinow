@@ -5,6 +5,11 @@ import (
 	"wikinow/utils"
 )
 
+type Node = ast.Node
+type Container = ast.Container
+type Document = ast.Document
+type Leaf = ast.Leaf
+
 func NewAstTree(lines []string) Node {
 	doc := new(ast.Document)
 

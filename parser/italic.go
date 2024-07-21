@@ -3,11 +3,10 @@ package parser
 import (
 	"fmt"
 	"strings"
-	"wikinow/ast"
 )
 
 type Italic struct {
-	ast.Leaf
+	Leaf
 }
 
 func (i *Italic) Print(spaces int) {

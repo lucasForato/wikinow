@@ -2,16 +2,13 @@ package parser
 
 import (
 	"regexp"
-	"wikinow/ast"
 )
 
 type Header struct {
-	ast.Container
+	Container
 
 	Level int8
 }
-
-type Node = ast.Node
 
 func ParseHeader(content string, parent Node) []Node {
 	var nodes []Node
@@ -21,7 +18,6 @@ func ParseHeader(content string, parent Node) []Node {
 
 	lastIndex := 0
 	for _, match := range segments {
-		// Add paragraph node for text before bold text
 		if match[0] > lastIndex {
 			paragraph := new(Paragraph)
 			paragraph.Parent = parent
@@ -29,7 +25,6 @@ func ParseHeader(content string, parent Node) []Node {
 			nodes = append(nodes, paragraph)
 		}
 
-		// Add bold node
 		bold := new(Bold)
 		bold.Parent = parent
 		bold.Content = content[match[2]:match[3]]
@@ -38,7 +33,6 @@ func ParseHeader(content string, parent Node) []Node {
 		lastIndex = match[1]
 	}
 
-	// Add paragraph node for text after last bold text
 	if lastIndex < len(content) {
 		paragraph := new(Paragraph)
 		paragraph.Parent = parent
