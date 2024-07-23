@@ -11,6 +11,13 @@ type Paragraph struct {
 	Content string
 }
 
+func NewParagraph(content string, parent Node) *Paragraph {
+	paragraph := new(Paragraph)
+	paragraph.Parent = parent
+	paragraph.Content = content
+	return paragraph
+}
+
 func (p *Paragraph) Print(spaces int) {
 	tab := strings.Repeat(" ", spaces)
 	fmt.Println(tab, "Type: Paragraph")
