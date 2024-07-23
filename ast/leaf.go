@@ -6,12 +6,13 @@ import (
 )
 
 type Leaf struct {
-	Parent  Node
-	Content string
+	Parent   Node
+	Content  string
+	Original string
 }
 
 func (l *Leaf) AsDocument() *Document {
-  return nil
+	return nil
 }
 
 func (l *Leaf) AsContainer() *Container {
@@ -41,7 +42,7 @@ func (l *Leaf) SetChildren(newChildren []Node) {
 }
 
 func (l *Leaf) Print(spaces int) {
-  tab := strings.Repeat(" ", spaces)
+	tab := strings.Repeat(" ", spaces)
 
-  fmt.Println(tab, "Content:", l.Content)
+	fmt.Println(tab, "Content:", l.Content)
 }

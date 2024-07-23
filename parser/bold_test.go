@@ -19,10 +19,10 @@ func (suite *BoldTestSuite) SetupTest() {
 	}
 }
 
-// test if FindBold returns the expected values
-func (suite *BoldTestSuite) TestFindBoldReturnsExpected() {
+// test if ParseBold returns the expected values
+func (suite *BoldTestSuite) TestParseBoldReturnsExpected() {
 	for _, pair := range suite.Data {
-		received := FindBold(pair.Input)
+		received := ParseBold(pair.Input)
 		suite.Equal(pair.Expected, received)
 	}
 }

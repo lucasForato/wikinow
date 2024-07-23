@@ -12,7 +12,7 @@ func ParseHeader(content string, parent Node) []Node {
 	var nodes []Node
   fmt.Println(content)
 
-  FindBold(content)	
+  ParseBold(content)	
 
 	return nodes
 }

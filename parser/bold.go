@@ -19,7 +19,7 @@ func NewBold(content string, parent Node) *Bold {
 	return bold
 }
 
-func FindBold(content string) []string {
+func ParseBold(content string) []string {
 	regex := regexp.MustCompile(`(\*\*(.*?)\*\*)`)
 	segments := regex.FindAllStringSubmatch(content, -1)
 
