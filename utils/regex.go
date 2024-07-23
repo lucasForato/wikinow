@@ -4,12 +4,6 @@ import (
 	"regexp"
 )
 
-type Pattern = string
-
-const (
-	BoldPattern Pattern = `(\*\*(.*?)\*\*)`
-)
-
 func FindMatches(pattern string, search string) ([]string, []int) {
 	regex := regexp.MustCompile(pattern)
 	segments := regex.FindAllStringSubmatchIndex(search, -1)
@@ -34,9 +28,4 @@ func FindMatches(pattern string, search string) ([]string, []int) {
 	}
 
 	return substrings, matchIndices
-}
-
-func IsMatch(pattern Pattern, search string) bool {
-	regex := regexp.MustCompile(pattern)
-	return regex.MatchString(search)
 }

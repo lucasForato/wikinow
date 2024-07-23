@@ -1,9 +1,6 @@
 package parser
 
-import (
-	"slices"
-	"wikinow/utils"
-)
+import "fmt"
 
 type Header struct {
 	Container
@@ -13,17 +10,9 @@ type Header struct {
 
 func ParseHeader(content string, parent Node) []Node {
 	var nodes []Node
+  fmt.Println(content)
 
-	substrings, matchIndices := utils.FindMatches(utils.BoldPattern, content)
-	for i, sub := range substrings {
-		if slices.Contains(matchIndices, i) {
-			bold := NewBold(sub, parent)
-			nodes = append(nodes, bold)
-			continue
-		}
-		paragraph := NewParagraph(sub, parent)
-		nodes = append(nodes, paragraph)
-	}
+  FindBold(content)	
 
 	return nodes
 }
