@@ -8,8 +8,9 @@ import (
 
 type Container struct {
 	Type     string
-	// Parent   Node
 	Children []Node
+	Raw      string
+	// Parent   Node
 }
 
 func (c *Container) AsDocument() *Document {
@@ -23,14 +24,14 @@ func (c *Container) AsContainer() *Container {
 func (c *Container) AsLeaf() *Leaf {
 	return nil
 }
-//
-// func (c *Container) GetParent() Node {
-// 	return c.Parent
-// }
-//
-// func (c *Container) SetParent(newParent Node) {
-// 	c.Parent = newParent
-// }
+
+func (c *Container) GetRaw() string {
+	return c.Raw
+}
+
+func (c *Container) SetRaw(in string) {
+	c.Raw = in
+}
 
 func (c *Container) GetChildren() []Node {
 	return c.Children

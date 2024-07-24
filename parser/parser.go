@@ -1,27 +1,28 @@
 package parser
 
 import (
+	"strings"
 	"wikinow/ast"
-	"wikinow/utils"
 )
 
-// These are used all the time, so I am simplifying the imports
-type Node = ast.Node
-type Container = ast.Container
-type Document = ast.Document
-type Leaf = ast.Leaf
+type (
+	Node      = ast.Node
+	Container = ast.Container
+	Document  = ast.Document
+	Leaf      = ast.Leaf
+)
 
 func NewAstTree(lines []string) Node {
-	doc := new(ast.Document)
-
+	doc := ast.NewDocument()
+	children := []Node{}
 	for _, line := range lines {
-		if utils.IsHeader(line) {
-			content, level := utils.GetHeaderContent(line)
-			header := new(Header)
-			header.Children = ParseHeader(content, header)
-			header.Level = level
-			doc.Children = append(doc.Children, header)
-		}
+		children = append(children, ParseLine(line))
 	}
+	doc.SetChildren(children)
+	doc.SetRaw(strings.Join(lines, "\n"))
 	return doc
+}
+
+func ParseLine(string) Node {
+   
 }

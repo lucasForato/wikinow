@@ -4,8 +4,8 @@ type Node interface {
 	AsContainer() *Container
 	AsLeaf() *Leaf
 	AsDocument() *Document
-	// GetParent() Node
-	// SetParent(newParent Node)
+  GetRaw() string
+  SetRaw(in string)
 	GetChildren() []Node
 	SetChildren(newChildren []Node)
   AsJSON() string

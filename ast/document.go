@@ -14,6 +14,12 @@ type Document struct {
 	End      int
 }
 
+func NewDocument() *Document {
+	doc := new(Document)
+	doc.Type = "Document"
+  return doc
+}
+
 func (d *Document) AsDocument() *Document {
 	return d
 }
@@ -24,6 +30,14 @@ func (d *Document) AsContainer() *Container {
 
 func (d *Document) AsLeaf() *Leaf {
 	return nil
+}
+
+func (d *Document) GetRaw() string {
+	return d.Raw
+}
+
+func (d *Document) SetRaw(in string) {
+	d.Raw = in
 }
 
 func (d *Document) GetParent() Node {

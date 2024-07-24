@@ -11,8 +11,9 @@ type Bold struct {
 	Content string
 }
 
-func NewBold(content string, parent Node) *Bold {
+func NewBold(content string) *Bold {
 	bold := new(Bold)
+  bold.Type = "Bold"
 	bold.Content = strings.Trim(content, "**")
 	return bold
 }
