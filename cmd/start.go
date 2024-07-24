@@ -58,7 +58,11 @@ func handler(ctx echo.Context) error {
 	path := handlePath(ctx)
 	lines := utils.ReadMarkdown(path)
 	tree := parser.NewAstTree(lines)
-  tree.Print(0)
+	json := tree.AsJSON()
+  err := utils.JsonPrettyPrint(json)
+  if err != nil {
+    log.Fatal("Failed to parse json", err)
+  }
 
 	return Render(ctx, http.StatusOK, component.Parser(tree))
 }

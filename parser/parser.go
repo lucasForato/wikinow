@@ -18,7 +18,6 @@ func NewAstTree(lines []string) Node {
 		if utils.IsHeader(line) {
 			content, level := utils.GetHeaderContent(line)
 			header := new(Header)
-			header.Parent = doc
 			header.Children = ParseHeader(content, header)
 			header.Level = level
 			doc.Children = append(doc.Children, header)

@@ -9,18 +9,12 @@ templ Header(data *parser.Header) {
 		<h1>
 			for _, child := range data.Children {
 				switch child := child.(type) {
-					case *parser.Paragraph:
-						@Paragraph(child)
 					case *parser.Bold:
 						@Bold(child)
 				}
 			}
 		</h1>
 	}
-}
-
-templ Paragraph(data *parser.Paragraph) {
-	{ data.Content }
 }
 
 templ Bold(data *parser.Bold) {

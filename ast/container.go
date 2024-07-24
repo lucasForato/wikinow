@@ -1,12 +1,14 @@
 package ast
 
 import (
-	"fmt"
-	"strings"
+	"encoding/json"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Container struct {
-	Parent   Node
+	Type     string
+	// Parent   Node
 	Children []Node
 }
 
@@ -21,14 +23,14 @@ func (c *Container) AsContainer() *Container {
 func (c *Container) AsLeaf() *Leaf {
 	return nil
 }
-
-func (c *Container) GetParent() Node {
-	return c.Parent
-}
-
-func (c *Container) SetParent(newParent Node) {
-	c.Parent = newParent
-}
+//
+// func (c *Container) GetParent() Node {
+// 	return c.Parent
+// }
+//
+// func (c *Container) SetParent(newParent Node) {
+// 	c.Parent = newParent
+// }
 
 func (c *Container) GetChildren() []Node {
 	return c.Children
@@ -41,15 +43,10 @@ func (c *Container) SetChildren(newChildren []Node) {
 	c.Children = newChildren
 }
 
-func (c *Container) Print(spaces int) {
-	tab := strings.Repeat(" ", spaces)
-
-	fmt.Println(tab, "{")
-	fmt.Println(tab, "  Type: Container")
-	fmt.Println(tab, "  Children: [")
-	for _, child := range c.Children {
-		child.Print(spaces + 4)
+func (c *Container) AsJSON() string {
+	b, err := json.Marshal(c)
+	if err != nil {
+		log.Fatal(err)
 	}
-	fmt.Println(tab, "  ]")
-	fmt.Println(tab, "}")
+	return string(b)
 }

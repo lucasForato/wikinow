@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -9,7 +12,7 @@ import (
 )
 
 type TestPair struct {
-	Input  string
+	Input    string
 	Expected []string
 }
 
@@ -17,17 +20,17 @@ func GetTestData(dir ...string) []TestPair {
 	path := GetDirFromCurr(dir...)
 	lines := ReadMarkdown(path)
 
-  result := []TestPair{}
+	result := []TestPair{}
 
 	for i := 0; i < len(lines)-1; i += 2 {
 		testPair := new(TestPair)
 		testPair.Input = string(lines[i])
-    expected := strings.Split(lines[i+1], ", ")
+		expected := strings.Split(lines[i+1], ", ")
 		testPair.Expected = expected
-    result = append(result, *testPair)
+		result = append(result, *testPair)
 	}
 
-  return result
+	return result
 }
 
 func GetCurrentDir() string {
@@ -46,4 +49,14 @@ func GetDirFromCurr(path ...string) string {
 
 	newDir := filepath.Join(fullPath...)
 	return newDir
+}
+
+func JsonPrettyPrint(in string) *error {
+	var out bytes.Buffer
+	err := json.Indent(&out, []byte(in), "", "  ")
+	if err != nil {
+		return &err
+	}
+	fmt.Print(out.String())
+	return nil
 }

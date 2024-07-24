@@ -1,7 +1,5 @@
 package parser
 
-import "fmt"
-
 type Header struct {
 	Container
 
@@ -10,9 +8,8 @@ type Header struct {
 
 func ParseHeader(content string, parent Node) []Node {
 	var nodes []Node
-  fmt.Println(content)
 
-  ParseBold(content)	
+	ParseBold(content)
 
 	return nodes
 }

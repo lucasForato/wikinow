@@ -1,11 +1,17 @@
 package ast
 
 import (
-	"fmt"
+	"encoding/json"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Document struct {
+	Type     string
 	Children []Node
+	Raw      string
+	Start    int
+	End      int
 }
 
 func (d *Document) AsDocument() *Document {
@@ -38,11 +44,16 @@ func (d *Document) SetChildren(newChildren []Node) {
 	}
 }
 
-func (d *Document) Print(spaces int) {
-	fmt.Println("Type: Document")
-	fmt.Println("Children: [")
+func (d *Document) AsJSON() string {
+	children := make([]string, len(d.Children))
 	for _, child := range d.Children {
-		child.Print(2)
+		json := child.AsJSON()
+		children = append(children, json)
 	}
-	fmt.Println("]")
+
+	b, err := json.Marshal(d)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(b)
 }
