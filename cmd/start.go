@@ -64,7 +64,7 @@ func handler(ctx echo.Context) error {
     log.Fatal("Failed to parse json", err)
   }
 
-	return Render(ctx, http.StatusOK, component.Parser(tree))
+	return Render(ctx, http.StatusOK, component.Layout())
 }
 
 func handlePath(ctx echo.Context) string {

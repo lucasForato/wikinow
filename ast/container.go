@@ -10,6 +10,8 @@ type Container struct {
 	Type     string
 	Children []Node
 	Raw      string
+	Start    int
+	End      int
 	// Parent   Node
 }
 
@@ -35,6 +37,14 @@ func (c *Container) SetRaw(in string) {
 
 func (c *Container) GetChildren() []Node {
 	return c.Children
+}
+
+func (c *Container) AppendChild(child Node) {
+  c.Children = append(c.Children, child)
+}
+
+func (c *Container) AppendChildren(children []Node) {
+	c.Children = append(c.Children, children...)
 }
 
 func (c *Container) SetChildren(newChildren []Node) {

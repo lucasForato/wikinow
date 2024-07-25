@@ -8,5 +8,6 @@ type Node interface {
   SetRaw(in string)
 	GetChildren() []Node
 	SetChildren(newChildren []Node)
+  AppendChild(newChild Node)
   AsJSON() string
 }

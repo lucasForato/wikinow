@@ -2,30 +2,53 @@ package parser
 
 import (
 	"regexp"
-	"strings"
 )
 
 type Bold struct {
 	Container
-
-	Content string
 }
 
-func NewBold(content string) *Bold {
-	bold := new(Bold)
-  bold.Type = "Bold"
-	bold.Content = strings.Trim(content, "**")
-	return bold
+type LeafBold struct {
+	Leaf
 }
 
-func ParseBold(content string) []string {
-	regex := regexp.MustCompile(`(\*\*(.*?)\*\*)`)
-	segments := regex.FindAllStringSubmatch(content, -1)
-
-	result := []string{}
-	for _, match := range segments {
-		text := match[len(match)-1]
-		result = append(result, strings.Trim(text, "*"))
+func NewBold(raw string, content string, start int, end int) Node {
+	children := Parse(content)
+	if children == nil {
+		bold := new(LeafBold)
+		bold.Type = "LeafBold"
+		bold.Raw = raw
+		bold.Content = content
+		bold.Start = start
+		bold.End = end
+		return bold
+	} else {
+		bold := new(Bold)
+		bold.Type = "Bold"
+		bold.Raw = raw
+		bold.Start = start
+		bold.End = end
+		bold.SetChildren(*children)
+		return bold
 	}
-	return result
+}
+
+func ParseBold(in string) *[]Node {
+	regex := regexp.MustCompile(`(\*\*(.*?)\*\*)`)
+	segments := regex.FindAllStringSubmatchIndex(in, -1)
+	if len(segments) == 0 {
+		return nil
+	}
+
+	result := []Node{}
+	for _, match := range segments {
+		bold := NewBold(
+			in[match[0]:match[1]],
+			in[match[4]:match[5]],
+			match[0],
+			match[1],
+		)
+		result = append(result, bold)
+	}
+	return &result
 }

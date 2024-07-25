@@ -17,7 +17,7 @@ type Document struct {
 func NewDocument() *Document {
 	doc := new(Document)
 	doc.Type = "Document"
-  return doc
+	return doc
 }
 
 func (d *Document) AsDocument() *Document {
@@ -30,6 +30,14 @@ func (d *Document) AsContainer() *Container {
 
 func (d *Document) AsLeaf() *Leaf {
 	return nil
+}
+
+func (d *Document) AppendChild(child Node) {
+	d.Children = append(d.Children, child)
+}
+
+func (d *Document) AppendChildren(children []Node) {
+	d.Children = append(d.Children, children...)
 }
 
 func (d *Document) GetRaw() string {

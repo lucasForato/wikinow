@@ -7,8 +7,11 @@ import (
 )
 
 type Leaf struct {
+	Type    string
 	Content string
 	Raw     string
+	Start   int
+	End     int
 	// Parent   Node
 }
 
@@ -22,6 +25,14 @@ func (l *Leaf) AsContainer() *Container {
 
 func (l *Leaf) AsLeaf() *Leaf {
 	return l
+}
+
+func (l *Leaf) AppendChild(child Node) {
+	panic("Leaf cannot have children")
+}
+
+func (l *Leaf) AppendChildren(children []Node) {
+	panic("Leaf cannot have children")
 }
 
 func (l *Leaf) GetRaw() string {

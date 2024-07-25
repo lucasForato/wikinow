@@ -3,6 +3,7 @@ package parser
 import (
 	"strings"
 	"wikinow/ast"
+	"wikinow/utils"
 )
 
 type (
@@ -14,15 +15,19 @@ type (
 
 func NewAstTree(lines []string) Node {
 	doc := ast.NewDocument()
-	children := []Node{}
 	for _, line := range lines {
-		children = append(children, ParseLine(line))
+		children := Parse(line)
+		if children == nil {
+			continue
+		}
+		doc.AppendChildren(*children)
 	}
-	doc.SetChildren(children)
 	doc.SetRaw(strings.Join(lines, "\n"))
+	utils.JsonPrettyPrint(doc.AsJSON())
 	return doc
 }
 
-func ParseLine(string) Node {
-   
+func Parse(in string) *[]Node {
+	bold := ParseBold(in)
+	return bold
 }
