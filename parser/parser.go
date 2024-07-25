@@ -28,21 +28,17 @@ func NewAstTree(lines []string) Node {
 }
 
 func Parse(in string) *[]Node {
-  result := []Node{}
+	result := []Node{}
 
-	bold := ParseBold(in)
-  if bold != nil {
-    result = append(result, *bold...)
-  }
+	if bold := ParseBold(in); bold != nil {
+		result = append(result, *bold...)
+	}
+	if header := ParseHeader(in); header != nil {
+		result = append(result, *header...)
+	}
+	if len(result) == 0 {
+		return nil
+	}
 
-  header := ParseHeader(in)
-  if header != nil {
-    result = append(result, *header...)
-  }
-
-  if len(result) == 0 {
-    return nil
-  }
-
-	return &result 
+	return &result
 }
