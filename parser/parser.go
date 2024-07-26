@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"sort"
 	"strings"
 	"wikinow/ast"
 	"wikinow/utils"
@@ -40,5 +41,70 @@ func Parse(in string) *[]Node {
 		return nil
 	}
 
+	if len(result) > 1 {
+		return GroupNodes(&result)
+	}
+
 	return &result
 }
+
+func GroupNodes(nodes *[]Node) *[]Node {
+	if len(*nodes) == 1 {
+		return nodes
+	}
+
+	sorted := make([]Node, len(*nodes))
+	copy(sorted, *nodes)
+	sort.Sort(ByDiff(sorted))
+
+	p1 := 0
+	p2 := 1
+
+	for {
+		if p2 >= len(sorted) {
+			p1++
+			p2 = p1 + 1
+		}
+
+		if p1 >= len(sorted)-1 {
+			break
+		}
+
+		a := sorted[p1]
+		b := sorted[p2]
+
+		if b.AsLeaf() != nil {
+			p2++
+			if p2 >= len(sorted) {
+				p1++
+				p2 = p1 + 1
+			}
+			continue
+		}
+
+		if a.GetStart() >= b.GetStart() && a.GetEnd() <= b.GetEnd() {
+			b.AsContainer().AppendChild(a)
+			sorted = append(sorted[:p1], sorted[p1+1:]...)
+			p2 = p1 + 1
+			continue
+		}
+		p2++
+	}
+
+	for _, node := range sorted {
+		container := node.AsContainer()
+		if container == nil {
+			continue
+		}
+
+		GroupNodes(container.GetChildren())
+	}
+
+	return &sorted
+}
+
+type ByDiff []Node
+
+func (a ByDiff) Len() int           { return len(a) }
+func (a ByDiff) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByDiff) Less(i, j int) bool { return a[i].Range() < a[j].Range() }

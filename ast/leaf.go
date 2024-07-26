@@ -27,6 +27,14 @@ func (l *Leaf) AsLeaf() *Leaf {
 	return l
 }
 
+func (l *Leaf) GetStart() int {
+  return l.Start
+}
+
+func (l *Leaf) GetEnd() int {
+  return l.End
+}
+
 func (l *Leaf) AppendChild(child Node) {
 	panic("Leaf cannot have children")
 }
@@ -43,8 +51,12 @@ func (l *Leaf) SetRaw(in string) {
 	l.Raw = in
 }
 
-func (l *Leaf) GetChildren() []Node {
+func (l *Leaf) GetChildren() *[]Node {
 	return nil
+}
+
+func (l *Leaf) GetType() string {
+  return l.Type
 }
 
 func (l *Leaf) SetChildren(newChildren []Node) {
@@ -59,4 +71,8 @@ func (l *Leaf) AsJSON() string {
 		log.Fatal(err)
 	}
 	return string(b)
+}
+
+func (l *Leaf) Range() int {
+  return l.End - l.Start
 }

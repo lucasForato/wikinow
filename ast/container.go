@@ -35,8 +35,20 @@ func (c *Container) SetRaw(in string) {
 	c.Raw = in
 }
 
-func (c *Container) GetChildren() []Node {
-	return c.Children
+func (c *Container) GetStart() int {
+  return c.Start
+}
+
+func (c *Container) GetEnd() int {
+  return c.End
+}
+
+func (c *Container) GetChildren() *[]Node {
+	return &c.Children
+}
+
+func (c *Container) GetType() string {
+  return c.Type
 }
 
 func (c *Container) AppendChild(child Node) {
@@ -60,4 +72,8 @@ func (c *Container) AsJSON() string {
 		log.Fatal(err)
 	}
 	return string(b)
+}
+
+func (c *Container) Range() int {
+  return c.End - c.Start
 }

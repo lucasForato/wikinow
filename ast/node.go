@@ -6,8 +6,12 @@ type Node interface {
 	AsDocument() *Document
   GetRaw() string
   SetRaw(in string)
-	GetChildren() []Node
+  GetStart() int
+  GetEnd() int
+	GetChildren() *[]Node
 	SetChildren(newChildren []Node)
   AppendChild(newChild Node)
+  GetType() string
   AsJSON() string
+  Range() int
 }

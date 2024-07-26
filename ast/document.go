@@ -32,6 +32,14 @@ func (d *Document) AsLeaf() *Leaf {
 	return nil
 }
 
+func (d *Document) GetStart() int {
+  return d.Start
+}
+
+func (d *Document) GetEnd() int {
+  return d.End
+}
+
 func (d *Document) AppendChild(child Node) {
 	d.Children = append(d.Children, child)
 }
@@ -56,12 +64,16 @@ func (d *Document) SetParent(newParent Node) {
 	panic("Document cannot have a parent")
 }
 
-func (d *Document) GetChildren() []Node {
-	return d.Children
+func (d *Document) GetChildren() *[]Node {
+	return &d.Children
+}
+
+func (d *Document) GetType() string {
+  return d.Type
 }
 
 func (d *Document) SetChildren(newChildren []Node) {
-	if len(newChildren) > 0 {
+	if len(newChildren) == 0 {
 		panic("Document received invalid children")
 	}
 }
@@ -78,4 +90,8 @@ func (d *Document) AsJSON() string {
 		log.Fatal(err)
 	}
 	return string(b)
+}
+
+func (d *Document) Range() int {
+  return d.End - d.Start
 }
