@@ -8,29 +8,17 @@ type Bold struct {
 	Container
 }
 
-type LeafBold struct {
-	Leaf
-}
-
 func NewBold(raw string, content string, start int, end int) Node {
+	bold := new(Bold)
+	bold.Type = "Bold"
+	bold.Raw = raw
+	bold.Start = start
+	bold.End = end
 	children := Parse(content)
-	if children == nil {
-		bold := new(LeafBold)
-		bold.Type = "LeafBold"
-		bold.Raw = raw
-		bold.Content = content
-		bold.Start = start
-		bold.End = end
-		return bold
-	} else {
-		bold := new(Bold)
-		bold.Type = "Bold"
-		bold.Raw = raw
-		bold.Start = start
-		bold.End = end
+	if children != nil {
 		bold.SetChildren(*children)
-		return bold
 	}
+	return bold
 }
 
 func ParseBold(in string) *[]Node {

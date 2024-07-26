@@ -76,3 +76,7 @@ func (l *Leaf) AsJSON() string {
 func (l *Leaf) Range() int {
   return l.End - l.Start
 }
+
+func (l *Leaf) GetContent() string {
+  return l.Content
+}

@@ -2,7 +2,7 @@ package parser
 
 import (
 	"sort"
-	"testing"
+  "testing"
 
 	"github.com/stretchr/testify/suite"
 )
@@ -123,6 +123,6 @@ func (suite *ParserTestSuite) Test_should_have_5_levels_of_hierarchy() {
 	suite.Equal("E", e.GetType())
 }
 
-func TestMain(t *testing.T) {
+func TestParser(t *testing.T) {
 	suite.Run(t, new(ParserTestSuite))
 }

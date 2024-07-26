@@ -34,9 +34,19 @@ func Parse(in string) *[]Node {
 	if bold := ParseBold(in); bold != nil {
 		result = append(result, *bold...)
 	}
+
 	if header := ParseHeader(in); header != nil {
 		result = append(result, *header...)
 	}
+
+	if italic := ParseItalic(in); italic != nil {
+		result = append(result, *italic...)
+	}
+
+	if text := ParseText(in); text != nil {
+		result = append(result, *text...)
+	}
+
 	if len(result) == 0 {
 		return nil
 	}

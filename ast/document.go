@@ -95,3 +95,7 @@ func (d *Document) AsJSON() string {
 func (d *Document) Range() int {
   return d.End - d.Start
 }
+
+func (d *Document) GetContent() *string {
+  return nil
+}
