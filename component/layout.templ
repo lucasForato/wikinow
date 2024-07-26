@@ -1,6 +1,8 @@
 package component;
 
-templ Layout() {
+import "wikinow/ast"
+
+templ Layout(node *ast.Node) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -9,7 +11,7 @@ templ Layout() {
 			<title>Document</title>
 		</head>
 		<body>
-			{ children... }
+			@Parser(node)
 		</body>
 	</html>
 }

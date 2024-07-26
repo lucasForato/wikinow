@@ -9,32 +9,22 @@ type Header struct {
 	Level int
 }
 
-type LeafHeader struct {
-	Leaf
-	Level int
+func (h *Header) AsHeader() *Header {
+  return h
 }
 
 func NewHeader(raw string, content string, start int, end int, level int) Node {
+	header := new(Header)
+	header.Type = "Header"
+	header.Raw = raw
+	header.Start = start
+	header.End = end
+	header.Level = level
 	children := Parse(content)
-	if children == nil {
-		header := new(LeafHeader)
-		header.Type = "LeafHeader"
-		header.Raw = raw
-		header.Content = content
-		header.Start = start
-		header.End = end
-		header.Level = level
-		return header
-	} else {
-		header := new(Header)
-		header.Type = "Header"
-		header.Raw = raw
-		header.Start = start
-		header.End = end
-		header.Level = level
+	if children != nil {
 		header.SetChildren(*children)
-		return header
 	}
+	return header
 }
 
 func ParseHeader(in string) *[]Node {
