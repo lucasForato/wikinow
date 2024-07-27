@@ -10,7 +10,7 @@ type Header struct {
 }
 
 func (h *Header) AsHeader() *Header {
-  return h
+	return h
 }
 
 func NewHeader(raw string, content string, start int, end int, level int) Node {
@@ -19,11 +19,11 @@ func NewHeader(raw string, content string, start int, end int, level int) Node {
 	header.Raw = raw
 	header.Start = start
 	header.End = end
-	header.Level = level
 	children := Parse(content)
 	if children != nil {
 		header.SetChildren(*children)
 	}
+	header.Level = level
 	return header
 }
 

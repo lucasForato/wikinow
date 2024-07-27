@@ -14,15 +14,11 @@ func NewItalic(raw string, content string, start int, end int) Node {
 	italic.Raw = raw
 	italic.Start = start
 	italic.End = end
-	children := Parse(content)
-	if children != nil {
-		italic.SetChildren(*children)
-	}
 	return italic
 }
 
 func ParseItalic(in string) *[]Node {
-	regex := regexp.MustCompile(`(\*(.*?)\*)`)
+	regex := regexp.MustCompile(`\*(.+?)\*|_(.+?)_`)
 	segments := regex.FindAllStringSubmatchIndex(in, -1)
 	if len(segments) == 0 {
 		return nil
@@ -30,9 +26,15 @@ func ParseItalic(in string) *[]Node {
 
 	result := []Node{}
 	for _, match := range segments {
+		raw := in[match[0]:match[1]]
+		content := in[match[2]:match[3]]
+    if content[0] == '*' || content[len(content)-1] == '*' {
+      continue
+    }
+
 		italic := NewItalic(
-			in[match[0]:match[1]],
-			in[match[4]:match[5]],
+			raw,
+			content,
 			match[0],
 			match[1],
 		)

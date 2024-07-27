@@ -1,10 +1,10 @@
 package parser
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 	"wikinow/ast"
-	"wikinow/utils"
 )
 
 type (
@@ -24,26 +24,28 @@ func NewAstTree(lines []string) Node {
 		doc.AppendChildren(*children)
 	}
 	doc.SetRaw(strings.Join(lines, "\n"))
-	utils.JsonPrettyPrint(doc.AsJSON())
 	return doc
 }
 
 func Parse(in string) *[]Node {
 	result := []Node{}
 
-	if bold := ParseBold(in); bold != nil {
-		result = append(result, *bold...)
-	}
-
 	if header := ParseHeader(in); header != nil {
 		result = append(result, *header...)
+	}
+
+	if bold := ParseBold(in); bold != nil {
+		result = append(result, *bold...)
 	}
 
 	if italic := ParseItalic(in); italic != nil {
 		result = append(result, *italic...)
 	}
 
-	if text := ParseText(in); text != nil {
+	if text := ParseText(in, result); text != nil {
+		for _, item := range result {
+			fmt.Println(item.GetType(), ":", item.GetRaw())
+		}
 		result = append(result, *text...)
 	}
 

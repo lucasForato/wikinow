@@ -19,3 +19,12 @@ func ReadMarkdown(path string) []string {
 
 	return strings.Split(file, "\n")
 }
+
+func IndexOfSubstring(str, subStr string) int {
+   for i := 0; i < len(str); i++ {
+      if str[i:i+len(subStr)] == subStr {
+         return i
+      }
+   }
+   return -1
+}
