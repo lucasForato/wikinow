@@ -13,13 +13,13 @@ func (h *Header) AsHeader() *Header {
 	return h
 }
 
-func NewHeader(raw string, content string, start int, end int, level int) Node {
+func NewHeader(raw string, content string, start int, end int, level int, ctx *Ctx) Node {
 	header := new(Header)
 	header.Type = "Header"
 	header.Raw = raw
 	header.Start = start
 	header.End = end
-	children := Parse(content)
+	children, _ := Parse(content, ctx)
 	if children != nil {
 		header.SetChildren(*children)
 	}
@@ -27,29 +27,29 @@ func NewHeader(raw string, content string, start int, end int, level int) Node {
 	return header
 }
 
-func ParseHeader(in string) *[]Node {
-	if h6 := ParseH6(in); h6 != nil {
+func ParseHeader(in string, ctx *Ctx) *[]Node {
+	if h6 := ParseH6(in, ctx); h6 != nil {
 		return h6
 	}
-	if h5 := ParseH5(in); h5 != nil {
+	if h5 := ParseH5(in, ctx); h5 != nil {
 		return h5
 	}
-	if h4 := ParseH4(in); h4 != nil {
+	if h4 := ParseH4(in, ctx); h4 != nil {
 		return h4
 	}
-	if h3 := ParseH3(in); h3 != nil {
+	if h3 := ParseH3(in, ctx); h3 != nil {
 		return h3
 	}
-	if h2 := ParseH2(in); h2 != nil {
+	if h2 := ParseH2(in, ctx); h2 != nil {
 		return h2
 	}
-	if h1 := ParseH1(in); h1 != nil {
+	if h1 := ParseH1(in, ctx); h1 != nil {
 		return h1
 	}
 	return nil
 }
 
-func ParseH1(in string) *[]Node {
+func ParseH1(in string, ctx *Ctx) *[]Node {
 	regex := regexp.MustCompile(`(#{1}\s)(.*)`)
 	segments := regex.FindAllStringSubmatchIndex(in, -1)
 	if len(segments) == 0 {
@@ -64,13 +64,14 @@ func ParseH1(in string) *[]Node {
 			match[0],
 			match[1],
 			1,
+      ctx,
 		)
 		result = append(result, bold)
 	}
 	return &result
 }
 
-func ParseH2(in string) *[]Node {
+func ParseH2(in string, ctx *Ctx) *[]Node {
 	regex := regexp.MustCompile(`(#{2}\s)(.*)`)
 	segments := regex.FindAllStringSubmatchIndex(in, -1)
 	if len(segments) == 0 {
@@ -85,13 +86,14 @@ func ParseH2(in string) *[]Node {
 			match[0],
 			match[1],
 			2,
+      ctx,
 		)
 		result = append(result, bold)
 	}
 	return &result
 }
 
-func ParseH3(in string) *[]Node {
+func ParseH3(in string, ctx *Ctx) *[]Node {
 	regex := regexp.MustCompile(`(#{3}\s)(.*)`)
 	segments := regex.FindAllStringSubmatchIndex(in, -1)
 	if len(segments) == 0 {
@@ -106,13 +108,14 @@ func ParseH3(in string) *[]Node {
 			match[0],
 			match[1],
 			3,
+      ctx,
 		)
 		result = append(result, bold)
 	}
 	return &result
 }
 
-func ParseH4(in string) *[]Node {
+func ParseH4(in string, ctx *Ctx) *[]Node {
 	regex := regexp.MustCompile(`(#{4}\s)(.*)`)
 	segments := regex.FindAllStringSubmatchIndex(in, -1)
 	if len(segments) == 0 {
@@ -127,13 +130,14 @@ func ParseH4(in string) *[]Node {
 			match[0],
 			match[1],
 			4,
+      ctx,
 		)
 		result = append(result, bold)
 	}
 	return &result
 }
 
-func ParseH5(in string) *[]Node {
+func ParseH5(in string, ctx *Ctx) *[]Node {
 	regex := regexp.MustCompile(`(#{5}\s)(.*)`)
 	segments := regex.FindAllStringSubmatchIndex(in, -1)
 	if len(segments) == 0 {
@@ -148,13 +152,14 @@ func ParseH5(in string) *[]Node {
 			match[0],
 			match[1],
 			5,
+      ctx,
 		)
 		result = append(result, bold)
 	}
 	return &result
 }
 
-func ParseH6(in string) *[]Node {
+func ParseH6(in string, ctx *Ctx) *[]Node {
 	regex := regexp.MustCompile(`(#{6}\s)(.*)`)
 	segments := regex.FindAllStringSubmatchIndex(in, -1)
 	if len(segments) == 0 {
@@ -169,6 +174,7 @@ func ParseH6(in string) *[]Node {
 			match[0],
 			match[1],
 			6,
+      ctx,
 		)
 		result = append(result, bold)
 	}

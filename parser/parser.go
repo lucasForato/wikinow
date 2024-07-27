@@ -1,10 +1,10 @@
 package parser
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 	"wikinow/ast"
+	"wikinow/utils"
 )
 
 type (
@@ -12,12 +12,14 @@ type (
 	Container = ast.Container
 	Document  = ast.Document
 	Leaf      = ast.Leaf
+	Ctx       = utils.Ctx
 )
 
 func NewAstTree(lines []string) Node {
 	doc := ast.NewDocument()
 	for _, line := range lines {
-		children := Parse(line)
+		ctx := utils.NewCtx()
+		children, _ := Parse(line, ctx)
 		if children == nil {
 			continue
 		}
@@ -27,37 +29,43 @@ func NewAstTree(lines []string) Node {
 	return doc
 }
 
-func Parse(in string) *[]Node {
+func Parse(in string, ctx *Ctx) (*[]Node, *Ctx) {
 	result := []Node{}
 
-	if header := ParseHeader(in); header != nil {
-		result = append(result, *header...)
-	}
-
-	if bold := ParseBold(in); bold != nil {
-		result = append(result, *bold...)
-	}
-
-	if italic := ParseItalic(in); italic != nil {
-		result = append(result, *italic...)
-	}
-
-	if text := ParseText(in, result); text != nil {
-		for _, item := range result {
-			fmt.Println(item.GetType(), ":", item.GetRaw())
+	if headers := ParseHeader(in, ctx); headers != nil {
+		if !ctx.IsTypeIgnored("Header") {
+			ctx.AppendIgnored("Header")
+			result = append(result, *headers...)
 		}
-		result = append(result, *text...)
+	}
+
+	if bolds := ParseBold(in, ctx); bolds != nil {
+		if !ctx.IsTypeIgnored("Bold") {
+			ctx.AppendIgnored("Bold")
+			result = append(result, *bolds...)
+		}
+	}
+
+	if italics := ParseItalic(in, ctx); italics != nil {
+		if !ctx.IsTypeIgnored("Italic") {
+			ctx.AppendIgnored("Italic")
+			result = append(result, *italics...)
+		}
+	}
+
+	if texts := ParseText(in, result); texts != nil {
+		result = append(result, *texts...)
 	}
 
 	if len(result) == 0 {
-		return nil
+		return nil, ctx
 	}
 
 	if len(result) > 1 {
-		return GroupNodes(&result)
+		return GroupNodes(&result), ctx
 	}
 
-	return &result
+	return &result, ctx
 }
 
 func GroupNodes(nodes *[]Node) *[]Node {
