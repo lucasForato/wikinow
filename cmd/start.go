@@ -1,15 +1,20 @@
 package cmd
 
 import (
+	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"path"
-	"wikinow/component"
-	"wikinow/parser"
+	"strings"
 	"wikinow/utils"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
+	sitter "github.com/smacker/go-tree-sitter"
+	markdown "github.com/smacker/go-tree-sitter/markdown/tree-sitter-markdown"
+
 	"github.com/spf13/cobra"
 )
 
@@ -57,13 +62,21 @@ func Render(ctx echo.Context, statusCode int, t templ.Component) error {
 func handler(ctx echo.Context) error {
 	path := handlePath(ctx)
 	lines := utils.ReadMarkdown(path)
-	tree := parser.NewAstTree(lines)
-	json := tree.AsJSON()
-	err := utils.JsonPrettyPrint(json)
+
+	parser := sitter.NewParser()
+	parser.SetLanguage(markdown.GetLanguage())
+
+	sourceCode := []byte(strings.Join(lines, "\n"))
+	tree, err := parser.ParseCtx(context.Background(), nil, sourceCode)
 	if err != nil {
-		log.Fatal("Failed to parse json", err)
+		log.Fatal("Failed to parse source code", err)
 	}
-	return Render(ctx, http.StatusOK, component.Layout(&tree))
+
+	root := tree.RootNode()
+	str := ConvertTreeToJson(root, lines)
+	utils.JsonPrettyPrint(str)
+
+	return Render(ctx, http.StatusOK, nil)
 }
 
 func handlePath(ctx echo.Context) string {
@@ -72,4 +85,49 @@ func handlePath(ctx echo.Context) string {
 		url = "/main.md"
 	}
 	return path.Join("wiki", url)
+}
+
+func getTextFromPoints(lines []string, start sitter.Point, end sitter.Point) string {
+	startLine := start.Row
+	startColumn := start.Column
+	endLine := end.Row
+	endColumn := end.Column
+	if startLine == endLine {
+		return lines[startLine][startColumn:endColumn]
+	}
+	text := lines[startLine][startColumn:]
+	for i := startLine + 1; i < endLine; i++ {
+		text += lines[i]
+	}
+	text += lines[endLine][:endColumn]
+	return text
+}
+
+func ConvertTreeToJson(node *sitter.Node, lines []string) string {
+	if node.IsNull() {
+		return "[]"
+	}
+
+	maps := map[string]interface{}{}
+	children := []interface{}{}
+	count := int(node.ChildCount())
+
+	for i := 0; i < count; i++ {
+    fmt.Println(node.Child(i))
+    fmt.Println(node.String())
+
+		child := ConvertTreeToJson(node.Child(i), lines)
+		children = append(children, json.RawMessage(child))
+	}
+
+	maps[node.Type()] = map[string]interface{}{
+		"content":  getTextFromPoints(lines, node.StartPoint(), node.EndPoint()),
+		"children": children,
+	}
+
+	item, err := json.Marshal(maps)
+	if err != nil {
+		log.Fatal("failed to parse json", err)
+	}
+	return string(item)
 }
