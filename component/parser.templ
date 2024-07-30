@@ -1,0 +1,47 @@
+package component
+
+import (
+	sitter "github.com/smacker/go-tree-sitter"
+	"wikinow/utils"
+)
+
+templ Parser(node *sitter.Node, lines *[]string) {
+	switch node.Type() {
+		case "document":
+			for i := 0; i < int(node.ChildCount()); i++ {
+				@Parser(node.Child(i), lines)
+			}
+		case "section":
+			for i := 0; i < int(node.ChildCount()); i++ {
+				@Parser(node.Child(i), lines)
+			}
+		case "atx_heading":
+			@Parser(node.Child(0), lines)
+		case "atx_h1_marker":
+			<h1>
+				@Parser(node.NextSibling(), lines)
+			</h1>
+		case "atx_h2_marker":
+			<h2>
+				@Parser(node.NextSibling(), lines)
+			</h2>
+		case "atx_h3_marker":
+			<h3>
+				@Parser(node.NextSibling(), lines)
+			</h3>
+		case "atx_h4_marker":
+			<h4>
+				@Parser(node.NextSibling(), lines)
+			</h4>
+		case "atx_h5_marker":
+			<h5>
+				@Parser(node.NextSibling(), lines)
+			</h5>
+		case "atx_h6_marker":
+			<h6>
+				@Parser(node.NextSibling(), lines)
+			</h6>
+		case "inline":
+			{ utils.GetText(*lines, node) }
+	}
+}

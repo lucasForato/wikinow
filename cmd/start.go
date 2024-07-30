@@ -2,11 +2,10 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"path"
 	"strings"
+	"wikinow/component"
 	"wikinow/utils"
 
 	"github.com/a-h/templ"
@@ -73,10 +72,10 @@ func handler(ctx echo.Context) error {
 	}
 
 	root := tree.RootNode()
-	str := ConvertTreeToJson(root, lines)
+	str := utils.ConvertTreeToJson(root, lines)
 	utils.JsonPrettyPrint(str)
 
-	return Render(ctx, http.StatusOK, nil)
+	return Render(ctx, http.StatusOK, component.Layout(root, &lines))
 }
 
 func handlePath(ctx echo.Context) string {
@@ -85,49 +84,4 @@ func handlePath(ctx echo.Context) string {
 		url = "/main.md"
 	}
 	return path.Join("wiki", url)
-}
-
-func getTextFromPoints(lines []string, start sitter.Point, end sitter.Point) string {
-	startLine := start.Row
-	startColumn := start.Column
-	endLine := end.Row
-	endColumn := end.Column
-	if startLine == endLine {
-		return lines[startLine][startColumn:endColumn]
-	}
-	text := lines[startLine][startColumn:]
-	for i := startLine + 1; i < endLine; i++ {
-		text += lines[i]
-	}
-	text += lines[endLine][:endColumn]
-	return text
-}
-
-func ConvertTreeToJson(node *sitter.Node, lines []string) string {
-	if node.IsNull() {
-		return "[]"
-	}
-
-	maps := map[string]interface{}{}
-	children := []interface{}{}
-	count := int(node.ChildCount())
-
-	for i := 0; i < count; i++ {
-    fmt.Println(node.Child(i))
-    fmt.Println(node.String())
-
-		child := ConvertTreeToJson(node.Child(i), lines)
-		children = append(children, json.RawMessage(child))
-	}
-
-	maps[node.Type()] = map[string]interface{}{
-		"content":  getTextFromPoints(lines, node.StartPoint(), node.EndPoint()),
-		"children": children,
-	}
-
-	item, err := json.Marshal(maps)
-	if err != nil {
-		log.Fatal("failed to parse json", err)
-	}
-	return string(item)
 }
