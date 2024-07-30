@@ -3,7 +3,10 @@ package component
 import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/utils"
+	"html/template"
 )
+
+var goTemplate = template.Must(template.New("inline").Parse("{{ . }}"))
 
 templ Parser(node *sitter.Node, lines *[]string) {
 	switch node.Type() {
@@ -42,6 +45,6 @@ templ Parser(node *sitter.Node, lines *[]string) {
 				@Parser(node.NextSibling(), lines)
 			</h6>
 		case "inline":
-			{ utils.GetText(*lines, node) }
+			@templ.FromGoHTML(goTemplate, utils.ParseInline(utils.GetText(*lines, node)))
 	}
 }
