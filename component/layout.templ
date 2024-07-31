@@ -2,9 +2,10 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
+	"wikinow/utils"
 )
 
-templ Layout(node *sitter.Node, lines *[]string) {
+templ Layout(node *sitter.Node, lines *[]string, c *utils.Context) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -13,7 +14,7 @@ templ Layout(node *sitter.Node, lines *[]string) {
 			<title>Document</title>
 		</head>
 		<body>
-			@Parser(node, lines)
+			@Parser(node, lines, c)
 		</body>
 	</html>
 }

@@ -66,16 +66,21 @@ func handler(ctx echo.Context) error {
 	parser.SetLanguage(markdown.GetLanguage())
 
 	sourceCode := []byte(strings.Join(lines, "\n"))
+
+  store := utils.CreateContext()
+  store.Load(&lines)
+  store.Print()
+
 	tree, err := parser.ParseCtx(context.Background(), nil, sourceCode)
 	if err != nil {
 		log.Fatal("Failed to parse source code", err)
 	}
 
 	root := tree.RootNode()
-	str := utils.ConvertTreeToJson(root, lines)
-	utils.JsonPrettyPrint(str)
+	// str := utils.ConvertTreeToJson(root, lines)
+	// utils.JsonPrettyPrint(str)
 
-	return Render(ctx, http.StatusOK, component.Layout(root, &lines))
+	return Render(ctx, http.StatusOK, component.Layout(root, &lines, &store))
 }
 
 func handlePath(ctx echo.Context) string {

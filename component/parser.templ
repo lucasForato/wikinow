@@ -6,45 +6,60 @@ import (
 	"html/template"
 )
 
-var goTemplate = template.Must(template.New("inline").Parse("{{ . }}"))
+var goTemplate = template.Must(template.New("inline").Parse("<p>{{ . }}</p>"))
 
-templ Parser(node *sitter.Node, lines *[]string) {
+templ Parser(node *sitter.Node, lines *[]string, c *utils.Context) {
 	switch node.Type() {
 		case "document":
 			for i := 0; i < int(node.ChildCount()); i++ {
-				@Parser(node.Child(i), lines)
+				@Parser(node.Child(i), lines, c)
 			}
 		case "section":
 			for i := 0; i < int(node.ChildCount()); i++ {
-				@Parser(node.Child(i), lines)
+				@Parser(node.Child(i), lines, c)
 			}
 		case "atx_heading":
-			@Parser(node.Child(0), lines)
+			@Parser(node.Child(0), lines, c)
 		case "atx_h1_marker":
 			<h1>
-				@Parser(node.NextSibling(), lines)
+				@Parser(node.NextSibling(), lines, c)
+			</h1>
+		case "setext_heading":
+			@Parser(node.Child(int(node.ChildCount()-1)), lines, c)
+		case "setext_h1_underline":
+			<h1>
+				@Parser(node.PrevSibling(), lines, c)
 			</h1>
 		case "atx_h2_marker":
 			<h2>
-				@Parser(node.NextSibling(), lines)
+				@Parser(node.NextSibling(), lines, c)
+			</h2>
+		case "setext_h2_underline":
+			<h2>
+				@Parser(node.PrevSibling(), lines, c)
 			</h2>
 		case "atx_h3_marker":
 			<h3>
-				@Parser(node.NextSibling(), lines)
+				@Parser(node.NextSibling(), lines, c)
 			</h3>
 		case "atx_h4_marker":
 			<h4>
-				@Parser(node.NextSibling(), lines)
+				@Parser(node.NextSibling(), lines, c)
 			</h4>
 		case "atx_h5_marker":
 			<h5>
-				@Parser(node.NextSibling(), lines)
+				@Parser(node.NextSibling(), lines, c)
 			</h5>
 		case "atx_h6_marker":
 			<h6>
-				@Parser(node.NextSibling(), lines)
+				@Parser(node.NextSibling(), lines, c)
 			</h6>
+		case "paragraph":
+			for i := 0; i < int(node.ChildCount()); i++ {
+				@Parser(node.Child(i), lines, c)
+			}
 		case "inline":
-			@templ.FromGoHTML(goTemplate, utils.ParseInline(utils.GetText(*lines, node)))
+			@templ.FromGoHTML(goTemplate, utils.ParseInline(utils.GetText(*lines, node), c))
+		default:
 	}
 }

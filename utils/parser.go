@@ -2,6 +2,7 @@ package utils
 
 import (
 	"html/template"
+	"regexp"
 	"strings"
 
 	sitter "github.com/smacker/go-tree-sitter"
@@ -26,15 +27,27 @@ func GetText(lines []string, node *sitter.Node) string {
 	return text
 }
 
-func ParseInline(str string) template.HTML {
-	// Parse bold markers (**)
+func ParseInline(str string, ctx *Context) template.HTML {
+	str = parseBold(str)
+	str = parseItalic(str)
+	str = parseInlineLink(str)
+	str = parseVariable(str, ctx)
+  str = parseRefLink(str, ctx)
+
+	return template.HTML(str)
+}
+
+func parseBold(str string) string {
 	for {
 		fromStart := strings.Index(str, "**")
+		if fromStart == -1 {
+			fromStart = strings.Index(str, "__")
+		}
 		if fromStart == -1 {
 			break
 		}
 
-		fromEnd := strings.Index(str[fromStart+2:], "**")
+		fromEnd := strings.Index(str[fromStart+2:], str[fromStart:fromStart+2])
 		if fromEnd == -1 {
 			break
 		}
@@ -42,15 +55,20 @@ func ParseInline(str string) template.HTML {
 
 		str = str[:fromStart] + "<strong>" + str[fromStart+2:fromEnd] + "</strong>" + str[fromEnd+2:]
 	}
+	return str
+}
 
-	// Parse italic markers (*)
+func parseItalic(str string) string {
 	for {
 		fromStart := strings.Index(str, "*")
+		if fromStart == -1 {
+			fromStart = strings.Index(str, "_")
+		}
 		if fromStart == -1 {
 			break
 		}
 
-		fromEnd := strings.Index(str[fromStart+1:], "*")
+		fromEnd := strings.Index(str[fromStart+1:], str[fromStart:fromStart+1])
 		if fromEnd == -1 {
 			break
 		}
@@ -58,6 +76,51 @@ func ParseInline(str string) template.HTML {
 
 		str = str[:fromStart] + "<i>" + str[fromStart+1:fromEnd] + "</i>" + str[fromEnd+1:]
 	}
+	return str
+}
 
-	return template.HTML(str)
+func parseInlineLink(str string) string {
+	re := regexp.MustCompile(`\[(.*?)\]\((.*?)\)`)
+	str = re.ReplaceAllString(str, `<a href="$2" target="_blank">$1</a>`)
+
+	return str
+}
+
+func parseRefLink(str string, ctx *Context) string {
+  re := regexp.MustCompile(`\[([^\]]+)\]\[([^\]]+)\]`)
+
+  match := re.FindStringSubmatch(str)
+  if len(match) == 0 {
+    return str
+  }
+  name := match[2]
+  value, ok := ctx.Get(name)
+  if !ok {
+    return str 
+  }
+  str = re.ReplaceAllString(str, `<a href="` + value + `">$1</a>`)
+  return str
+}
+
+func parseVariable(str string, ctx *Context) string {
+	for {
+		fromStart := strings.Index(str, "{{")
+		if fromStart == -1 {
+			break
+		}
+
+		fromEnd := strings.Index(str, "}}")
+		if fromEnd == -1 {
+			break
+		}
+
+		varName := str[fromStart+2 : fromEnd]
+		varValue, ok := ctx.Get(varName)
+		if !ok {
+			varValue = ""
+		}
+
+		str = str[:fromStart] + varValue + str[fromEnd+2:]
+	}
+	return str
 }
