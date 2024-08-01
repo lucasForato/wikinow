@@ -34,6 +34,7 @@ func ParseInline(str string, ctx *context.Context) template.HTML {
 	str = parseInlineLink(str)
 	str = parseVariable(str, ctx)
   str = parseRefLink(str, ctx)
+  str = parseInlineCode(str)
 
 	return template.HTML(str)
 }
@@ -124,4 +125,10 @@ func parseVariable(str string, ctx *context.Context) string {
 		str = str[:fromStart] + varValue + str[fromEnd+2:]
 	}
 	return str
+}
+
+func parseInlineCode(str string) string {
+  re := regexp.MustCompile("`([^`]+)`")
+  str = re.ReplaceAllString(str, `<code class="bg-zinc-700 p-1 rounded text-amber-600">$1</code>`)
+  return str
 }
