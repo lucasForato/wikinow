@@ -8,26 +8,32 @@ import (
 
 var goTemplate = template.Must(template.New("inline").Parse("<p>{{ . }}</p>"))
 
-templ Parser(node *sitter.Node, lines *[]string, c *utils.Context) {
+templ Parser(node *sitter.Node, lines *[]string, c *context.Context) {
 	switch node.Type() {
 		case "document":
-			for i := 0; i < int(node.ChildCount()); i++ {
-				@Parser(node.Child(i), lines, c)
-			}
+			<div>
+				for i := 0; i < int(node.ChildCount()); i++ {
+					@Parser(node.Child(i), lines, c)
+				}
+			</div>
 		case "section":
 			for i := 0; i < int(node.ChildCount()); i++ {
 				@Parser(node.Child(i), lines, c)
 			}
 		case "atx_heading":
-			@Parser(node.Child(0), lines, c)
+			<div class="my-4">
+				@Parser(node.Child(0), lines, c)
+			</div>
 		case "atx_h1_marker":
-			<h1>
+			<h1 class="text-xl font-bold">
 				@Parser(node.NextSibling(), lines, c)
 			</h1>
 		case "setext_heading":
-			@Parser(node.Child(int(node.ChildCount()-1)), lines, c)
+			<div class="my-4">
+				@Parser(node.Child(int(node.ChildCount()-1)), lines, c)
+			</div>
 		case "setext_h1_underline":
-			<h1>
+			<h1 class="text-xl font-bold">
 				@Parser(node.PrevSibling(), lines, c)
 			</h1>
 		case "atx_h2_marker":

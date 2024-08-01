@@ -11,18 +11,15 @@ type contextKey string
 
 const mapKey contextKey = "storageContext"
 
-type Context struct {
-	ctx context.Context
-}
 
-func CreateContext() Context {
+func CreateContext() *context.Context {
 	ctx := context.Background()
 	stringMap := map[string]string{}
 	ctx = context.WithValue(ctx, mapKey, stringMap)
-	return Context{ctx}
+	return &ctx
 }
 
-func (c *Context) Load(lines *[]string) {
+func LoadContext(ctx *context.Context, lines *[]string) {
 	var metadataStart int
 	var metadataEnd int
 
@@ -45,7 +42,7 @@ func (c *Context) Load(lines *[]string) {
 		for _, line := range metadataLines {
 			split := strings.SplitN(line, ":", 2)
 			if len(split) == 2 {
-				c.Add(strings.Trim(split[0], " "), strings.Trim(split[1], " "))
+				AddToContext(ctx, strings.Trim(split[0], " "), strings.Trim(split[1], " "))
 			}
 		}
 	}
@@ -57,12 +54,12 @@ func (c *Context) Load(lines *[]string) {
 		if match == nil {
 			continue
 		}
-		c.Add(strings.Trim(match[1], " "), strings.Trim(match[2], " "))
+		AddToContext(ctx, strings.Trim(match[1], " "), strings.Trim(match[2], " "))
 	}
 }
 
-func (c *Context) Add(key, value string) {
-	stringMap, ok := c.ctx.Value(mapKey).(map[string]string)
+func AddToContext(ctx *context.Context, key, value string) {
+	stringMap, ok := (*ctx).Value(mapKey).(map[string]string)
 	if !ok {
 		stringMap = make(map[string]string)
 	}
@@ -73,27 +70,11 @@ func (c *Context) Add(key, value string) {
 	}
 	newMap[key] = value
 
-	c.ctx = context.WithValue(c.ctx, mapKey, newMap)
+	*ctx = context.WithValue(*ctx, mapKey, newMap)
 }
 
-func (c *Context) Remove(key string) {
-	stringMap, ok := c.ctx.Value(mapKey).(map[string]string)
-	if !ok {
-		stringMap = make(map[string]string)
-	}
-
-	newMap := make(map[string]string)
-	for k, v := range stringMap {
-		if k != key {
-			newMap[k] = v
-		}
-	}
-
-	c.ctx = context.WithValue(c.ctx, mapKey, newMap)
-}
-
-func (c *Context) Get(key string) (string, bool) {
-	stringMap, ok := c.ctx.Value(mapKey).(map[string]string)
+func GetFromContext(ctx *context.Context, key string) (string, bool) {
+	stringMap, ok := (*ctx).Value(mapKey).(map[string]string)
 	if !ok {
 		return "", false
 	}
@@ -102,9 +83,9 @@ func (c *Context) Get(key string) (string, bool) {
 	return value, found
 }
 
-func (c *Context) Print() {
+func PrintContext(ctx *context.Context) {
 	fmt.Println("Store {")
-	for k, v := range c.ctx.Value(mapKey).(map[string]string) {
+	for k, v := range (*ctx).Value(mapKey).(map[string]string) {
 		fmt.Println("  ", k, ":", v)
 	}
 	fmt.Println("}")

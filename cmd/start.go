@@ -67,9 +67,9 @@ func handler(ctx echo.Context) error {
 
 	sourceCode := []byte(strings.Join(lines, "\n"))
 
-  store := utils.CreateContext()
-  store.Load(&lines)
-  store.Print()
+	store := utils.CreateContext()
+  utils.LoadContext(store, &lines)
+  utils.PrintContext(store)
 
 	tree, err := parser.ParseCtx(context.Background(), nil, sourceCode)
 	if err != nil {
@@ -80,7 +80,7 @@ func handler(ctx echo.Context) error {
 	// str := utils.ConvertTreeToJson(root, lines)
 	// utils.JsonPrettyPrint(str)
 
-	return Render(ctx, http.StatusOK, component.Layout(root, &lines, &store))
+	return Render(ctx, http.StatusOK, component.Layout(root, &lines, store))
 }
 
 func handlePath(ctx echo.Context) string {

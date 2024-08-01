@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"regexp"
 	"strings"
+  "context"
 
 	sitter "github.com/smacker/go-tree-sitter"
 )
@@ -27,7 +28,7 @@ func GetText(lines []string, node *sitter.Node) string {
 	return text
 }
 
-func ParseInline(str string, ctx *Context) template.HTML {
+func ParseInline(str string, ctx *context.Context) template.HTML {
 	str = parseBold(str)
 	str = parseItalic(str)
 	str = parseInlineLink(str)
@@ -86,7 +87,7 @@ func parseInlineLink(str string) string {
 	return str
 }
 
-func parseRefLink(str string, ctx *Context) string {
+func parseRefLink(str string, ctx *context.Context) string {
   re := regexp.MustCompile(`\[([^\]]+)\]\[([^\]]+)\]`)
 
   match := re.FindStringSubmatch(str)
@@ -94,7 +95,7 @@ func parseRefLink(str string, ctx *Context) string {
     return str
   }
   name := match[2]
-  value, ok := ctx.Get(name)
+  value, ok := GetFromContext(ctx, name)
   if !ok {
     return str 
   }
@@ -102,7 +103,7 @@ func parseRefLink(str string, ctx *Context) string {
   return str
 }
 
-func parseVariable(str string, ctx *Context) string {
+func parseVariable(str string, ctx *context.Context) string {
 	for {
 		fromStart := strings.Index(str, "{{")
 		if fromStart == -1 {
@@ -115,7 +116,7 @@ func parseVariable(str string, ctx *Context) string {
 		}
 
 		varName := str[fromStart+2 : fromEnd]
-		varValue, ok := ctx.Get(varName)
+		varValue, ok := GetFromContext(ctx, varName)
 		if !ok {
 			varValue = ""
 		}

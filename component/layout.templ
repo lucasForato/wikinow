@@ -2,18 +2,18 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
-	"wikinow/utils"
 )
 
-templ Layout(node *sitter.Node, lines *[]string, c *utils.Context) {
+templ Layout(node *sitter.Node, lines *[]string, c *context.Context) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<script src="https://cdn.tailwindcss.com"></script>
 			<title>Document</title>
 		</head>
-		<body>
+		<body class="bg-zinc-800 text-neutral-100	m-10">
 			@Parser(node, lines, c)
 		</body>
 	</html>
