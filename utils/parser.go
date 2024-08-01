@@ -164,7 +164,6 @@ func parseImage(str string) string {
 	return str
 }
 
-// first position is the file path, second is the start line, third is end line
 func parseCodeBlock(str string, ctx *context.Context) string {
 	for {
 		fromStart := strings.Index(str, "$code(")
@@ -222,8 +221,8 @@ func GetFileType(path string) string {
 	switch fileType {
 	case "md":
 		return "language-markdown"
-  case "go":
-    return "language-go"
+	case "go":
+		return "language-go"
 	default:
 		return "text"
 	}
