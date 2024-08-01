@@ -16,7 +16,6 @@ func ReadMarkdown(path string) []string {
 	}
 
 	file := string(mainInput)
-
 	return strings.Split(file, "\n")
 }
 
