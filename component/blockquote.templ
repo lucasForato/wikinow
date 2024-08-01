@@ -1,0 +1,22 @@
+package component
+
+import (
+	sitter "github.com/smacker/go-tree-sitter"
+)
+
+templ BlockQuote(node *sitter.Node, lines *[]string, c *context.Context) {
+	switch node.Type() {
+		case "block_quote":
+			@Quote(node, lines, c)
+		case "block_quote_marker":
+			@Parser(node.NextNamedSibling(), lines, c)
+	}
+}
+
+templ Quote(node *sitter.Node, lines *[]string, c *context.Context) {
+	<blockquote class="italic flex flex-row font-semibold text-amber-600">
+		<span>❝</span>
+		@Parser(node.NamedChild(0), lines, c)
+		<span>❝</span>
+	</blockquote>
+}

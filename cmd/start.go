@@ -85,7 +85,8 @@ func handler(ctx echo.Context) error {
 func handlePath(ctx echo.Context) string {
 	url := ctx.Request().URL.Path
 	if url == "/" {
-		url = "/main.md"
+		url = "/main"
 	}
-	return path.Join("wiki", url)
+  file := strings.Join([]string{url, "md"}, ".")
+	return path.Join("wiki", file)
 }

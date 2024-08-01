@@ -1,0 +1,66 @@
+package component
+
+import (
+	sitter "github.com/smacker/go-tree-sitter"
+	"wikinow/utils"
+)
+
+templ CodeBlock(node *sitter.Node, lines *[]string, c *context.Context) {
+	<pre class="bg-gray-800 p-4 my-4">
+		for i := 0; i < int(node.NamedChildCount()); i++ {
+			if node.NamedChild(i).Type() == "code_fence_content" {
+				switch utils.GetLanguage(node, *lines) {
+					case utils.JavaScript:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					case utils.Go:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					case utils.Python:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					case utils.C:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					case utils.Cpp:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					case utils.CSharp:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					case utils.Ruby:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					case utils.PHP:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					case utils.HTML:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					case utils.CSS:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					case utils.Rust:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+					default:
+						<code class="language-javascript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
+				}
+			}
+		}
+		@Parser(node.NamedChild(0), lines, c)
+	</pre>
+}

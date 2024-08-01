@@ -1,0 +1,13 @@
+package component
+
+import (
+	sitter "github.com/smacker/go-tree-sitter"
+)
+
+templ Document(node *sitter.Node, lines *[]string, c *context.Context) {
+	<div>
+		for i := 0; i < int(node.NamedChildCount()); i++ {
+			@Parser(node.NamedChild(i), lines, c)
+		}
+	</div>
+}

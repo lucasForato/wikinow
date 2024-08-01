@@ -1,0 +1,36 @@
+package component
+
+import (
+	sitter "github.com/smacker/go-tree-sitter"
+)
+
+templ List(node *sitter.Node, lines *[]string, c *context.Context) {
+	switch node.Type() {
+		case "list":
+			if node.Child(0).Child(0).Type() == "list_marker_dot" {
+				<ol class="list-decimal">
+					for i := 0; i < int(node.NamedChildCount()); i++ {
+						@Parser(node.NamedChild(i), lines, c)
+					}
+				</ol>
+			} else {
+				<ul class="list-disc">
+					for i := 0; i < int(node.NamedChildCount()); i++ {
+						@Parser(node.NamedChild(i), lines, c)
+					}
+				</ul>
+			}
+		case "list_item":
+			<li>
+				@Parser(node.NamedChild(0), lines, c)
+			</li>
+		case "list_marker_minus":
+			@Parser(node.NextNamedSibling(), lines, c)
+		case "list_marker_star":
+			@Parser(node.NextNamedSibling(), lines, c)
+		case "list_marker_plus":
+			@Parser(node.NextNamedSibling(), lines, c)
+		case "list_marker_dot":
+			@Parser(node.NextNamedSibling(), lines, c)
+	}
+}

@@ -1,0 +1,46 @@
+package component
+
+import (
+	sitter "github.com/smacker/go-tree-sitter"
+)
+
+templ Header(node *sitter.Node, lines *[]string, c *context.Context) {
+	switch node.Type() {
+		case "atx_heading":
+			@Parser(node.NamedChild(0), lines, c)
+		case "setext_heading":
+			@Parser(node.NamedChild(int(node.NamedChildCount()-1)), lines, c)
+		case "atx_h1_marker":
+			<h1 class="text-3xl font-bold my-4">
+				@Parser(node.NextNamedSibling(), lines, c)
+			</h1>
+		case "setext_h1_underline":
+			<h1 class="text-3xl font-bold my-4">
+				@Parser(node.PrevSibling(), lines, c)
+			</h1>
+		case "atx_h2_marker":
+			<h2 class="text-2xl font-bold my-4">
+				@Parser(node.NextNamedSibling(), lines, c)
+			</h2>
+		case "setext_h2_underline":
+			<h2 class="text-2xl font-bold my-4">
+				@Parser(node.PrevSibling(), lines, c)
+			</h2>
+		case "atx_h3_marker":
+			<h3 class="text-xl font-bold my-4">
+				@Parser(node.NextNamedSibling(), lines, c)
+			</h3>
+		case "atx_h4_marker":
+			<h4 class="text-lg font-bold my-4">
+				@Parser(node.NextNamedSibling(), lines, c)
+			</h4>
+		case "atx_h5_marker":
+			<h5 class="text-lg font-bold my-4">
+				@Parser(node.NextNamedSibling(), lines, c)
+			</h5>
+		case "atx_h6_marker":
+			<h6 class="font-bold my-4">
+				@Parser(node.NextNamedSibling(), lines, c)
+			</h6>
+	}
+}
