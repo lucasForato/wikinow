@@ -31,6 +31,7 @@ func GetText(lines []string, node *sitter.Node) string {
 func ParseInline(str string, ctx *context.Context) template.HTML {
 	str = parseBold(str)
 	str = parseItalic(str)
+  str = parseImage(str)
 	str = parseInlineLink(str)
 	str = parseVariable(str, ctx)
   str = parseRefLink(str, ctx)
@@ -130,5 +131,11 @@ func parseVariable(str string, ctx *context.Context) string {
 func parseInlineCode(str string) string {
   re := regexp.MustCompile("`([^`]+)`")
   str = re.ReplaceAllString(str, `<code class="bg-zinc-700 p-1 rounded text-amber-600">$1</code>`)
+  return str
+}
+
+func parseImage(str string) string {
+  re := regexp.MustCompile(`!\[([^\]]+)\]\(([^)]+)\)`)
+  str = re.ReplaceAllString(str, `<img src="$2" alt="$1" class="w-full" />`)
   return str
 }
