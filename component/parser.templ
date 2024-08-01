@@ -20,6 +20,14 @@ templ Parser(node *sitter.Node, lines *[]string, c *context.Context) {
 			for i := 0; i < int(node.ChildCount()); i++ {
 				@Parser(node.Child(i), lines, c)
 			}
+		case "block_quote":
+			<blockquote class="italic flex flex-row font-semibold text-amber-600">
+				<span>❝</span>
+				@Parser(node.Child(0), lines, c)
+				<span>❝</span>
+			</blockquote>
+		case "block_quote_marker":
+			@Parser(node.NextSibling(), lines, c)
 		case "atx_heading":
 			<div class="my-4">
 				@Parser(node.Child(0), lines, c)

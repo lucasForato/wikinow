@@ -69,7 +69,6 @@ func handler(ctx echo.Context) error {
 
 	store := utils.CreateContext()
   utils.LoadContext(store, &lines)
-  utils.PrintContext(store)
 
 	tree, err := parser.ParseCtx(context.Background(), nil, sourceCode)
 	if err != nil {
@@ -77,8 +76,8 @@ func handler(ctx echo.Context) error {
 	}
 
 	root := tree.RootNode()
-	// str := utils.ConvertTreeToJson(root, lines)
-	// utils.JsonPrettyPrint(str)
+	str := utils.ConvertTreeToJson(root, lines)
+	utils.JsonPrettyPrint(str)
 
 	return Render(ctx, http.StatusOK, component.Layout(root, &lines, store))
 }
