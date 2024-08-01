@@ -32,6 +32,22 @@ templ Parser(node *sitter.Node, lines *[]string, c *context.Context) {
 			<div class="my-4">
 				@Parser(node.Child(0), lines, c)
 			</div>
+		case "list":
+			<ol>
+				for i := 0; i < int(node.ChildCount()); i++ {
+					@Parser(node.Child(i), lines, c)
+				}
+			</ol>
+		case "list_item":
+			<li>
+				@Parser(node.Child(0), lines, c)
+			</li>
+		case "list_marker_minus":
+			@Parser(node.NextSibling(), lines, c)
+		case "list_marker_star":
+			@Parser(node.NextSibling(), lines, c)
+		case "list_marker_plus":
+			@Parser(node.NextSibling(), lines, c)
 		case "atx_h1_marker":
 			<h1 class="text-xl font-bold">
 				@Parser(node.NextSibling(), lines, c)
