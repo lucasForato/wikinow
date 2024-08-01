@@ -1,10 +1,10 @@
 package utils
 
 import (
+	"context"
 	"html/template"
 	"regexp"
 	"strings"
-  "context"
 
 	sitter "github.com/smacker/go-tree-sitter"
 )
@@ -13,19 +13,38 @@ func GetText(lines []string, node *sitter.Node) string {
 	start := node.StartPoint()
 	end := node.EndPoint()
 
-	startLine := start.Row
-	startColumn := start.Column
-	endLine := end.Row
-	endColumn := end.Column
-	if startLine == endLine {
-		return lines[startLine][startColumn:endColumn]
+	startRow := start.Row
+	endRow := end.Row
+	startCol := start.Column
+	endCol := end.Column
+	if startRow == endRow {
+		return lines[startRow][startCol:endCol]
 	}
-	text := lines[startLine][startColumn:]
-	for i := startLine + 1; i < endLine; i++ {
+	text := lines[startRow][startCol:]
+	for i := startRow + 1; i < endRow; i++ {
 		text += lines[i]
 	}
-	text += lines[endLine][:endColumn]
+	text += lines[endRow][:endCol]
 	return text
+}
+
+func GetCode(lines []string, node *sitter.Node) string {
+  start := node.StartPoint()
+  end := node.EndPoint()
+
+  startRow := start.Row
+  startColumn := start.Column
+  endRow := end.Row
+  endColumn := end.Column
+  if startRow == endRow {
+    return lines[startRow][startColumn:endColumn]
+  }
+  allLines := lines[startRow:endRow+1] 
+  allLines[0] = allLines[0][startColumn:]
+  allLines[len(allLines)-1] = allLines[len(allLines)-1][:endColumn]
+
+  text := strings.Join(allLines, "\n")
+  return text
 }
 
 func ParseInline(str string, ctx *context.Context) template.HTML {

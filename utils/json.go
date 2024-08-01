@@ -14,10 +14,10 @@ func ConvertTreeToJson(node *sitter.Node, lines []string) string {
 
 	maps := map[string]interface{}{}
 	children := []interface{}{}
-	count := int(node.ChildCount())
+	count := int(node.NamedChildCount())
 
 	for i := 0; i < count; i++ {
-		child := ConvertTreeToJson(node.Child(i), lines)
+		child := ConvertTreeToJson(node.NamedChild(i), lines)
 		children = append(children, json.RawMessage(child))
 	}
 

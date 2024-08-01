@@ -12,51 +12,51 @@ templ Parser(node *sitter.Node, lines *[]string, c *context.Context) {
 	switch node.Type() {
 		case "document":
 			<div>
-				for i := 0; i < int(node.ChildCount()); i++ {
-					@Parser(node.Child(i), lines, c)
+				for i := 0; i < int(node.NamedChildCount()); i++ {
+					@Parser(node.NamedChild(i), lines, c)
 				}
 			</div>
 		case "section":
-			for i := 0; i < int(node.ChildCount()); i++ {
-				@Parser(node.Child(i), lines, c)
+			for i := 0; i < int(node.NamedChildCount()); i++ {
+				@Parser(node.NamedChild(i), lines, c)
 			}
 		case "block_quote":
 			<blockquote class="italic flex flex-row font-semibold text-amber-600">
 				<span>❝</span>
-				@Parser(node.Child(0), lines, c)
+				@Parser(node.NamedChild(0), lines, c)
 				<span>❝</span>
 			</blockquote>
 		case "block_quote_marker":
-			@Parser(node.NextSibling(), lines, c)
+			@Parser(node.NextNamedSibling(), lines, c)
 		case "atx_heading":
 			<div class="my-4">
-				@Parser(node.Child(0), lines, c)
+				@Parser(node.NamedChild(0), lines, c)
 			</div>
 		case "list":
 			<ol>
-				for i := 0; i < int(node.ChildCount()); i++ {
-					@Parser(node.Child(i), lines, c)
+				for i := 0; i < int(node.NamedChildCount()); i++ {
+					@Parser(node.NamedChild(i), lines, c)
 				}
 			</ol>
 		case "list_item":
 			<li>
-				@Parser(node.Child(0), lines, c)
+				@Parser(node.NamedChild(0), lines, c)
 			</li>
 		case "list_marker_minus":
-			@Parser(node.NextSibling(), lines, c)
+			@Parser(node.NextNamedSibling(), lines, c)
 		case "list_marker_star":
-			@Parser(node.NextSibling(), lines, c)
+			@Parser(node.NextNamedSibling(), lines, c)
 		case "list_marker_plus":
-			@Parser(node.NextSibling(), lines, c)
+			@Parser(node.NextNamedSibling(), lines, c)
 		case "thematic_break":
 			<hr class="my-4"/>
 		case "atx_h1_marker":
 			<h1 class="text-xl font-bold">
-				@Parser(node.NextSibling(), lines, c)
+				@Parser(node.NextNamedSibling(), lines, c)
 			</h1>
 		case "setext_heading":
 			<div class="my-4">
-				@Parser(node.Child(int(node.ChildCount()-1)), lines, c)
+				@Parser(node.NamedChild(int(node.NamedChildCount()-1)), lines, c)
 			</div>
 		case "setext_h1_underline":
 			<h1 class="text-xl font-bold">
@@ -64,7 +64,7 @@ templ Parser(node *sitter.Node, lines *[]string, c *context.Context) {
 			</h1>
 		case "atx_h2_marker":
 			<h2>
-				@Parser(node.NextSibling(), lines, c)
+				@Parser(node.NextNamedSibling(), lines, c)
 			</h2>
 		case "setext_h2_underline":
 			<h2>
@@ -72,26 +72,84 @@ templ Parser(node *sitter.Node, lines *[]string, c *context.Context) {
 			</h2>
 		case "atx_h3_marker":
 			<h3>
-				@Parser(node.NextSibling(), lines, c)
+				@Parser(node.NextNamedSibling(), lines, c)
 			</h3>
 		case "atx_h4_marker":
 			<h4>
-				@Parser(node.NextSibling(), lines, c)
+				@Parser(node.NextNamedSibling(), lines, c)
 			</h4>
 		case "atx_h5_marker":
 			<h5>
-				@Parser(node.NextSibling(), lines, c)
+				@Parser(node.NextNamedSibling(), lines, c)
 			</h5>
 		case "atx_h6_marker":
 			<h6>
-				@Parser(node.NextSibling(), lines, c)
+				@Parser(node.NextNamedSibling(), lines, c)
 			</h6>
 		case "paragraph":
-			for i := 0; i < int(node.ChildCount()); i++ {
+			for i := 0; i < int(node.NamedChildCount()); i++ {
 				@Parser(node.Child(i), lines, c)
 			}
 		case "inline":
 			@templ.FromGoHTML(goTemplate, utils.ParseInline(utils.GetText(*lines, node), c))
+		case "fenced_code_block":
+			<pre class="bg-gray-800 p-4 my-4">
+				for i := 0; i < int(node.NamedChildCount()); i++ {
+					if node.NamedChild(i).Type() == "code_fence_content" {
+						switch utils.GetLanguage(node, *lines) {
+							case utils.JavaScript:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							case utils.Go:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							case utils.Python:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							case utils.C:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							case utils.Cpp:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							case utils.CSharp:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							case utils.Ruby:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							case utils.PHP:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							case utils.HTML:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							case utils.CSS:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							case utils.Rust:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+							default:
+								<code class="language-javascript">
+									{ utils.GetCode(*lines, node.NamedChild(i)) }
+								</code>
+						}
+					}
+				}
+				@Parser(node.NamedChild(0), lines, c)
+			</pre>
 		default:
 	}
 }

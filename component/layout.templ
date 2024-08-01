@@ -11,10 +11,13 @@ templ Layout(node *sitter.Node, lines *[]string, c *context.Context) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<script src="https://cdn.tailwindcss.com"></script>
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
 			<title>Document</title>
 		</head>
 		<body class="bg-zinc-800 text-neutral-100	m-10">
 			@Parser(node, lines, c)
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-go.min.js"></script>
 		</body>
 	</html>
 }
