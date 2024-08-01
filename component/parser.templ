@@ -48,6 +48,8 @@ templ Parser(node *sitter.Node, lines *[]string, c *context.Context) {
 			@Parser(node.NextSibling(), lines, c)
 		case "list_marker_plus":
 			@Parser(node.NextSibling(), lines, c)
+		case "thematic_break":
+			<hr class="my-4"/>
 		case "atx_h1_marker":
 			<h1 class="text-xl font-bold">
 				@Parser(node.NextSibling(), lines, c)
