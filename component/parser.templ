@@ -15,11 +15,26 @@ templ Parser(node *sitter.Node, lines *[]string, c *context.Context) {
 			@Section(node, lines, c)
 		case "thematic_break":
 			<hr class="my-4"/>
-		case "block_quote", "block_quote_marker":
+		case "block_quote", 
+      "block_quote_marker":
 			@BlockQuote(node, lines, c)
-		case "list", "list_item", "list_marker_minus", "list_marker_start", "list_marker_plus", "list_marker_dot":
+		case "list", 
+      "list_item", 
+      "list_marker_minus", 
+      "list_marker_start", 
+      "list_marker_plus", 
+      "list_marker_dot":
 			@List(node, lines, c)
-		case "atx_heading", "atx_h1_marker", "setext_heading", "setext_h1_underline", "atx_h2_marker", "setext_h2_underline", "atx_h3_marker", "atx_h4_marker", "atx_h5_marker", "atx_h6_marker":
+		case "atx_heading", 
+      "atx_h1_marker", 
+      "setext_heading", 
+      "setext_h1_underline", 
+      "atx_h2_marker", 
+      "setext_h2_underline", 
+      "atx_h3_marker", 
+      "atx_h4_marker", 
+      "atx_h5_marker", 
+      "atx_h6_marker":
 			@Header(node, lines, c)
 		case "paragraph", "inline":
 			@Inline(node, lines, c)
