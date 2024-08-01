@@ -54,7 +54,7 @@ func parseBold(str string) string {
 		}
 		fromEnd += fromStart + 2
 
-		str = str[:fromStart] + "<strong>" + str[fromStart+2:fromEnd] + "</strong>" + str[fromEnd+2:]
+		str = str[:fromStart] + "<strong class=\"font-bold\">" + str[fromStart+2:fromEnd] + "</strong>" + str[fromEnd+2:]
 	}
 	return str
 }
@@ -75,14 +75,14 @@ func parseItalic(str string) string {
 		}
 		fromEnd += fromStart + 1
 
-		str = str[:fromStart] + "<i>" + str[fromStart+1:fromEnd] + "</i>" + str[fromEnd+1:]
+		str = str[:fromStart] + "<i class=\"italic\">" + str[fromStart+1:fromEnd] + "</i>" + str[fromEnd+1:]
 	}
 	return str
 }
 
 func parseInlineLink(str string) string {
 	re := regexp.MustCompile(`\[(.*?)\]\((.*?)\)`)
-	str = re.ReplaceAllString(str, `<a href="$2" target="_blank">$1</a>`)
+	str = re.ReplaceAllString(str, `<a href="$2" class="text-amber-600" target="_blank">$1</a>`)
 
 	return str
 }
@@ -99,7 +99,7 @@ func parseRefLink(str string, ctx *context.Context) string {
   if !ok {
     return str 
   }
-  str = re.ReplaceAllString(str, `<a href="` + value + `">$1</a>`)
+  str = re.ReplaceAllString(str, `<a href="` + value + `" class="text-amber-600" target="_blank">$1</a>`)
   return str
 }
 
