@@ -2,7 +2,35 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
+	"wikinow/utils"
+	"strings"
 )
 
 templ Table(node *sitter.Node, lines *[]string, c *context.Context) {
+	switch node.Type() {
+		case "pipe_table":
+			<table class="table-auto min-w-20 max-w-full grow border-collapse border border-zinc-500">
+				for i := 0; i < int(node.NamedChildCount()); i++ {
+					@Parser(node.NamedChild(i), lines, c)
+				}
+			</table>
+		case "pipe_table_header":
+			<thead class="bg-amber-600">
+				<tr>
+					for i := 0; i < int(node.NamedChildCount()); i++ {
+						<th class="px-4 py-2 text-left border-b border-l border-amber-800">
+							{ strings.TrimSpace(utils.GetText(*lines, node.NamedChild(i))) }
+						</th>
+					}
+				</tr>
+			</thead>
+		case "pipe_table_row":
+			<tr class="hover:bg-zinc-700">
+				for i := 0; i < int(node.NamedChildCount()); i++ {
+					<td class="px-4 py-2 border-l text-left border-b border-zinc-500">
+						{ strings.TrimSpace(utils.GetText(*lines, node.NamedChild(i))) }
+					</td>
+				}
+			</tr>
+	}
 }
