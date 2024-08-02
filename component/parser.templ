@@ -40,6 +40,13 @@ templ Parser(node *sitter.Node, lines *[]string, c *context.Context) {
 			@Inline(node, lines, c)
 		case "fenced_code_block":
 			@CodeBlock(node, lines, c)
+		case "pipe_table":
+			for i := 0; i < node.ChildCount(); i++ {
+				@Parser(node.Child(i), lines, c)
+			}
+		case "pipe_table_header":
+		case "pipe_table_cell"
+
 		default:
 	}
 }
