@@ -6,18 +6,24 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type LoadSuite struct {
+// Setting Up ------------------------------------------------------------------
+
+func (s *CtxSuite) SetupTest() {
+	s.ctx = CreateCtx()
+}
+
+type CtxSuite struct {
 	suite.Suite
 	ctx *Ctx
 }
 
-func (s *LoadSuite) SetupTest() {
-	s.ctx = CreateCtx()
+func TestLoadSuite(t *testing.T) {
+	suite.Run(t, new(CtxSuite))
 }
 
-// - LoadCtx -------------------------------------------------------------------
+// LoadCtx ---------------------------------------------------------------------
 
-func (s *LoadSuite) Test_should_load_all_values_to_store() {
+func (s *CtxSuite) Test_should_load_all_values_to_store() {
 	lines := []string{
 		"---",
 		"key1: value1",
@@ -37,7 +43,7 @@ func (s *LoadSuite) Test_should_load_all_values_to_store() {
 	s.Equal("value3", key3)
 }
 
-func (s *LoadSuite) Test_should_not_read_what_is_not_within_delimeter() {
+func (s *CtxSuite) Test_should_not_read_what_is_not_within_delimeter() {
 	lines := []string{
 		"---",
 		"key1: value1",
@@ -54,7 +60,7 @@ func (s *LoadSuite) Test_should_not_read_what_is_not_within_delimeter() {
 	s.Equal("", key3)
 }
 
-func (s *LoadSuite) Test_should_store_link_definitions() {
+func (s *CtxSuite) Test_should_store_link_definitions() {
 	lines := []string{
 		"[1]: http://url/b.jpg",
 		"[link2]: http://url/a.jpg",
@@ -72,7 +78,7 @@ func (s *LoadSuite) Test_should_store_link_definitions() {
 	s.Equal("http://url/c.jpg", key3)
 }
 
-func (s *LoadSuite) Test_should_fail_if_keys_are_repeated() {
+func (s *CtxSuite) Test_should_fail_if_keys_are_repeated() {
 	lines := []string{
 		"---",
 		"test: hello",
@@ -89,7 +95,7 @@ func (s *LoadSuite) Test_should_fail_if_keys_are_repeated() {
 	s.Equal("Duplicate key: test", err.Error())
 }
 
-func (s *LoadSuite) Test_should_fail_if_values_are_invalid() {
+func (s *CtxSuite) Test_should_fail_if_values_are_invalid() {
 	lines := []string{
 		"---",
 		"test: [hello](world)", // this is a link
@@ -106,7 +112,7 @@ func (s *LoadSuite) Test_should_fail_if_values_are_invalid() {
 	s.Equal("value can only contain text: [hello](world)", err.Error())
 }
 
-func (s *LoadSuite) Test_should_fail_if_title_is_not_set() {
+func (s *CtxSuite) Test_should_fail_if_title_is_not_set() {
 	lines := []string{
 		"---",
 		"---",
@@ -119,9 +125,9 @@ func (s *LoadSuite) Test_should_fail_if_title_is_not_set() {
 	s.Equal("title must be set", err.Error())
 }
 
-// - ReadCtx -------------------------------------------------------------------
+// ReadCtx ---------------------------------------------------------------------
 
-func (s *LoadSuite) Test_should_return_text_within_ctx() {
+func (s *CtxSuite) Test_should_return_text_within_ctx() {
 	lines := []string{
 		"---",
 		"key1: value1",
@@ -135,7 +141,7 @@ func (s *LoadSuite) Test_should_return_text_within_ctx() {
 	s.Equal("value1", key1)
 }
 
-func (s *LoadSuite) Test_should_trim_whitespaces() {
+func (s *CtxSuite) Test_should_trim_whitespaces() {
 	lines := []string{
 		"---",
 		" key1 :  value1 ",
@@ -147,7 +153,7 @@ func (s *LoadSuite) Test_should_trim_whitespaces() {
 	s.Equal("value1", key1)
 }
 
-func (s *LoadSuite) Test_should_return_false_if_key_not_found() {
+func (s *CtxSuite) Test_should_return_false_if_key_not_found() {
 	lines := []string{
 		"---",
 		"key1: value1",
@@ -158,37 +164,31 @@ func (s *LoadSuite) Test_should_return_false_if_key_not_found() {
 	s.False(ok)
 }
 
-// - UpdateCtx -----------------------------------------------------------------
+// UpdateCtx -------------------------------------------------------------------
 
-func (s *LoadSuite) Test_should_update_ctx() {
+func (s *CtxSuite) Test_should_update_ctx() {
 	UpdateCtx(s.ctx, "key1", "value1")
 	value, ok := ReadCtx(s.ctx, "key1")
 	s.True(ok)
 	s.Equal("value1", value)
 }
 
-func (s *LoadSuite) Test_should_fail_to_load_if_value_is_invalid() {
-  err := UpdateCtx(s.ctx, "key1", "[hello](world)")
-  if err == nil {
-    s.Fail("Expected error, got nil")
-    return
-  }
+func (s *CtxSuite) Test_should_fail_to_load_if_value_is_invalid() {
+	err := UpdateCtx(s.ctx, "key1", "[hello](world)")
+	if err == nil {
+		s.Fail("Expected error, got nil")
+		return
+	}
 
 	s.Equal("value can only contain text: [hello](world)", err.Error())
 }
 
-func (s *LoadSuite) Test_should_fail_if_repeated_key() {
-  UpdateCtx(s.ctx, "key1", "value1")
-  err := UpdateCtx(s.ctx, "key1", "value2")
-  if err == nil {
-    s.Fail("Expected error, got nil")
-    return
-  }
-  s.Equal("Duplicate key: key1", err.Error())
-}
-
-// -----------------------------------------------------------------------------
-
-func TestLoadSuite(t *testing.T) {
-	suite.Run(t, new(LoadSuite))
+func (s *CtxSuite) Test_should_fail_if_repeated_key() {
+	UpdateCtx(s.ctx, "key1", "value1")
+	err := UpdateCtx(s.ctx, "key1", "value2")
+	if err == nil {
+		s.Fail("Expected error, got nil")
+		return
+	}
+	s.Equal("Duplicate key: key1", err.Error())
 }

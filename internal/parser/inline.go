@@ -16,11 +16,12 @@ func ParseInline(str string, c *Ctx) template.HTML {
 	str = parseBold(str)
 	str = parseItalic(str)
 	str = parseImage(str)
+	str = parseRefImage(str, c)
 	str = parseInlineLink(str)
-	str = parseVariable(str, c)
 	str = parseRefLink(str, c)
+	str = parseVariable(str, c)
 	str = parseInlineCode(str)
-	str = parseCodeBlock(str, c)
+	str = parseCodeBlock(str, c, new(RealFileReader))
 	str = parseLinkToAnotherFile(str)
 
 	return template.HTML(str)
@@ -164,7 +165,32 @@ func parseImage(str string) string {
 	return str
 }
 
-func parseCodeBlock(str string, c *Ctx) string {
+func parseRefImage(str string, c *Ctx) string {
+	re := regexp.MustCompile(`!\[([^\]]+)\]\[([^\]]+)\]`)
+	match := re.FindStringSubmatch(str)
+	if len(match) == 0 {
+		return str
+	}
+	name := match[2]
+	value, ok := ReadCtx(c, name)
+	if !ok {
+		return str
+	}
+	str = re.ReplaceAllString(str, `<img src="`+value+`" alt="$1" class="w-full" />`)
+	return str
+}
+
+type FileReader interface {
+	ReadFile(path string) ([]byte, error)
+}
+
+type RealFileReader struct{}
+
+func (r RealFileReader) ReadFile(path string) ([]byte, error) {
+	return os.ReadFile(path)
+}
+
+func parseCodeBlock(str string, c *Ctx, reader FileReader) string {
 	for {
 		fromStart := strings.Index(str, "$code(")
 		if fromStart == -1 {
@@ -187,11 +213,11 @@ func parseCodeBlock(str string, c *Ctx) string {
 			log.Fatal("Variable not found")
 		}
 
-		bytes, err := os.ReadFile(path)
+		bytes, err := reader.ReadFile(path)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"source": path,
-			}).Fatal("Error reading main documentation file.")
+			}).Fatal("Error reading documentation file.")
 		}
 		file := string(bytes)
 		lines := strings.Split(file, "\n")
