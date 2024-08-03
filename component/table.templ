@@ -7,12 +7,12 @@ import (
 	"wikinow/internal/store"
 )
 
-templ Table(node *sitter.Node, lines *[]string, store *store.Store) {
+templ Table(node *sitter.Node, lines *[]string, storage *store.Store) {
 	switch node.Type() {
 		case "pipe_table":
 			<table class="table-auto min-w-20 max-w-full grow border-collapse border border-zinc-500">
 				for i := 0; i < int(node.NamedChildCount()); i++ {
-					@Parser(node.NamedChild(i), lines, store)
+					@Parser(node.NamedChild(i), lines, storage)
 				}
 			</table>
 		case "pipe_table_header":

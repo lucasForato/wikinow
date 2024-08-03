@@ -8,24 +8,24 @@ import (
 
 var goTemplate = template.Must(template.New("inline").Parse("<p>{{ . }}</p>"))
 
-templ Parser(node *sitter.Node, lines *[]string, store *store.Store) {
+templ Parser(node *sitter.Node, lines *[]string, storage *store.Store) {
 	switch node.Type() {
 		case "document":
-			@Document(node, lines, store)
+			@Document(node, lines, storage)
 		case "section":
-			@Section(node, lines, store)
+			@Section(node, lines, storage)
 		case "thematic_break":
 			<hr class="my-4"/>
 		case "block_quote", 
       "block_quote_marker":
-			@BlockQuote(node, lines, store)
+			@BlockQuote(node, lines, storage)
 		case "list", 
       "list_item", 
       "list_marker_minus", 
       "list_marker_start", 
       "list_marker_plus", 
       "list_marker_dot":
-			@List(node, lines, store)
+			@List(node, lines, storage)
 		case "atx_heading", 
       "atx_h1_marker", 
       "setext_heading", 
@@ -36,14 +36,14 @@ templ Parser(node *sitter.Node, lines *[]string, store *store.Store) {
       "atx_h4_marker", 
       "atx_h5_marker", 
       "atx_h6_marker":
-			@Header(node, lines, store)
+			@Header(node, lines, storage)
 		case "paragraph", "inline":
-			@Inline(node, lines, store)
+			@Inline(node, lines, storage)
 		case "fenced_code_block":
-			@CodeBlock(node, lines, store)
+			@CodeBlock(node, lines, storage)
 		case "pipe_table", 
       "pipe_table_header", 
       "pipe_table_row":
-			@Table(node, lines, store)
+			@Table(node, lines, storage)
 	}
 }

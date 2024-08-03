@@ -5,8 +5,8 @@ import (
 	"wikinow/internal/store"
 )
 
-templ Section(node *sitter.Node, lines *[]string, store *store.Store) {
+templ Section(node *sitter.Node, lines *[]string, storage *store.Store) {
 	for i := 0; i < int(node.NamedChildCount()); i++ {
-		@Parser(node.NamedChild(i), lines, store)
+		@Parser(node.NamedChild(i), lines, storage)
 	}
 }

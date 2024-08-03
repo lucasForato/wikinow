@@ -5,43 +5,43 @@ import (
 	"wikinow/internal/store"
 )
 
-templ Header(node *sitter.Node, lines *[]string, store *store.Store) {
+templ Header(node *sitter.Node, lines *[]string, storage *store.Store) {
 	switch node.Type() {
 		case "atx_heading":
-			@Parser(node.NamedChild(0), lines, store)
+			@Parser(node.NamedChild(0), lines, storage)
 		case "setext_heading":
-			@Parser(node.NamedChild(int(node.NamedChildCount()-1)), lines, store)
+			@Parser(node.NamedChild(int(node.NamedChildCount()-1)), lines, storage)
 		case "atx_h1_marker":
 			<h1 class="text-3xl font-bold my-4">
-				@Parser(node.NextNamedSibling(), lines, store)
+				@Parser(node.NextNamedSibling(), lines, storage)
 			</h1>
 		case "setext_h1_underline":
 			<h1 class="text-3xl font-bold my-4">
-				@Parser(node.PrevSibling(), lines, store)
+				@Parser(node.PrevSibling(), lines, storage)
 			</h1>
 		case "atx_h2_marker":
 			<h2 class="text-2xl font-bold my-4">
-				@Parser(node.NextNamedSibling(), lines, store)
+				@Parser(node.NextNamedSibling(), lines, storage)
 			</h2>
 		case "setext_h2_underline":
 			<h2 class="text-2xl font-bold my-4">
-				@Parser(node.PrevSibling(), lines, store)
+				@Parser(node.PrevSibling(), lines, storage)
 			</h2>
 		case "atx_h3_marker":
 			<h3 class="text-xl font-bold my-4">
-				@Parser(node.NextNamedSibling(), lines, store)
+				@Parser(node.NextNamedSibling(), lines, storage)
 			</h3>
 		case "atx_h4_marker":
 			<h4 class="text-lg font-bold my-4">
-				@Parser(node.NextNamedSibling(), lines, store)
+				@Parser(node.NextNamedSibling(), lines, storage)
 			</h4>
 		case "atx_h5_marker":
 			<h5 class="text-lg font-bold my-4">
-				@Parser(node.NextNamedSibling(), lines, store)
+				@Parser(node.NextNamedSibling(), lines, storage)
 			</h5>
 		case "atx_h6_marker":
 			<h6 class="font-bold my-4">
-				@Parser(node.NextNamedSibling(), lines, store)
+				@Parser(node.NextNamedSibling(), lines, storage)
 			</h6>
 	}
 }

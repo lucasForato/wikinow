@@ -5,10 +5,10 @@ import (
 	"wikinow/internal/store"
 )
 
-templ Document(node *sitter.Node, lines *[]string, store *store.Store) {
+templ Document(node *sitter.Node, lines *[]string, storage *store.Store) {
 	<div>
 		for i := 0; i < int(node.NamedChildCount()); i++ {
-			@Parser(node.NamedChild(i), lines, store)
+			@Parser(node.NamedChild(i), lines, storage)
 		}
 	</div>
 }

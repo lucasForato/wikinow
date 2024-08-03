@@ -51,15 +51,15 @@ func GetCode(lines []string, node *sitter.Node) string {
 	return text
 }
 
-func ParseInline(str string, ctx *store.Store) template.HTML {
+func ParseInline(str string, storage *store.Store) template.HTML {
 	str = parseBold(str)
 	str = parseItalic(str)
 	str = parseImage(str)
 	str = parseInlineLink(str)
-	str = parseVariable(str, ctx)
-	str = parseRefLink(str, ctx)
+	str = parseVariable(str, storage)
+	str = parseRefLink(str, storage)
 	str = parseInlineCode(str)
-	str = parseCodeBlock(str, ctx)
+	str = parseCodeBlock(str, storage)
   str = parseLinkToAnotherFile(str)
 
 	return template.HTML(str)
@@ -114,7 +114,7 @@ func parseInlineLink(str string) string {
 	return str
 }
 
-func parseRefLink(str string, ctx *store.Store) string {
+func parseRefLink(str string, storage *store.Store) string {
 	re := regexp.MustCompile(`\[([^\]]+)\]\[([^\]]+)\]`)
 
 	match := re.FindStringSubmatch(str)
@@ -122,7 +122,7 @@ func parseRefLink(str string, ctx *store.Store) string {
 		return str
 	}
 	name := match[2]
-	value, ok := store.Read(ctx, name)
+	value, ok := store.Read(storage, name)
 	if !ok {
 		return str
 	}
@@ -130,7 +130,7 @@ func parseRefLink(str string, ctx *store.Store) string {
 	return str
 }
 
-func parseVariable(str string, ctx *store.Store) string {
+func parseVariable(str string, storage *store.Store) string {
 	for {
 		fromStart := strings.Index(str, "$var(")
 		if fromStart == -1 {
@@ -143,7 +143,7 @@ func parseVariable(str string, ctx *store.Store) string {
 		}
 
 		varName := str[fromStart+5 : fromEnd]
-		varValue, ok := store.Read(ctx, varName)
+		varValue, ok := store.Read(storage, varName)
 		if !ok {
 			varValue = ""
 		}

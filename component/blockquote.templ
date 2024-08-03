@@ -5,19 +5,19 @@ import (
 	"wikinow/internal/store"
 )
 
-templ BlockQuote(node *sitter.Node, lines *[]string, store *store.Store) {
+templ BlockQuote(node *sitter.Node, lines *[]string, storage *store.Store) {
 	switch node.Type() {
 		case "block_quote":
-			@Quote(node, lines, store)
+			@Quote(node, lines, storage)
 		case "block_quote_marker":
-			@Parser(node.NextNamedSibling(), lines, store)
+			@Parser(node.NextNamedSibling(), lines, storage)
 	}
 }
 
-templ Quote(node *sitter.Node, lines *[]string, store *store.Store) {
+templ Quote(node *sitter.Node, lines *[]string, storage *store.Store) {
 	<blockquote class="italic flex flex-row font-semibold text-amber-600">
 		<span>❝</span>
-		@Parser(node.NamedChild(0), lines, store)
+		@Parser(node.NamedChild(0), lines, storage)
 		<span>❝</span>
 	</blockquote>
 }

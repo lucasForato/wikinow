@@ -5,33 +5,33 @@ import (
 	"wikinow/internal/store"
 )
 
-templ List(node *sitter.Node, lines *[]string, store *store.Store) {
+templ List(node *sitter.Node, lines *[]string, storage *store.Store) {
 	switch node.Type() {
 		case "list":
 			if node.Child(0).Child(0).Type() == "list_marker_dot" {
 				<ol class="list-decimal">
 					for i := 0; i < int(node.NamedChildCount()); i++ {
-						@Parser(node.NamedChild(i), lines, store)
+						@Parser(node.NamedChild(i), lines, storage)
 					}
 				</ol>
 			} else {
 				<ul class="list-disc">
 					for i := 0; i < int(node.NamedChildCount()); i++ {
-						@Parser(node.NamedChild(i), lines, store)
+						@Parser(node.NamedChild(i), lines, storage)
 					}
 				</ul>
 			}
 		case "list_item":
 			<li>
-				@Parser(node.NamedChild(0), lines, store)
+				@Parser(node.NamedChild(0), lines, storage)
 			</li>
 		case "list_marker_minus":
-			@Parser(node.NextNamedSibling(), lines, store)
+			@Parser(node.NextNamedSibling(), lines, storage)
 		case "list_marker_star":
-			@Parser(node.NextNamedSibling(), lines, store)
+			@Parser(node.NextNamedSibling(), lines, storage)
 		case "list_marker_plus":
-			@Parser(node.NextNamedSibling(), lines, store)
+			@Parser(node.NextNamedSibling(), lines, storage)
 		case "list_marker_dot":
-			@Parser(node.NextNamedSibling(), lines, store)
+			@Parser(node.NextNamedSibling(), lines, storage)
 	}
 }

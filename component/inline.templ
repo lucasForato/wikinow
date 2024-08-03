@@ -6,13 +6,13 @@ import (
 	"wikinow/internal/store"
 )
 
-templ Inline(node *sitter.Node, lines *[]string, store *store.Store) {
+templ Inline(node *sitter.Node, lines *[]string, storage *store.Store) {
 	switch node.Type() {
 		case "paragraph":
 			for i := 0; i < int(node.NamedChildCount()); i++ {
-				@Parser(node.Child(i), lines, store)
+				@Parser(node.Child(i), lines, storage)
 			}
 		case "inline":
-			@templ.FromGoHTML(goTemplate, utils.ParseInline(utils.GetText(*lines, node), store))
+			@templ.FromGoHTML(goTemplate, utils.ParseInline(utils.GetText(*lines, node), storage))
 	}
 }

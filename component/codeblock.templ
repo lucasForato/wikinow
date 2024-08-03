@@ -7,7 +7,7 @@ import (
 	"wikinow/internal/store"
 )
 
-templ CodeBlock(node *sitter.Node, lines *[]string, store *store.Store) {
+templ CodeBlock(node *sitter.Node, lines *[]string, storage *store.Store) {
 	<pre class="bg-gray-800 p-4 my-4">
 		for i := 0; i < int(node.NamedChildCount()); i++ {
 			if node.NamedChild(i).Type() == "code_fence_content" {
@@ -63,6 +63,6 @@ templ CodeBlock(node *sitter.Node, lines *[]string, store *store.Store) {
 				}
 			}
 		}
-		@Parser(node.NamedChild(0), lines, store)
+		@Parser(node.NamedChild(0), lines, storage)
 	</pre>
 }
