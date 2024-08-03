@@ -3,54 +3,56 @@ package component
 import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/utils"
+	"wikinow/types"
+	"wikinow/internal/store"
 )
 
-templ CodeBlock(node *sitter.Node, lines *[]string, c *context.Context) {
+templ CodeBlock(node *sitter.Node, lines *[]string, store *store.Store) {
 	<pre class="bg-gray-800 p-4 my-4">
 		for i := 0; i < int(node.NamedChildCount()); i++ {
 			if node.NamedChild(i).Type() == "code_fence_content" {
 				switch utils.GetLanguage(node, *lines) {
-					case utils.JavaScript:
+					case types.JavaScript:
 						<code class="language-javascript">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case utils.Go:
+					case types.Go:
 						<code class="language-go">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case utils.Python:
+					case types.Python:
 						<code class="language-python">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case utils.C:
+					case types.C:
 						<code class="language-c">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case utils.Cpp:
+					case types.Cpp:
 						<code class="language-cpp">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case utils.CSharp:
+					case types.CSharp:
 						<code class="language-csharp">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case utils.Ruby:
+					case types.Ruby:
 						<code class="language-ruby">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case utils.PHP:
+					case types.PHP:
 						<code class="language-php">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case utils.HTML:
+					case types.HTML:
 						<code class="language-html">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case utils.CSS:
+					case types.CSS:
 						<code class="language-css">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case utils.Rust:
+					case types.Rust:
 						<code class="language-rust">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
@@ -61,6 +63,6 @@ templ CodeBlock(node *sitter.Node, lines *[]string, c *context.Context) {
 				}
 			}
 		}
-		@Parser(node.NamedChild(0), lines, c)
+		@Parser(node.NamedChild(0), lines, store)
 	</pre>
 }

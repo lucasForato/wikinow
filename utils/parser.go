@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"context"
+  "wikinow/internal/store"
 	"fmt"
 	"html/template"
 	"os"
@@ -51,7 +51,7 @@ func GetCode(lines []string, node *sitter.Node) string {
 	return text
 }
 
-func ParseInline(str string, ctx *context.Context) template.HTML {
+func ParseInline(str string, ctx *store.Store) template.HTML {
 	str = parseBold(str)
 	str = parseItalic(str)
 	str = parseImage(str)
@@ -114,7 +114,7 @@ func parseInlineLink(str string) string {
 	return str
 }
 
-func parseRefLink(str string, ctx *context.Context) string {
+func parseRefLink(str string, ctx *store.Store) string {
 	re := regexp.MustCompile(`\[([^\]]+)\]\[([^\]]+)\]`)
 
 	match := re.FindStringSubmatch(str)
@@ -122,7 +122,7 @@ func parseRefLink(str string, ctx *context.Context) string {
 		return str
 	}
 	name := match[2]
-	value, ok := GetFromContext(ctx, name)
+	value, ok := store.Read(ctx, name)
 	if !ok {
 		return str
 	}
@@ -130,7 +130,7 @@ func parseRefLink(str string, ctx *context.Context) string {
 	return str
 }
 
-func parseVariable(str string, ctx *context.Context) string {
+func parseVariable(str string, ctx *store.Store) string {
 	for {
 		fromStart := strings.Index(str, "$var(")
 		if fromStart == -1 {
@@ -143,7 +143,7 @@ func parseVariable(str string, ctx *context.Context) string {
 		}
 
 		varName := str[fromStart+5 : fromEnd]
-		varValue, ok := GetFromContext(ctx, varName)
+		varValue, ok := store.Read(ctx, varName)
 		if !ok {
 			varValue = ""
 		}
@@ -165,7 +165,7 @@ func parseImage(str string) string {
 	return str
 }
 
-func parseCodeBlock(str string, ctx *context.Context) string {
+func parseCodeBlock(str string, storage *store.Store) string {
 	for {
 		fromStart := strings.Index(str, "$code(")
 		if fromStart == -1 {
@@ -183,7 +183,7 @@ func parseCodeBlock(str string, ctx *context.Context) string {
 			split[i] = strings.TrimSpace(split[i])
 		}
 
-		path, ok := GetFromContext(ctx, split[0])
+		path, ok := store.Read(storage, split[0])
 		if !ok {
 			log.Fatal("Variable not found")
 		}

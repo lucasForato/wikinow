@@ -2,21 +2,22 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
+	"wikinow/internal/store"
 )
 
-templ BlockQuote(node *sitter.Node, lines *[]string, c *context.Context) {
+templ BlockQuote(node *sitter.Node, lines *[]string, store *store.Store) {
 	switch node.Type() {
 		case "block_quote":
-			@Quote(node, lines, c)
+			@Quote(node, lines, store)
 		case "block_quote_marker":
-			@Parser(node.NextNamedSibling(), lines, c)
+			@Parser(node.NextNamedSibling(), lines, store)
 	}
 }
 
-templ Quote(node *sitter.Node, lines *[]string, c *context.Context) {
+templ Quote(node *sitter.Node, lines *[]string, store *store.Store) {
 	<blockquote class="italic flex flex-row font-semibold text-amber-600">
 		<span>❝</span>
-		@Parser(node.NamedChild(0), lines, c)
+		@Parser(node.NamedChild(0), lines, store)
 		<span>❝</span>
 	</blockquote>
 }

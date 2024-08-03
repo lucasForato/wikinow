@@ -4,14 +4,15 @@ import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/utils"
 	"strings"
+	"wikinow/internal/store"
 )
 
-templ Table(node *sitter.Node, lines *[]string, c *context.Context) {
+templ Table(node *sitter.Node, lines *[]string, store *store.Store) {
 	switch node.Type() {
 		case "pipe_table":
 			<table class="table-auto min-w-20 max-w-full grow border-collapse border border-zinc-500">
 				for i := 0; i < int(node.NamedChildCount()); i++ {
-					@Parser(node.NamedChild(i), lines, c)
+					@Parser(node.NamedChild(i), lines, store)
 				}
 			</table>
 		case "pipe_table_header":

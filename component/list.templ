@@ -2,35 +2,36 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
+	"wikinow/internal/store"
 )
 
-templ List(node *sitter.Node, lines *[]string, c *context.Context) {
+templ List(node *sitter.Node, lines *[]string, store *store.Store) {
 	switch node.Type() {
 		case "list":
 			if node.Child(0).Child(0).Type() == "list_marker_dot" {
 				<ol class="list-decimal">
 					for i := 0; i < int(node.NamedChildCount()); i++ {
-						@Parser(node.NamedChild(i), lines, c)
+						@Parser(node.NamedChild(i), lines, store)
 					}
 				</ol>
 			} else {
 				<ul class="list-disc">
 					for i := 0; i < int(node.NamedChildCount()); i++ {
-						@Parser(node.NamedChild(i), lines, c)
+						@Parser(node.NamedChild(i), lines, store)
 					}
 				</ul>
 			}
 		case "list_item":
 			<li>
-				@Parser(node.NamedChild(0), lines, c)
+				@Parser(node.NamedChild(0), lines, store)
 			</li>
 		case "list_marker_minus":
-			@Parser(node.NextNamedSibling(), lines, c)
+			@Parser(node.NextNamedSibling(), lines, store)
 		case "list_marker_star":
-			@Parser(node.NextNamedSibling(), lines, c)
+			@Parser(node.NextNamedSibling(), lines, store)
 		case "list_marker_plus":
-			@Parser(node.NextNamedSibling(), lines, c)
+			@Parser(node.NextNamedSibling(), lines, store)
 		case "list_marker_dot":
-			@Parser(node.NextNamedSibling(), lines, c)
+			@Parser(node.NextNamedSibling(), lines, store)
 	}
 }

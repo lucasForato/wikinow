@@ -6,6 +6,7 @@ import (
 	"path"
 	"strings"
 	"wikinow/component"
+	"wikinow/internal/store"
 	"wikinow/utils"
 
 	"github.com/a-h/templ"
@@ -67,8 +68,8 @@ func handler(ctx echo.Context) error {
 
 	sourceCode := []byte(strings.Join(lines, "\n"))
 
-	store := utils.CreateContext()
-  utils.LoadContext(store, &lines)
+	storage := store.Create()
+  store.Load(storage, &lines)
 
 	tree, err := parser.ParseCtx(context.Background(), nil, sourceCode)
 	if err != nil {
@@ -79,7 +80,7 @@ func handler(ctx echo.Context) error {
 	str := utils.ConvertTreeToJson(root, lines)
 	utils.JsonPrettyPrint(str)
 
-	return Render(ctx, http.StatusOK, component.Layout(root, &lines, store))
+	return Render(ctx, http.StatusOK, component.Layout(root, &lines, storage))
 }
 
 func handlePath(ctx echo.Context) string {

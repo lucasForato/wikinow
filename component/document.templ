@@ -2,12 +2,13 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
+	"wikinow/internal/store"
 )
 
-templ Document(node *sitter.Node, lines *[]string, c *context.Context) {
+templ Document(node *sitter.Node, lines *[]string, store *store.Store) {
 	<div>
 		for i := 0; i < int(node.NamedChildCount()); i++ {
-			@Parser(node.NamedChild(i), lines, c)
+			@Parser(node.NamedChild(i), lines, store)
 		}
 	</div>
 }
