@@ -15,12 +15,12 @@ templ Layout(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
 			<title>{ parser.ReadCtxSkipError(c, "title") }</title>
 		</head>
-		<body class="bg-zinc-800 text-neutral-100	m-10">
-			<div class="max-w-[900px]">
+		<body class="bg-zinc-800 flex text-neutral-100 m-10 justify-center">
+			<main class="flex flex-col w-[800px]">
 				<h1 class="text-4xl font-bold my-4 text-amber-500">{ parser.ReadCtxSkipError(c, "title") }</h1>
 				<hr class="my-4"/>
 				@Parser(node, lines, c)
-			</div>
+			</main>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-go.min.js"></script>
 		</body>
