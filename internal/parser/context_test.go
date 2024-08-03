@@ -15,6 +15,8 @@ func (s *LoadSuite) SetupTest() {
 	s.ctx = CreateCtx()
 }
 
+// - LoadCtx -------------------------------------------------------------------
+
 func (s *LoadSuite) Test_should_load_all_values_to_store() {
 	lines := []string{
 		"---",
@@ -105,17 +107,87 @@ func (s *LoadSuite) Test_should_fail_if_values_are_invalid() {
 }
 
 func (s *LoadSuite) Test_should_fail_if_title_is_not_set() {
-  lines := []string{
-    "---",
-    "---",
-  }
-  err := LoadCtx(s.ctx, &lines)
+	lines := []string{
+		"---",
+		"---",
+	}
+	err := LoadCtx(s.ctx, &lines)
+	if err == nil {
+		s.Fail("Expected error, got nil")
+		return
+	}
+	s.Equal("title must be set", err.Error())
+}
+
+// - ReadCtx -------------------------------------------------------------------
+
+func (s *LoadSuite) Test_should_return_text_within_ctx() {
+	lines := []string{
+		"---",
+		"key1: value1",
+		"key2: value2",
+		"key3: value3",
+		"---",
+	}
+	LoadCtx(s.ctx, &lines)
+	key1, ok := ReadCtx(s.ctx, "key1")
+	s.True(ok)
+	s.Equal("value1", key1)
+}
+
+func (s *LoadSuite) Test_should_trim_whitespaces() {
+	lines := []string{
+		"---",
+		" key1 :  value1 ",
+		"---",
+	}
+	LoadCtx(s.ctx, &lines)
+	key1, ok := ReadCtx(s.ctx, "key1")
+	s.True(ok)
+	s.Equal("value1", key1)
+}
+
+func (s *LoadSuite) Test_should_return_false_if_key_not_found() {
+	lines := []string{
+		"---",
+		"key1: value1",
+		"---",
+	}
+	LoadCtx(s.ctx, &lines)
+	_, ok := ReadCtx(s.ctx, "key2")
+	s.False(ok)
+}
+
+// - UpdateCtx -----------------------------------------------------------------
+
+func (s *LoadSuite) Test_should_update_ctx() {
+	UpdateCtx(s.ctx, "key1", "value1")
+	value, ok := ReadCtx(s.ctx, "key1")
+	s.True(ok)
+	s.Equal("value1", value)
+}
+
+func (s *LoadSuite) Test_should_fail_to_load_if_value_is_invalid() {
+  err := UpdateCtx(s.ctx, "key1", "[hello](world)")
   if err == nil {
     s.Fail("Expected error, got nil")
     return
   }
-  s.Equal("title must be set", err.Error())
+
+	s.Equal("value can only contain text: [hello](world)", err.Error())
 }
+
+func (s *LoadSuite) Test_should_fail_if_repeated_key() {
+  UpdateCtx(s.ctx, "key1", "value1")
+  err := UpdateCtx(s.ctx, "key1", "value2")
+  if err == nil {
+    s.Fail("Expected error, got nil")
+    return
+  }
+  s.Equal("Duplicate key: key1", err.Error())
+}
+
+// -----------------------------------------------------------------------------
 
 func TestLoadSuite(t *testing.T) {
 	suite.Run(t, new(LoadSuite))

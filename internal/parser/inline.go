@@ -12,6 +12,20 @@ import (
 	sitter "github.com/smacker/go-tree-sitter"
 )
 
+func ParseInline(str string, c *Ctx) template.HTML {
+	str = parseBold(str)
+	str = parseItalic(str)
+	str = parseImage(str)
+	str = parseInlineLink(str)
+	str = parseVariable(str, c)
+	str = parseRefLink(str, c)
+	str = parseInlineCode(str)
+	str = parseCodeBlock(str, c)
+	str = parseLinkToAnotherFile(str)
+
+	return template.HTML(str)
+}
+
 func GetText(lines []string, node *sitter.Node) string {
 	start := node.StartPoint()
 	end := node.EndPoint()
@@ -48,20 +62,6 @@ func GetCode(lines []string, node *sitter.Node) string {
 
 	text := strings.Join(allLines, "\n")
 	return text
-}
-
-func ParseInline(str string, c *Ctx) template.HTML {
-	str = parseBold(str)
-	str = parseItalic(str)
-	str = parseImage(str)
-	str = parseInlineLink(str)
-	str = parseVariable(str, c)
-	str = parseRefLink(str, c)
-	str = parseInlineCode(str)
-	str = parseCodeBlock(str, c)
-	str = parseLinkToAnotherFile(str)
-
-	return template.HTML(str)
 }
 
 func parseBold(str string) string {

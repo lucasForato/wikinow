@@ -26,7 +26,7 @@ func CreateCtx() *Ctx {
 func ReadCtx(c *Ctx, key string) (string, bool) {
 	stringMap, ok := (*c).Value(mapKey).(map[string]string)
 	if !ok {
-		return "", false
+		return "", ok
 	}
 
 	value, found := stringMap[key]
@@ -34,14 +34,14 @@ func ReadCtx(c *Ctx, key string) (string, bool) {
 }
 
 func ReadCtxSkipError(c *Ctx, key string) string {
-  value, _ := ReadCtx(c, key)
-  return value
+	value, _ := ReadCtx(c, key)
+	return value
 }
 
 func LoadCtx(c *Ctx, lines *[]string) error {
 	var metadataStart int
 	var metadataEnd int
-  var keys []string
+	var keys []string
 
 	if len(*lines) == 0 {
 		return errors.New("Empty file")
@@ -71,7 +71,7 @@ func LoadCtx(c *Ctx, lines *[]string) error {
 				if parsedValue != template.HTML(value) {
 					return errors.New(fmt.Sprintf("value can only contain text: %s", value))
 				}
-        keys = append(keys, key)
+				keys = append(keys, key)
 				UpdateCtx(c, key, value)
 			}
 		}
@@ -94,18 +94,26 @@ func LoadCtx(c *Ctx, lines *[]string) error {
 			return errors.New(fmt.Sprintf("value can only contain text: %s", value))
 		}
 
-    keys = append(keys, key)
+		keys = append(keys, key)
 		UpdateCtx(c, key, value)
 	}
 
-  if slices.Contains(keys, "title") == false || len(keys) == 0 {
-    return errors.New("title must be set")
-  }
+	if slices.Contains(keys, "title") == false || len(keys) == 0 {
+		return errors.New("title must be set")
+	}
 
 	return nil
 }
 
-func UpdateCtx(c *Ctx, key, value string) {
+func UpdateCtx(c *Ctx, key, value string) error {
+	if parsedValue := ParseInline(value, c); parsedValue != template.HTML(value) {
+		return errors.New(fmt.Sprintf("value can only contain text: %s", value))
+	}
+
+	if _, ok := ReadCtx(c, key); ok {
+		return errors.New(fmt.Sprintf("Duplicate key: %s", key))
+	}
+
 	stringMap, ok := (*c).Value(mapKey).(map[string]string)
 	if !ok {
 		stringMap = make(map[string]string)
@@ -118,6 +126,7 @@ func UpdateCtx(c *Ctx, key, value string) {
 	newMap[key] = value
 
 	*c = context.WithValue(*c, mapKey, newMap)
+	return nil
 }
 
 func PrintCtx(c *Ctx) {
