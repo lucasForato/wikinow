@@ -33,6 +33,11 @@ func ReadCtx(c *Ctx, key string) (string, bool) {
 	return value, found
 }
 
+func ReadCtxSkipError(c *Ctx, key string) string {
+  value, _ := ReadCtx(c, key)
+  return value
+}
+
 func LoadCtx(c *Ctx, lines *[]string) error {
 	var metadataStart int
 	var metadataEnd int
