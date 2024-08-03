@@ -60,6 +60,7 @@ func ParseInline(str string, ctx *context.Context) template.HTML {
 	str = parseRefLink(str, ctx)
 	str = parseInlineCode(str)
 	str = parseCodeBlock(str, ctx)
+  str = parseLinkToAnotherFile(str)
 
 	return template.HTML(str)
 }
@@ -209,13 +210,13 @@ func parseCodeBlock(str string, ctx *context.Context) string {
 
 		code := strings.Join(lines, "\n")
 
-		html := fmt.Sprintf(`<pre class="bg-zinc-700 p-1 rounded text-amber-600"><code class="%s">%s</code></pre>`, GetFileType(path), code)
+		html := fmt.Sprintf(`<pre class="bg-zinc-700 p-1 rounded text-amber-600"><code class="%s">%s</code></pre>`, getFileType(path), code)
 		return html
 	}
 	return str
 }
 
-func GetFileType(path string) string {
+func getFileType(path string) string {
 	split := strings.Split(path, ".")
 	fileType := split[len(split)-1]
 	switch fileType {
@@ -226,4 +227,32 @@ func GetFileType(path string) string {
 	default:
 		return "text"
 	}
+}
+
+func parseLinkToAnotherFile(str string) string {
+	for {
+		fromStart := strings.Index(str, "$link(")
+		if fromStart == -1 {
+			break
+		}
+
+		fromEnd := strings.Index(str, ")")
+		if fromEnd == -1 {
+			break
+		}
+
+		within := str[fromStart+6 : fromEnd]
+		split := strings.Split(within, ",")
+		for i := range split {
+			split[i] = strings.TrimSpace(split[i])
+		}
+
+
+    path := split[1]
+
+    link := fmt.Sprintf(`<a href="%s" class="text-amber-600">%s</a>`, path, split[0])
+    str = str[:fromStart] + link + str[fromEnd+1:]
+
+	}
+	return str
 }
