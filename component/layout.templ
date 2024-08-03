@@ -2,10 +2,10 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
-	"wikinow/internal/store"
+	"wikinow/internal/parser"
 )
 
-templ Layout(node *sitter.Node, lines *[]string, storage *store.Store) {
+templ Layout(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -16,7 +16,7 @@ templ Layout(node *sitter.Node, lines *[]string, storage *store.Store) {
 			<title>Document</title>
 		</head>
 		<body class="bg-zinc-800 text-neutral-100	m-10">
-			@Parser(node, lines, storage)
+			@Parser(node, lines, c)
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-go.min.js"></script>
 		</body>

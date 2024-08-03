@@ -1,7 +1,6 @@
-package utils
+package parser
 
 import (
-  "wikinow/internal/store"
 	"fmt"
 	"html/template"
 	"os"
@@ -51,16 +50,16 @@ func GetCode(lines []string, node *sitter.Node) string {
 	return text
 }
 
-func ParseInline(str string, storage *store.Store) template.HTML {
+func ParseInline(str string, c *Ctx) template.HTML {
 	str = parseBold(str)
 	str = parseItalic(str)
 	str = parseImage(str)
 	str = parseInlineLink(str)
-	str = parseVariable(str, storage)
-	str = parseRefLink(str, storage)
+	str = parseVariable(str, c)
+	str = parseRefLink(str, c)
 	str = parseInlineCode(str)
-	str = parseCodeBlock(str, storage)
-  str = parseLinkToAnotherFile(str)
+	str = parseCodeBlock(str, c)
+	str = parseLinkToAnotherFile(str)
 
 	return template.HTML(str)
 }
@@ -114,7 +113,7 @@ func parseInlineLink(str string) string {
 	return str
 }
 
-func parseRefLink(str string, storage *store.Store) string {
+func parseRefLink(str string, c *Ctx) string {
 	re := regexp.MustCompile(`\[([^\]]+)\]\[([^\]]+)\]`)
 
 	match := re.FindStringSubmatch(str)
@@ -122,7 +121,7 @@ func parseRefLink(str string, storage *store.Store) string {
 		return str
 	}
 	name := match[2]
-	value, ok := store.Read(storage, name)
+	value, ok := ReadCtx(c, name)
 	if !ok {
 		return str
 	}
@@ -130,7 +129,7 @@ func parseRefLink(str string, storage *store.Store) string {
 	return str
 }
 
-func parseVariable(str string, storage *store.Store) string {
+func parseVariable(str string, c *Ctx) string {
 	for {
 		fromStart := strings.Index(str, "$var(")
 		if fromStart == -1 {
@@ -143,7 +142,7 @@ func parseVariable(str string, storage *store.Store) string {
 		}
 
 		varName := str[fromStart+5 : fromEnd]
-		varValue, ok := store.Read(storage, varName)
+		varValue, ok := ReadCtx(c, varName)
 		if !ok {
 			varValue = ""
 		}
@@ -165,7 +164,7 @@ func parseImage(str string) string {
 	return str
 }
 
-func parseCodeBlock(str string, storage *store.Store) string {
+func parseCodeBlock(str string, c *Ctx) string {
 	for {
 		fromStart := strings.Index(str, "$code(")
 		if fromStart == -1 {
@@ -183,7 +182,7 @@ func parseCodeBlock(str string, storage *store.Store) string {
 			split[i] = strings.TrimSpace(split[i])
 		}
 
-		path, ok := store.Read(storage, split[0])
+		path, ok := ReadCtx(c, split[0])
 		if !ok {
 			log.Fatal("Variable not found")
 		}
@@ -247,11 +246,10 @@ func parseLinkToAnotherFile(str string) string {
 			split[i] = strings.TrimSpace(split[i])
 		}
 
+		path := split[1]
 
-    path := split[1]
-
-    link := fmt.Sprintf(`<a href="%s" class="text-amber-600">%s</a>`, path, split[0])
-    str = str[:fromStart] + link + str[fromEnd+1:]
+		link := fmt.Sprintf(`<a href="%s" class="text-amber-600">%s</a>`, path, split[0])
+		str = str[:fromStart] + link + str[fromEnd+1:]
 
 	}
 	return str

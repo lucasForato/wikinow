@@ -2,6 +2,7 @@ package utils
 
 import (
 	"strings"
+	"wikinow/internal/parser"
 
 	sitter "github.com/smacker/go-tree-sitter"
 )
@@ -12,7 +13,7 @@ func GetTableHeader(node *sitter.Node, lines []string) []string {
 
   for i := 0; i < int(child.ChildCount()); i++ {
     if child.Child(i).Type() == "pipe_table_cell" {
-      text := GetText(lines, child.Child(i))
+      text := parser.GetText(lines, child.Child(i))
       content = append(content, strings.TrimSpace(text))
     }
   }

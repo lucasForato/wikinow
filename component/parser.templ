@@ -3,29 +3,29 @@ package component
 import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"html/template"
-	"wikinow/internal/store"
+	"wikinow/internal/parser"
 )
 
 var goTemplate = template.Must(template.New("inline").Parse("<p>{{ . }}</p>"))
 
-templ Parser(node *sitter.Node, lines *[]string, storage *store.Store) {
+templ Parser(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	switch node.Type() {
 		case "document":
-			@Document(node, lines, storage)
+			@Document(node, lines, c)
 		case "section":
-			@Section(node, lines, storage)
+			@Section(node, lines, c)
 		case "thematic_break":
 			<hr class="my-4"/>
 		case "block_quote", 
       "block_quote_marker":
-			@BlockQuote(node, lines, storage)
+			@BlockQuote(node, lines, c)
 		case "list", 
       "list_item", 
       "list_marker_minus", 
       "list_marker_start", 
       "list_marker_plus", 
       "list_marker_dot":
-			@List(node, lines, storage)
+			@List(node, lines, c)
 		case "atx_heading", 
       "atx_h1_marker", 
       "setext_heading", 
@@ -36,14 +36,14 @@ templ Parser(node *sitter.Node, lines *[]string, storage *store.Store) {
       "atx_h4_marker", 
       "atx_h5_marker", 
       "atx_h6_marker":
-			@Header(node, lines, storage)
+			@Header(node, lines, c)
 		case "paragraph", "inline":
-			@Inline(node, lines, storage)
+			@Inline(node, lines, c)
 		case "fenced_code_block":
-			@CodeBlock(node, lines, storage)
+			@CodeBlock(node, lines, c)
 		case "pipe_table", 
       "pipe_table_header", 
       "pipe_table_row":
-			@Table(node, lines, storage)
+			@Table(node, lines, c)
 	}
 }

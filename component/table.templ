@@ -2,17 +2,16 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
-	"wikinow/utils"
 	"strings"
-	"wikinow/internal/store"
+	"wikinow/internal/parser"
 )
 
-templ Table(node *sitter.Node, lines *[]string, storage *store.Store) {
+templ Table(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	switch node.Type() {
 		case "pipe_table":
 			<table class="table-auto min-w-20 max-w-full grow border-collapse border border-zinc-500">
 				for i := 0; i < int(node.NamedChildCount()); i++ {
-					@Parser(node.NamedChild(i), lines, storage)
+					@Parser(node.NamedChild(i), lines, c)
 				}
 			</table>
 		case "pipe_table_header":
@@ -20,7 +19,7 @@ templ Table(node *sitter.Node, lines *[]string, storage *store.Store) {
 				<tr>
 					for i := 0; i < int(node.NamedChildCount()); i++ {
 						<th class="px-4 py-2 text-left border-b border-l border-amber-800">
-							{ strings.TrimSpace(utils.GetText(*lines, node.NamedChild(i))) }
+							{ strings.TrimSpace(parser.GetText(*lines, node.NamedChild(i))) }
 						</th>
 					}
 				</tr>
@@ -29,7 +28,7 @@ templ Table(node *sitter.Node, lines *[]string, storage *store.Store) {
 			<tr class="hover:bg-zinc-700">
 				for i := 0; i < int(node.NamedChildCount()); i++ {
 					<td class="px-4 py-2 border-l text-left border-b border-zinc-500">
-						{ strings.TrimSpace(utils.GetText(*lines, node.NamedChild(i))) }
+						{ strings.TrimSpace(parser.GetText(*lines, node.NamedChild(i))) }
 					</td>
 				}
 			</tr>

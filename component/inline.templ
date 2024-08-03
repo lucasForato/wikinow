@@ -2,17 +2,16 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
-	"wikinow/utils"
-	"wikinow/internal/store"
+	"wikinow/internal/parser"
 )
 
-templ Inline(node *sitter.Node, lines *[]string, storage *store.Store) {
+templ Inline(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	switch node.Type() {
 		case "paragraph":
 			for i := 0; i < int(node.NamedChildCount()); i++ {
-				@Parser(node.Child(i), lines, storage)
+				@Parser(node.Child(i), lines, c)
 			}
 		case "inline":
-			@templ.FromGoHTML(goTemplate, utils.ParseInline(utils.GetText(*lines, node), storage))
+			@templ.FromGoHTML(goTemplate, parser.ParseInline(parser.GetText(*lines, node), c))
 	}
 }

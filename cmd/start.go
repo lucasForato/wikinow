@@ -6,8 +6,8 @@ import (
 	"path"
 	"strings"
 	"wikinow/component"
-	"wikinow/internal/store"
 	"wikinow/utils"
+  "wikinow/internal/parser"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -63,15 +63,17 @@ func handler(ctx echo.Context) error {
 	path := handlePath(ctx)
 	lines := utils.ReadMarkdown(path)
 
-	parser := sitter.NewParser()
-	parser.SetLanguage(markdown.GetLanguage())
+	astParser := sitter.NewParser()
+	astParser.SetLanguage(markdown.GetLanguage())
 
 	sourceCode := []byte(strings.Join(lines, "\n"))
 
-	storage := store.Create()
-  store.Load(storage, &lines)
+	c := parser.CreateCtx()
+	if err := parser.LoadCtx(c, &lines); err != nil {
+		return Render(ctx, http.StatusInternalServerError, component.Error(err))
+	}
 
-	tree, err := parser.ParseCtx(context.Background(), nil, sourceCode)
+	tree, err := astParser.ParseCtx(context.Background(), nil, sourceCode)
 	if err != nil {
 		log.Fatal("Failed to parse source code", err)
 	}
@@ -80,7 +82,7 @@ func handler(ctx echo.Context) error {
 	str := utils.ConvertTreeToJson(root, lines)
 	utils.JsonPrettyPrint(str)
 
-	return Render(ctx, http.StatusOK, component.Layout(root, &lines, storage))
+	return Render(ctx, http.StatusOK, component.Layout(root, &lines, c))
 }
 
 func handlePath(ctx echo.Context) string {
@@ -89,6 +91,6 @@ func handlePath(ctx echo.Context) string {
 	if url == "/" {
 		url = "/main"
 	}
-  file := strings.Join([]string{url, "md"}, ".")
+	file := strings.Join([]string{url, "md"}, ".")
 	return path.Join("wiki", file)
 }
