@@ -104,6 +104,19 @@ func (s *LoadSuite) Test_should_fail_if_values_are_invalid() {
 	s.Equal("value can only contain text: [hello](world)", err.Error())
 }
 
+func (s *LoadSuite) Test_should_fail_if_title_is_not_set() {
+  lines := []string{
+    "---",
+    "---",
+  }
+  err := LoadCtx(s.ctx, &lines)
+  if err == nil {
+    s.Fail("Expected error, got nil")
+    return
+  }
+  s.Equal("title must be set", err.Error())
+}
+
 func TestLoadSuite(t *testing.T) {
 	suite.Run(t, new(LoadSuite))
 }

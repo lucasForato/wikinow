@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"regexp"
+	"slices"
 	"strings"
 )
 
@@ -35,6 +36,7 @@ func ReadCtx(c *Ctx, key string) (string, bool) {
 func LoadCtx(c *Ctx, lines *[]string) error {
 	var metadataStart int
 	var metadataEnd int
+  var keys []string
 
 	if len(*lines) == 0 {
 		return errors.New("Empty file")
@@ -64,7 +66,7 @@ func LoadCtx(c *Ctx, lines *[]string) error {
 				if parsedValue != template.HTML(value) {
 					return errors.New(fmt.Sprintf("value can only contain text: %s", value))
 				}
-
+        keys = append(keys, key)
 				UpdateCtx(c, key, value)
 			}
 		}
@@ -87,8 +89,14 @@ func LoadCtx(c *Ctx, lines *[]string) error {
 			return errors.New(fmt.Sprintf("value can only contain text: %s", value))
 		}
 
+    keys = append(keys, key)
 		UpdateCtx(c, key, value)
 	}
+
+  if slices.Contains(keys, "title") == false || len(keys) == 0 {
+    return errors.New("title must be set")
+  }
+
 	return nil
 }
 
