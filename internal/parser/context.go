@@ -1,9 +1,10 @@
-package parser 
+package parser
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"html/template"
 	"regexp"
 	"strings"
 )
@@ -11,6 +12,7 @@ import (
 type Ctx = context.Context
 
 type contextKey string
+
 const mapKey contextKey = "storageContext"
 
 func CreateCtx() *Ctx {
@@ -20,8 +22,8 @@ func CreateCtx() *Ctx {
 	return &store
 }
 
-func ReadCtx(ctx *Ctx, key string) (string, bool) {
-	stringMap, ok := (*ctx).Value(mapKey).(map[string]string)
+func ReadCtx(c *Ctx, key string) (string, bool) {
+	stringMap, ok := (*c).Value(mapKey).(map[string]string)
 	if !ok {
 		return "", false
 	}
@@ -30,7 +32,7 @@ func ReadCtx(ctx *Ctx, key string) (string, bool) {
 	return value, found
 }
 
-func LoadCtx(ctx *Ctx, lines *[]string) error {
+func LoadCtx(c *Ctx, lines *[]string) error {
 	var metadataStart int
 	var metadataEnd int
 
@@ -55,11 +57,15 @@ func LoadCtx(ctx *Ctx, lines *[]string) error {
 			if len(split) == 2 {
 				key := strings.Trim(split[0], " ")
 				value := strings.Trim(split[1], " ")
-				if _, ok := ReadCtx(ctx, key); ok {
+				if _, ok := ReadCtx(c, key); ok {
 					return errors.New(fmt.Sprintf("Duplicate key: %s", key))
 				}
+				parsedValue := ParseInline(value, c)
+				if parsedValue != template.HTML(value) {
+					return errors.New(fmt.Sprintf("value can only contain text: %s", value))
+				}
 
-				UpdateCtx(ctx, key, value)
+				UpdateCtx(c, key, value)
 			}
 		}
 	}
@@ -73,17 +79,21 @@ func LoadCtx(ctx *Ctx, lines *[]string) error {
 		}
 		key = strings.Trim(match[1], " ")
 		value := strings.Trim(match[2], " ")
-		if _, ok := ReadCtx(ctx, key); ok {
+		if _, ok := ReadCtx(c, key); ok {
 			return errors.New(fmt.Sprintf("Duplicate key: %s", key))
 		}
+		parsedValue := ParseInline(value, c)
+		if parsedValue != template.HTML(value) {
+			return errors.New(fmt.Sprintf("value can only contain text: %s", value))
+		}
 
-		UpdateCtx(ctx, key, value)
+		UpdateCtx(c, key, value)
 	}
 	return nil
 }
 
-func UpdateCtx(ctx *Ctx, key, value string) {
-	stringMap, ok := (*ctx).Value(mapKey).(map[string]string)
+func UpdateCtx(c *Ctx, key, value string) {
+	stringMap, ok := (*c).Value(mapKey).(map[string]string)
 	if !ok {
 		stringMap = make(map[string]string)
 	}
@@ -94,12 +104,12 @@ func UpdateCtx(ctx *Ctx, key, value string) {
 	}
 	newMap[key] = value
 
-	*ctx = context.WithValue(*ctx, mapKey, newMap)
+	*c = context.WithValue(*c, mapKey, newMap)
 }
 
-func PrintCtx(ctx *Ctx) {
+func PrintCtx(c *Ctx) {
 	fmt.Println("Store {")
-	for k, v := range (*ctx).Value(mapKey).(map[string]string) {
+	for k, v := range (*c).Value(mapKey).(map[string]string) {
 		fmt.Println("  ", k, ":", v)
 	}
 	fmt.Println("}")

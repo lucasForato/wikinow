@@ -88,6 +88,20 @@ func (s *LoadSuite) Test_should_fail_if_keys_are_repeated() {
 }
 
 func (s *LoadSuite) Test_should_fail_if_values_are_invalid() {
+	lines := []string{
+		"---",
+		"test: [hello](world)", // this is a link
+		"---",
+		"[test]: http://url/b.jpg",
+	}
+
+	err := LoadCtx(s.ctx, &lines)
+	if err == nil {
+		s.Fail("Expected error, got nil")
+		return
+	}
+
+	s.Equal("value can only contain text: [hello](world)", err.Error())
 }
 
 func TestLoadSuite(t *testing.T) {
