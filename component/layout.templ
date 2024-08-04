@@ -13,6 +13,11 @@ templ Layout(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<script src="https://cdn.tailwindcss.com"></script>
 			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+			<style type="text/css">
+        li span.pb-5 {
+          padding-bottom: 0 !important;
+        }
+      </style>
 			<title>{ parser.ReadCtxSkipError(c, "title") }</title>
 		</head>
 		<body class="bg-zinc-800 flex text-neutral-100 m-10 justify-center">

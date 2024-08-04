@@ -2,11 +2,8 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
-	"html/template"
 	"wikinow/internal/parser"
 )
-
-var goTemplate = template.Must(template.New("inline").Parse("<p>{{ . }}</p>"))
 
 templ Parser(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	switch node.Type() {
@@ -22,7 +19,7 @@ templ Parser(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 		case "list", 
       "list_item", 
       "list_marker_minus", 
-      "list_marker_start", 
+      "list_marker_star", 
       "list_marker_plus", 
       "list_marker_dot":
 			@List(node, lines, c)

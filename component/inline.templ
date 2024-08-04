@@ -3,7 +3,10 @@ package component
 import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/internal/parser"
+	"html/template"
 )
+
+var goTemplate = template.Must(template.New("inline").Parse("<span class=\"leading-relaxed pb-5 inline-block\">{{ . }}</span>"))
 
 templ Inline(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	switch node.Type() {
