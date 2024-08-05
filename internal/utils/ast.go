@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"strings"
 	"wikinow/types"
 
@@ -147,8 +148,9 @@ func GetCode(lines []string, node *sitter.Node) string {
 
 func GetLanguage(node *sitter.Node, lines []string) types.Language {
 	for i := 0; i < int(node.NamedChildCount()); i++ {
-		if node.NamedChild(i).Type() == "info_language" {
-			return GetText(lines, node)
+      fmt.Println("info_language", node.NamedChild(i).Type())
+		if node.NamedChild(i).Type() == "info_string" {
+			return GetText(lines, node.NamedChild(i))
 		}
 	}
 	return ""
