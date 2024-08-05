@@ -14,16 +14,16 @@ templ Layout(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 			<script src="https://cdn.tailwindcss.com"></script>
 			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
 			<style type="text/css">
-        li span.pb-5 {
-          padding-bottom: 0 !important;
-        }
-        li ul {
-          margin-left: 2rem !important;
-        }
-        li ol {
-          margin-left: 2rem !important;
-        }
-      </style>
+      li span.pb-5 {
+        padding-bottom: 0 !important;
+      }
+      li ul {
+        margin-left: 2rem !important;
+      }
+      li ol {
+        margin-left: 2rem !important;
+      }
+    </style>
 			<title>{ parser.ReadCtxSkipError(c, "title") }</title>
 		</head>
 		<body class="bg-zinc-800 flex text-neutral-100 m-10 justify-center">
@@ -33,6 +33,8 @@ templ Layout(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 				@Parser(node, lines, c)
 			</main>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-core.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-go.min.js"></script>
 		</body>
 	</html>

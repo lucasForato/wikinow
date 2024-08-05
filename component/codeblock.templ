@@ -16,6 +16,10 @@ templ CodeBlock(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 						<code class="language-javascript">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
+					case types.TypeScript:
+						<code class="language-typescript">
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
+						</code>
 					case types.Go:
 						<code class="language-go">
 							{ utils.GetCode(*lines, node.NamedChild(i)) }

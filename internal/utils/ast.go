@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"strings"
 	"wikinow/types"
 
@@ -99,13 +98,13 @@ func SplitQuote(node *sitter.Node, lines []string) []string {
 }
 
 func NextSiblingIsBlockContinuation(node *sitter.Node) bool {
-  if node.NextSibling() == nil {
-    return false
-  }
-  if node.NextSibling().Type() == "block_continuation" {
-    return true
-  }
-  return false
+	if node.NextSibling() == nil {
+		return false
+	}
+	if node.NextSibling().Type() == "block_continuation" {
+		return true
+	}
+	return false
 }
 
 func GetText(lines []string, node *sitter.Node) string {
@@ -148,7 +147,6 @@ func GetCode(lines []string, node *sitter.Node) string {
 
 func GetLanguage(node *sitter.Node, lines []string) types.Language {
 	for i := 0; i < int(node.NamedChildCount()); i++ {
-      fmt.Println("info_language", node.NamedChild(i).Type())
 		if node.NamedChild(i).Type() == "info_string" {
 			return GetText(lines, node.NamedChild(i))
 		}
