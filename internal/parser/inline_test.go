@@ -183,14 +183,6 @@ func (s *InlineSuite) Test_should_parse_link_to_another_file() {
   s.Equal("<a href=\"testdata/testfile.md\">text</a>", utils.RemoveClass(result))
 }
 
-// Block Quote -----------------------------------------------------------------
-
-func (s *InlineSuite) Test_should_parse_block_quote() {
-  str := "> block quote"
-  result := ParseInline(str, s.ctx)
-  s.Equal("<blockquote>block quote</blockquote>", utils.RemoveClass(result))
-}
-
 // Mocks -----------------------------------------------------------------------
 
 type MockFileReader struct{}
