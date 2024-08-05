@@ -12,8 +12,6 @@ templ BlockQuote(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 			@Quote(node, lines, c)
 		case "block_quote_marker":
 			@Parser(node.NextNamedSibling(), lines, c)
-		case "block_continuation":
-			@Quote(node.NextNamedSibling(), lines, c)
 	}
 }
 
@@ -26,8 +24,9 @@ templ Quote(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 						{ quote }
 						<br/>
 					}
-				case "block_continuation":
-					<br/>
+					if utils.NextSiblingIsBlockContinuation(node.Child(i)) {
+						<br/>
+					}
 			}
 		}
 	</blockquote>

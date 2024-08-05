@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"strings"
 	"wikinow/types"
 
@@ -95,8 +94,17 @@ func SplitQuote(node *sitter.Node, lines []string) []string {
 		splits = append(splits, text[:index])
 		text = text[index+1:]
 	}
-	fmt.Println(splits)
 	return splits
+}
+
+func NextSiblingIsBlockContinuation(node *sitter.Node) bool {
+  if node.NextSibling() == nil {
+    return false
+  }
+  if node.NextSibling().Type() == "block_continuation" {
+    return true
+  }
+  return false
 }
 
 func GetText(lines []string, node *sitter.Node) string {
