@@ -17,6 +17,12 @@ templ Layout(node *sitter.Node, lines *[]string, c *parser.Ctx) {
         li span.pb-5 {
           padding-bottom: 0 !important;
         }
+        li ul {
+          margin-left: 2rem !important;
+        }
+        li ol {
+          margin-left: 2rem !important;
+        }
       </style>
 			<title>{ parser.ReadCtxSkipError(c, "title") }</title>
 		</head>

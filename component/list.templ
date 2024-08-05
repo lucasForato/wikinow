@@ -3,12 +3,13 @@ package component
 import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/internal/parser"
+	"wikinow/internal/utils"
 )
 
 templ List(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	switch node.Type() {
 		case "list":
-			if node.Child(0).Child(0).Type() == "list_marker_dot" {
+			if utils.IsOrderedList(node) {
 				<ol class="list-decimal list-inside">
 					for i := 0; i < int(node.NamedChildCount()); i++ {
 						@Parser(node.NamedChild(i), lines, c)
@@ -22,9 +23,16 @@ templ List(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 				</ul>
 			}
 		case "list_item":
-			<li>
-				@Parser(node.NamedChild(0), lines, c)
-			</li>
+			if utils.HasNestedList(node) {
+				<li>
+					@Parser(node.NamedChild(0), lines, c)
+					@Parser(utils.GetNestedListNode(node), lines, c)
+				</li>
+			} else {
+				<li>
+					@Parser(node.NamedChild(0), lines, c)
+				</li>
+			}
 		case "list_marker_minus":
 			@Parser(node.NextNamedSibling(), lines, c)
 		case "list_marker_star":
@@ -32,6 +40,8 @@ templ List(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 		case "list_marker_plus":
 			@Parser(node.NextNamedSibling(), lines, c)
 		case "list_marker_dot":
+			@Parser(node.NextNamedSibling(), lines, c)
+		case "list_marker_parenthesis":
 			@Parser(node.NextNamedSibling(), lines, c)
 	}
 }

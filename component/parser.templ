@@ -21,6 +21,7 @@ templ Parser(node *sitter.Node, lines *[]string, c *parser.Ctx) {
       "list_marker_minus", 
       "list_marker_star", 
       "list_marker_plus", 
+      "list_marker_parenthesis",
       "list_marker_dot":
 			@List(node, lines, c)
 		case "atx_heading", 
