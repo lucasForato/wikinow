@@ -14,7 +14,8 @@ templ Parser(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 		case "thematic_break":
 			<hr class="my-4"/>
 		case "block_quote", 
-      "block_quote_marker":
+      "block_quote_marker",
+      "block_continuation":
 			@BlockQuote(node, lines, c)
 		case "list", 
       "list_item", 

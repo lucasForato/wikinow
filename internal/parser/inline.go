@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
-	sitter "github.com/smacker/go-tree-sitter"
 )
 
 func ParseInline(str string, c *Ctx) template.HTML {
@@ -25,44 +24,6 @@ func ParseInline(str string, c *Ctx) template.HTML {
 	str = parseLinkToAnotherFile(str)
 
 	return template.HTML(str)
-}
-
-func GetText(lines []string, node *sitter.Node) string {
-	start := node.StartPoint()
-	end := node.EndPoint()
-
-	startRow := start.Row
-	endRow := end.Row
-	startCol := start.Column
-	endCol := end.Column
-	if startRow == endRow {
-		return lines[startRow][startCol:endCol]
-	}
-	text := lines[startRow][startCol:]
-	for i := startRow + 1; i < endRow; i++ {
-		text += lines[i]
-	}
-	text += lines[endRow][:endCol]
-	return text
-}
-
-func GetCode(lines []string, node *sitter.Node) string {
-	start := node.StartPoint()
-	end := node.EndPoint()
-
-	startRow := start.Row
-	startColumn := start.Column
-	endRow := end.Row
-	endColumn := end.Column
-	if startRow == endRow {
-		return lines[startRow][startColumn:endColumn]
-	}
-	allLines := lines[startRow : endRow+1]
-	allLines[0] = allLines[0][startColumn:]
-	allLines[len(allLines)-1] = allLines[len(allLines)-1][:endColumn]
-
-	text := strings.Join(allLines, "\n")
-	return text
 }
 
 func parseBold(str string) string {

@@ -6,8 +6,8 @@ import (
 	"path"
 	"strings"
 	"wikinow/component"
-	"wikinow/utils"
-  "wikinow/internal/parser"
+	"wikinow/internal/parser"
+	"wikinow/internal/utils"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"

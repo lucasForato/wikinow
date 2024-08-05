@@ -3,6 +3,7 @@ package component
 import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/internal/parser"
+	"wikinow/internal/utils"
 )
 
 templ BlockQuote(node *sitter.Node, lines *[]string, c *parser.Ctx) {
@@ -11,13 +12,23 @@ templ BlockQuote(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 			@Quote(node, lines, c)
 		case "block_quote_marker":
 			@Parser(node.NextNamedSibling(), lines, c)
+		case "block_continuation":
+			@Quote(node.NextNamedSibling(), lines, c)
 	}
 }
 
 templ Quote(node *sitter.Node, lines *[]string, c *parser.Ctx) {
-	<blockquote class="italic flex flex-row font-semibold text-amber-600">
-		<span>❝</span>
-		@Parser(node.NamedChild(0), lines, c)
-		<span>❝</span>
+	<blockquote class="p-4 my-4 border-s-8 border-[#b16286] bg-zinc-700 rounded-r">
+		for i := 0; i < int(node.ChildCount()); i++ {
+			switch node.Child(i).Type() {
+				case "paragraph":
+					for _, quote := range utils.SplitQuote(node.Child(i), *lines) {
+						{ quote }
+						<br/>
+					}
+				case "block_continuation":
+					<br/>
+			}
+		}
 	</blockquote>
 }

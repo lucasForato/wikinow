@@ -2,63 +2,63 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
-	"wikinow/utils"
 	"wikinow/types"
+	"wikinow/internal/utils"
 	"wikinow/internal/parser"
 )
 
 templ CodeBlock(node *sitter.Node, lines *[]string, c *parser.Ctx) {
-	<pre class="bg-gray-800 p-4 my-4">
+	<pre class="bg-zinc-700 rounded p-4 my-4">
 		for i := 0; i < int(node.NamedChildCount()); i++ {
 			if node.NamedChild(i).Type() == "code_fence_content" {
 				switch utils.GetLanguage(node, *lines) {
 					case types.JavaScript:
 						<code class="language-javascript">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.Go:
 						<code class="language-go">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.Python:
 						<code class="language-python">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.C:
 						<code class="language-c">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.Cpp:
 						<code class="language-cpp">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.CSharp:
 						<code class="language-csharp">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.Ruby:
 						<code class="language-ruby">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.PHP:
 						<code class="language-php">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.HTML:
 						<code class="language-html">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.CSS:
 						<code class="language-css">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.Rust:
 						<code class="language-rust">
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					default:
 						<code>
-							{ parser.GetCode(*lines, node.NamedChild(i)) }
+							{ utils.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 				}
 			}

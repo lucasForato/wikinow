@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"wikinow/internal/parser"
 
 	log "github.com/sirupsen/logrus"
 	sitter "github.com/smacker/go-tree-sitter"
@@ -25,7 +24,7 @@ func ConvertTreeToJson(node *sitter.Node, lines []string) string {
 	}
 
 	maps[node.Type()] = map[string]interface{}{
-		"content":  parser.GetText(lines, node),
+		"content":  GetText(lines, node),
 		"children": children,
 	}
 
