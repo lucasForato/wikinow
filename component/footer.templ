@@ -6,7 +6,7 @@ import (
 )
 
 templ Footer(c *parser.Ctx) {
-	<footer>
+	<footer class="flex flex-col w-[800px]">
 		<hr class="my-4"/>
 		<ol class="list-decimal list-inside">
 			for k, v := range (*c).Value(parser.MapKey).(map[string]string) {
