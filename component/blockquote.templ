@@ -16,7 +16,7 @@ templ BlockQuote(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 }
 
 templ Quote(node *sitter.Node, lines *[]string, c *parser.Ctx) {
-	<blockquote class="p-4 my-4 border-s-8 border-[#b16286] bg-zinc-700 rounded-r">
+	<blockquote class="p-4 my-4 border-s-8 border-[#b16286] bg-[#2D2D2D] rounded-r">
 		for i := 0; i < int(node.ChildCount()); i++ {
 			switch node.Child(i).Type() {
 				case "paragraph":

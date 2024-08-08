@@ -140,7 +140,7 @@ func parseVariable(str string, c *Ctx) string {
 
 func parseInlineCode(str string) string {
 	re := regexp.MustCompile("`([^`]+)`")
-	str = re.ReplaceAllString(str, `<code class="bg-zinc-700 p-1 rounded text-amber-600">$1</code>`)
+	str = re.ReplaceAllString(str, `<code class="bg-[#2D2D2D] p-1 rounded text-amber-600">$1</code>`)
 	return str
 }
 
@@ -220,7 +220,7 @@ func parseCodeBlock(str string, c *Ctx, reader FileReader) string {
 
 		code := strings.Join(lines, "\n")
 
-		html := fmt.Sprintf(`<pre class="bg-zinc-700 p-1 rounded text-amber-600"><code class="%s">%s</code></pre>`, getFileType(path), code)
+		html := fmt.Sprintf(`<pre class="bg-[#2D2D2D] p-1 rounded text-amber-600"><code class="%s">%s</code></pre>`, getFileType(path), code)
 		return html
 	}
 	return str

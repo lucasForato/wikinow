@@ -26,7 +26,7 @@ templ Table(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 				</tr>
 			</thead>
 		case "pipe_table_row":
-			<tr class="hover:bg-zinc-700">
+			<tr class="hover:bg-[#2D2D2D]">
 				for i := 0; i < int(node.NamedChildCount()); i++ {
 					<td class="px-4 py-2 border-l text-left border-b border-zinc-500">
 						{ strings.TrimSpace(utils.GetText(*lines, node.NamedChild(i))) }

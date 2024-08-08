@@ -8,7 +8,7 @@ import (
 )
 
 templ CodeBlock(node *sitter.Node, lines *[]string, c *parser.Ctx) {
-	<pre class="bg-zinc-700 rounded p-4 my-4">
+	<pre class="bg-[#2D2D2D] rounded p-4 my-4">
 		for i := 0; i < int(node.NamedChildCount()); i++ {
 			if node.NamedChild(i).Type() == "code_fence_content" {
 				switch utils.GetLanguage(node, *lines) {
