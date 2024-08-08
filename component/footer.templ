@@ -1,0 +1,19 @@
+package component
+
+import (
+	"wikinow/internal/parser"
+	"strings"
+)
+
+templ Footer(c *parser.Ctx) {
+	<footer>
+		<hr class="my-4"/>
+		<ol class="list-decimal list-inside">
+			for k, v := range (*c).Value(parser.MapKey).(map[string]string) {
+				if strings.Contains(k, "^") {
+					<li class="text-amber-500 font-semibold" id={ strings.TrimLeft(k, "^") }><span class="text-white font-normal">{ v }</span></li>
+				}
+			}
+		</ol>
+	</footer>
+}

@@ -14,17 +14,17 @@ type Ctx = context.Context
 
 type contextKey string
 
-const mapKey contextKey = "storageContext"
+const MapKey contextKey = "storageContext"
 
 func CreateCtx() *Ctx {
 	store := context.Background()
 	stringMap := map[string]string{}
-	store = context.WithValue(store, mapKey, stringMap)
+	store = context.WithValue(store, MapKey, stringMap)
 	return &store
 }
 
 func ReadCtx(c *Ctx, key string) (string, bool) {
-	stringMap, ok := (*c).Value(mapKey).(map[string]string)
+	stringMap, ok := (*c).Value(MapKey).(map[string]string)
 	if !ok {
 		return "", ok
 	}
@@ -98,27 +98,6 @@ func LoadCtx(c *Ctx, lines *[]string) error {
 		UpdateCtx(c, key, value)
 	}
 
-	// regex to find footnote definitions
-	footnoteRe := regexp.MustCompile(`\[^.*?]\s`)
-	for _, key := range *lines {
-		match := footnoteRe.FindStringSubmatch(key)
-		if match == nil {
-			continue
-		}
-		key = strings.Trim(match[1], " ")
-		value := strings.Trim(match[2], " ")
-		if _, ok := ReadCtx(c, key); ok {
-			return errors.New(fmt.Sprintf("Duplicate key: %s", key))
-		}
-		parsedValue := ParseInline(value, c, nil)
-		if parsedValue != template.HTML(value) {
-			return errors.New(fmt.Sprintf("value can only contain text: %s", value))
-		}
-
-		keys = append(keys, key)
-		UpdateCtx(c, key, value)
-	}
-
 	if slices.Contains(keys, "title") == false || len(keys) == 0 {
 		return errors.New("title must be set")
 	}
@@ -135,7 +114,7 @@ func UpdateCtx(c *Ctx, key, value string) error {
 		return errors.New(fmt.Sprintf("Duplicate key: %s", key))
 	}
 
-	stringMap, ok := (*c).Value(mapKey).(map[string]string)
+	stringMap, ok := (*c).Value(MapKey).(map[string]string)
 	if !ok {
 		stringMap = make(map[string]string)
 	}
@@ -146,13 +125,13 @@ func UpdateCtx(c *Ctx, key, value string) error {
 	}
 	newMap[key] = value
 
-	*c = context.WithValue(*c, mapKey, newMap)
+	*c = context.WithValue(*c, MapKey, newMap)
 	return nil
 }
 
 func PrintCtx(c *Ctx) {
 	fmt.Println("Store {")
-	for k, v := range (*c).Value(mapKey).(map[string]string) {
+	for k, v := range (*c).Value(MapKey).(map[string]string) {
 		fmt.Println("  ", k, ":", v)
 	}
 	fmt.Println("}")

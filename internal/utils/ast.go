@@ -2,6 +2,7 @@ package utils
 
 import (
 	"html/template"
+	"regexp"
 	"strings"
 	"wikinow/types"
 
@@ -160,5 +161,15 @@ func IsLanguage(node *sitter.Node, language string, lines []string) bool {
 }
 
 func RemoveHashtags(html template.HTML) template.HTML {
-  return template.HTML(strings.Replace(string(html), "#", "", -1))
+	return template.HTML(strings.Replace(string(html), "#", "", -1))
+}
+
+func IsFootnoteRef(node *sitter.Node, lines *[]string) bool {
+	str := GetText(*lines, node)
+	re := regexp.MustCompile(`\[\^([^\]]+)\]:`)
+	match := re.FindStringSubmatch(str)
+	if len(match) > 0 {
+		return true
+	}
+	return false
 }

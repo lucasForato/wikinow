@@ -18,6 +18,8 @@ templ Inline(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 		case "inline":
 			if node.Parent().Type() == "atx_heading" {
 				@templ.FromGoHTML(goTemplate, parser.ParseInline(utils.GetText(*lines, node), c, &[]parser.Extra{"title"}))
+			} else if utils.IsFootnoteRef(node, lines) {
+				// nothing should be rendered
 			} else {
 				@templ.FromGoHTML(goTemplate, parser.ParseInline(utils.GetText(*lines, node), c, nil))
 			}

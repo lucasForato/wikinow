@@ -13,8 +13,9 @@ import (
 )
 
 type Extra string
+
 const (
-  Title Extra = "title"
+	Title Extra = "title"
 )
 
 func ParseInline(str string, c *Ctx, extra *[]Extra) template.HTML {
@@ -28,12 +29,13 @@ func ParseInline(str string, c *Ctx, extra *[]Extra) template.HTML {
 	str = parseInlineCode(str)
 	str = parseCodeBlock(str, c, new(RealFileReader))
 	str = parseLinkToAnotherFile(str)
+	str = parseRefFootnote(str)
 
-  if extra != nil {
-    if slices.Contains(*extra, "title") {
-      str = parseTitle(str)
-    }
-  }
+	if extra != nil {
+		if slices.Contains(*extra, "title") {
+			str = parseTitle(str)
+		}
+	}
 
 	return template.HTML(str)
 }
@@ -100,6 +102,16 @@ func parseRefLink(str string, c *Ctx) string {
 		return str
 	}
 	str = re.ReplaceAllString(str, `<a href="`+value+`" class="text-amber-600" target="_blank">$1</a>`)
+	return str
+}
+
+func parseRefFootnote(str string) string {
+  re := regexp.MustCompile(`\[\^([^\]]+)\]`)
+  match := re.FindStringSubmatch(str)
+	if len(match) == 0 {
+		return str
+	}
+	str = re.ReplaceAllString(str, `<a href="#`+match[1]+`" class="text-amber-600">$1</a>`)
 	return str
 }
 
@@ -255,5 +267,5 @@ func parseLinkToAnotherFile(str string) string {
 }
 
 func parseTitle(str string) string {
-  return strings.Replace(str, "#", "", -1)
+	return strings.Replace(str, "#", "", -1)
 }

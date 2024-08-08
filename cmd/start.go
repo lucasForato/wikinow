@@ -72,6 +72,7 @@ func handler(ctx echo.Context) error {
 	if err := parser.LoadCtx(c, &lines); err != nil {
 		return Render(ctx, http.StatusInternalServerError, component.Error(err))
 	}
+  parser.PrintCtx(c)
 
 	tree, err := astParser.ParseCtx(context.Background(), nil, sourceCode)
 	if err != nil {
@@ -79,8 +80,8 @@ func handler(ctx echo.Context) error {
 	}
 
 	root := tree.RootNode()
-	str := utils.ConvertTreeToJson(root, lines)
-	utils.JsonPrettyPrint(str)
+	// str := utils.ConvertTreeToJson(root, lines)
+	// utils.JsonPrettyPrint(str)
 
 	return Render(ctx, http.StatusOK, component.Layout(root, &lines, c))
 }

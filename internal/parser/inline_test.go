@@ -179,7 +179,7 @@ func (s *InlineSuite) Test_should_parse_link_to_another_file() {
     return
   }
   str := "$link(text, testdata/testfile.md)"
-  result := ParseInline(str, s.ctx)
+  result := ParseInline(str, s.ctx, nil)
   s.Equal("<a href=\"testdata/testfile.md\">text</a>", utils.RemoveClass(result))
 }
 
