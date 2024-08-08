@@ -67,7 +67,7 @@ func LoadCtx(c *Ctx, lines *[]string) error {
 				if _, ok := ReadCtx(c, key); ok {
 					return errors.New(fmt.Sprintf("Duplicate key: %s", key))
 				}
-				parsedValue := ParseInline(value, c)
+				parsedValue := ParseInline(value, c, nil)
 				if parsedValue != template.HTML(value) {
 					return errors.New(fmt.Sprintf("value can only contain text: %s", value))
 				}
@@ -89,7 +89,28 @@ func LoadCtx(c *Ctx, lines *[]string) error {
 		if _, ok := ReadCtx(c, key); ok {
 			return errors.New(fmt.Sprintf("Duplicate key: %s", key))
 		}
-		parsedValue := ParseInline(value, c)
+		parsedValue := ParseInline(value, c, nil)
+		if parsedValue != template.HTML(value) {
+			return errors.New(fmt.Sprintf("value can only contain text: %s", value))
+		}
+
+		keys = append(keys, key)
+		UpdateCtx(c, key, value)
+	}
+
+	// regex to find footnote definitions
+	footnoteRe := regexp.MustCompile(`\[^.*?]\s`)
+	for _, key := range *lines {
+		match := footnoteRe.FindStringSubmatch(key)
+		if match == nil {
+			continue
+		}
+		key = strings.Trim(match[1], " ")
+		value := strings.Trim(match[2], " ")
+		if _, ok := ReadCtx(c, key); ok {
+			return errors.New(fmt.Sprintf("Duplicate key: %s", key))
+		}
+		parsedValue := ParseInline(value, c, nil)
 		if parsedValue != template.HTML(value) {
 			return errors.New(fmt.Sprintf("value can only contain text: %s", value))
 		}
@@ -106,7 +127,7 @@ func LoadCtx(c *Ctx, lines *[]string) error {
 }
 
 func UpdateCtx(c *Ctx, key, value string) error {
-	if parsedValue := ParseInline(value, c); parsedValue != template.HTML(value) {
+	if parsedValue := ParseInline(value, c, nil); parsedValue != template.HTML(value) {
 		return errors.New(fmt.Sprintf("value can only contain text: %s", value))
 	}
 

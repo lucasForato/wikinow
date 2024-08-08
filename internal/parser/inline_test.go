@@ -27,13 +27,13 @@ func TestInlineSuite(t *testing.T) {
 
 func (s *InlineSuite) Test_should_parse_bold() {
 	str := "**bold**"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<strong>bold</strong>", utils.RemoveClass(result))
 }
 
 func (s *InlineSuite) Test_should_parse_bold_twice() {
 	str := "**1** **2**"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<strong>1</strong> <strong>2</strong>", utils.RemoveClass(result))
 }
 
@@ -41,13 +41,13 @@ func (s *InlineSuite) Test_should_parse_bold_twice() {
 
 func (s *InlineSuite) Test_should_parse_italic() {
 	str := "*italic*"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<i>italic</i>", utils.RemoveClass(result))
 }
 
 func (s *InlineSuite) Test_should_parse_italic_twice() {
 	str := "*italic* *italic*"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<i>italic</i> <i>italic</i>", utils.RemoveClass(result))
 }
 
@@ -55,26 +55,26 @@ func (s *InlineSuite) Test_should_parse_italic_twice() {
 
 func (s *InlineSuite) Test_should_parse_bold_italic() {
 	str := "***bold italic***"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	// This gets fixed when it is rendered, dont worry :)
 	s.Equal("<strong><i>bold italic</strong></i>", utils.RemoveClass(result))
 }
 
 func (s *InlineSuite) Test_should_parse_bold_italic_twice() {
 	str := "***bold italic*** ***bold italic***"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<strong><i>bold italic</strong></i> <strong><i>bold italic</strong></i>", utils.RemoveClass(result))
 }
 
 func (s *InlineSuite) Test_should_parse_bold_italic_underline() {
 	str := "___bold italic underline___"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<strong><i>bold italic underline</strong></i>", utils.RemoveClass(result))
 }
 
 func (s *InlineSuite) Test_should_parse_bold_italic_underline_twice() {
 	str := "___bold italic underline___ ___bold italic underline___"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<strong><i>bold italic underline</strong></i> <strong><i>bold italic underline</strong></i>", utils.RemoveClass(result))
 }
 
@@ -82,7 +82,7 @@ func (s *InlineSuite) Test_should_parse_bold_italic_underline_twice() {
 
 func (s *InlineSuite) Test_should_parse_image() {
 	str := "![alt](src)"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<img src=\"src\" alt=\"alt\" />", utils.RemoveClass(result))
 }
 
@@ -93,7 +93,7 @@ func (s *InlineSuite) Test_should_parse_image_by_reference() {
 	LoadCtx(s.ctx, &lines)
 
 	str := "![alt][1]"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 
 	s.Equal("<img src=\"src\" alt=\"alt\" />", utils.RemoveClass(result))
 }
@@ -102,7 +102,7 @@ func (s *InlineSuite) Test_should_parse_image_by_reference() {
 
 func (s *InlineSuite) Test_should_parse_link() {
 	str := "[text](href)"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<a href=\"href\" target=\"_blank\">text</a>", utils.RemoveClass(result))
 }
 
@@ -112,7 +112,7 @@ func (s *InlineSuite) Test_should_parse_link_by_reference() {
 	}
 	LoadCtx(s.ctx, &lines)
 	str := "[text][1]"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<a href=\"href\" target=\"_blank\">text</a>", utils.RemoveClass(result))
 }
 
@@ -127,7 +127,7 @@ func (s *InlineSuite) Test_should_parse_variable() {
 	LoadCtx(s.ctx, &lines)
 
 	str := "this is a $var(test)"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 
 	s.Equal("this is a test", utils.RemoveClass(result))
 }
@@ -136,13 +136,13 @@ func (s *InlineSuite) Test_should_parse_variable() {
 
 func (s *InlineSuite) Test_should_parse_inline_code() {
 	str := "`code`"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<code>code</code>", utils.RemoveClass(result))
 }
 
 func (s *InlineSuite) Test_should_parse_inline_code_twice() {
 	str := "`code` `code`"
-	result := ParseInline(str, s.ctx)
+	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<code>code</code> <code>code</code>", utils.RemoveClass(result))
 }
 

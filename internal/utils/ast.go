@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"html/template"
 	"strings"
 	"wikinow/types"
 
@@ -156,4 +157,8 @@ func GetLanguage(node *sitter.Node, lines []string) types.Language {
 
 func IsLanguage(node *sitter.Node, language string, lines []string) bool {
 	return GetText(lines, node) == language
+}
+
+func RemoveHashtags(html template.HTML) template.HTML {
+  return template.HTML(strings.Replace(string(html), "#", "", -1))
 }

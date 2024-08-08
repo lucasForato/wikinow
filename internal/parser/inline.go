@@ -5,13 +5,19 @@ import (
 	"html/template"
 	"os"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func ParseInline(str string, c *Ctx) template.HTML {
+type Extra string
+const (
+  Title Extra = "title"
+)
+
+func ParseInline(str string, c *Ctx, extra *[]Extra) template.HTML {
 	str = parseBold(str)
 	str = parseItalic(str)
 	str = parseImage(str)
@@ -22,6 +28,12 @@ func ParseInline(str string, c *Ctx) template.HTML {
 	str = parseInlineCode(str)
 	str = parseCodeBlock(str, c, new(RealFileReader))
 	str = parseLinkToAnotherFile(str)
+
+  if extra != nil {
+    if slices.Contains(*extra, "title") {
+      str = parseTitle(str)
+    }
+  }
 
 	return template.HTML(str)
 }
@@ -240,4 +252,8 @@ func parseLinkToAnotherFile(str string) string {
 
 	}
 	return str
+}
+
+func parseTitle(str string) string {
+  return strings.Replace(str, "#", "", -1)
 }

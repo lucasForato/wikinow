@@ -16,6 +16,10 @@ templ Inline(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 				@Parser(node.Child(i), lines, c)
 			}
 		case "inline":
-			@templ.FromGoHTML(goTemplate, parser.ParseInline(utils.GetText(*lines, node), c))
+			if node.Parent().Type() == "atx_heading" {
+				@templ.FromGoHTML(goTemplate, parser.ParseInline(utils.GetText(*lines, node), c, &[]parser.Extra{"title"}))
+			} else {
+				@templ.FromGoHTML(goTemplate, parser.ParseInline(utils.GetText(*lines, node), c, nil))
+			}
 	}
 }
