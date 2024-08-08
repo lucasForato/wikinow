@@ -80,8 +80,8 @@ func handler(ctx echo.Context) error {
 	}
 
 	root := tree.RootNode()
-	// str := utils.ConvertTreeToJson(root, lines)
-	// utils.JsonPrettyPrint(str)
+	str := utils.ConvertTreeToJson(root, lines)
+	utils.JsonPrettyPrint(str)
 
 	return Render(ctx, http.StatusOK, component.Layout(root, &lines, c))
 }

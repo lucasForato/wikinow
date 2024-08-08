@@ -43,5 +43,7 @@ templ Parser(node *sitter.Node, lines *[]string, c *parser.Ctx) {
       "pipe_table_header", 
       "pipe_table_row":
 			@Table(node, lines, c)
+		case "indented_code_block":
+			@IndentedCodeBlock(node, lines, c)
 	}
 }
