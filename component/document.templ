@@ -6,9 +6,7 @@ import (
 )
 
 templ Document(node *sitter.Node, lines *[]string, c *parser.Ctx) {
-	<div>
-		for i := 0; i < int(node.NamedChildCount()); i++ {
-			@Parser(node.NamedChild(i), lines, c)
-		}
-	</div>
+	for i := 0; i < int(node.NamedChildCount()); i++ {
+		@Parser(node.NamedChild(i), lines, c)
+	}
 }
