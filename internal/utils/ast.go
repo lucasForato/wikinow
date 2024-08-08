@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"regexp"
 	"strings"
-	"wikinow/types"
+	"wikinow/internal/types"
 
 	sitter "github.com/smacker/go-tree-sitter"
 )
