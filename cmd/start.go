@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"context"
+	"io/fs"
 	"net/http"
+	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"wikinow/component"
 	"wikinow/internal/parser"
@@ -72,7 +75,21 @@ func handler(ctx echo.Context) error {
 	if err := parser.LoadCtx(c, &lines); err != nil {
 		return Render(ctx, http.StatusInternalServerError, component.Error(err))
 	}
-  parser.PrintCtx(c)
+
+	path, err := os.Getwd()
+	if err != nil {
+		log.Fatal("Error while retrieving the current directory.")
+	}
+
+	rootPath := filepath.Join(path, "wiki")
+	if err := os.MkdirAll(rootPath, fs.ModePerm); err != nil {
+		log.WithFields(log.Fields{
+			"directory": rootPath,
+		}).Fatal("Error creating directory.")
+	}
+
+  treeRoot := utils.GetFileTree(rootPath)
+  treeRoot.PrintTreeAsJSON()
 
 	tree, err := astParser.ParseCtx(context.Background(), nil, sourceCode)
 	if err != nil {
@@ -80,10 +97,10 @@ func handler(ctx echo.Context) error {
 	}
 
 	root := tree.RootNode()
-	str := utils.ConvertTreeToJson(root, lines)
-	utils.JsonPrettyPrint(str)
+	// str := utils.ConvertTreeToJson(root, lines)
+	// utils.JsonPrettyPrint(str)
 
-	return Render(ctx, http.StatusOK, component.Layout(root, &lines, c))
+	return Render(ctx, http.StatusOK, component.Layout(root, &lines, treeRoot, c))
 }
 
 func handlePath(ctx echo.Context) string {
