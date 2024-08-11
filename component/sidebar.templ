@@ -9,7 +9,7 @@ var anchor = template.Must(template.New("inline").Parse("{{ . }}"))
 
 templ Sidebar(fileTree *utils.TreeNode) {
 	<div
-		class="relative flex w-full max-w-[20rem] grow flex-col bg-neutral-800 bg-clip-border py-1 pl-2 h-[100vh] overflow-y-auto"
+		class="flex flex-col bg-neutral-800 py-1 pl-2 pr-5 fixed h-screen"
 	>
 		<div class="p-4 mb-2">
 			<h5 class="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">

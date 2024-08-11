@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -19,6 +20,7 @@ const (
 
 type TreeNode struct {
 	Title        string       `json:"title"`
+	Order        int          `json:"order"`
 	Type         TreeNodeType `json:"type"`
 	Path         string       `json:"path"`
 	RelativePath string       `json:"relativePath"`
@@ -63,15 +65,20 @@ func buildTree(rootPath string, parentNode *TreeNode, currentPath string) error 
 				return err
 			}
 		} else {
-			title, err := GetFileTitle(node.Path)
+			title, order, err := GetFileTitleAndOrder(node.Path)
 			if err != nil {
 				return err
 			}
 			node.Type = File
 			node.Title = title
+			node.Order = order
 		}
 
 		// Append the node to the parent
+		sort.Slice(parentNode.Children, func(i, j int) bool {
+			return parentNode.Children[i].Order < parentNode.Children[j].Order
+		})
+
 		parentNode.Children = append(parentNode.Children, node)
 	}
 
@@ -92,6 +99,6 @@ func ParseAnchor(node TreeNode) template.HTML {
 }
 
 func GetLevelClasses(level int) string {
-  str := fmt.Sprintf("%dpx", (level * 15))
-  return fmt.Sprintf("ml-[%s] border-l-2 gap-0.5 border-neutral-700 flex flex-col", str)
+	str := fmt.Sprintf("%dpx", (level * 15))
+	return fmt.Sprintf("ml-[%s] border-l-2 gap-0.5 border-neutral-700 flex flex-col", str)
 }
