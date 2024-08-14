@@ -147,6 +147,16 @@ func GetCode(lines []string, node *sitter.Node) string {
 	return text
 }
 
+func GetIndentedCode(lines []string, node *sitter.Node) string {
+	lineCount := int(node.ChildCount())
+	content := GetText(lines, node)
+	indentText := GetText(lines, node.NamedChild(0))
+	content = strings.Replace(content, indentText, "\n", lineCount)
+  content = strings.Replace(content, "\n", "", 1)
+  
+	return content
+}
+
 func GetLanguage(node *sitter.Node, lines []string) types.Language {
 	for i := 0; i < int(node.NamedChildCount()); i++ {
 		if node.NamedChild(i).Type() == "info_string" {

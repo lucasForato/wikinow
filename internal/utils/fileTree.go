@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -14,28 +15,31 @@ import (
 type TreeNodeType string
 
 const (
+	Root TreeNodeType = "Root"
 	Dir  TreeNodeType = "Dir"
 	File TreeNodeType = "File"
 )
 
 type TreeNode struct {
 	Title        string       `json:"title"`
-	Order        int          `json:"order"`
+	Order        int64        `json:"order"`
 	Type         TreeNodeType `json:"type"`
 	Path         string       `json:"path"`
 	RelativePath string       `json:"relativePath"`
 	Children     []TreeNode   `json:"children,omitempty"`
 }
 
-func GetFileTree(rootPath string) *TreeNode {
+func GetFileTree(rootPath string, currentPath string) *TreeNode {
 	rootNode := &TreeNode{
 		Title:    "root",
-		Type:     Dir,
+		Type:     Root,
 		Path:     rootPath,
+    RelativePath: "./",
 		Children: []TreeNode{},
 	}
 
-	err := buildTree(rootPath, rootNode, rootPath)
+  dir := filepath.Dir(rootPath+currentPath)
+	err := buildTree(rootNode, rootPath, dir)
 	if err != nil {
 		log.Fatal("Error while building the file tree:", err)
 	}
@@ -43,7 +47,7 @@ func GetFileTree(rootPath string) *TreeNode {
 	return rootNode
 }
 
-func buildTree(rootPath string, parentNode *TreeNode, currentPath string) error {
+func buildTree(parentNode *TreeNode, currentPath string, directory string) error {
 	entries, err := os.ReadDir(currentPath)
 	if err != nil {
 		return err
@@ -51,16 +55,33 @@ func buildTree(rootPath string, parentNode *TreeNode, currentPath string) error 
 
 	for _, entry := range entries {
 		path := filepath.Join(currentPath, entry.Name())
-		relativePath, err := filepath.Rel(rootPath, path)
-		node := TreeNode{
-			Path:         path,
-			RelativePath: strings.TrimRight(relativePath, ".md"),
-			Children:     []TreeNode{},
+		relativePath, err := filepath.Rel(directory, path)
+		if err != nil {
+			return errors.New("Error while getting relative path")
 		}
 
-		if entry.IsDir() {
+		node := TreeNode{
+			Path:     path,
+			Children: []TreeNode{},
+		}
+
+		if strings.Contains(relativePath, ".md") {
+			node.RelativePath = strings.TrimRight(relativePath, ".md")
+		} else {
+			node.RelativePath = strings.Join([]string{relativePath, "/"}, "")
+		}
+
+		if entry.Name() == "main.md" {
+			title, order, err := GetFileTitleAndOrder(path)
+			if err != nil {
+				return err
+			}
+			(*parentNode).Title = title
+			(*parentNode).Order = order
+
+		} else if entry.IsDir() {
 			node.Type = Dir
-			err = buildTree(rootPath, &node, path)
+			err = buildTree(&node, path, directory)
 			if err != nil {
 				return err
 			}

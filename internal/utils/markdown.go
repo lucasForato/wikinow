@@ -3,25 +3,25 @@ package utils
 import (
 	"errors"
 	"os"
-	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func ReadMarkdown(path string) []string {
+func ReadMarkdown(path string) ([]string, error) {
 	mainInput, err := os.ReadFile(path)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"source": path,
-		}).Fatal("Error reading main documentation file.")
+		}).Error(err)
+    return nil, err
 	}
 
 	file := string(mainInput)
-	return strings.Split(file, "\n")
+	return strings.Split(file, "\n"), nil
 }
 
-func GetFileTitleAndOrder(path string) (string, int, error) {
+func GetFileTitleAndOrder(path string) (string, int64, error) {
 	mainInput, err := os.ReadFile(path)
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -35,33 +35,25 @@ func GetFileTitleAndOrder(path string) (string, int, error) {
 		return "", 0, errors.New("File format is incorrect")
 	}
 
-	metadata := strings.Split(split[1], "\n")
+	info, err := os.Stat(path)
+	if err != nil {
+		return "", 0, errors.New("Could not retrieve last update date from file")
+	}
+	order := info.ModTime().Unix()
 	title := ""
-	order := -1
+	metadata := strings.Split(split[1], "\n")
 	for _, line := range metadata {
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "title: ") {
 			title = strings.TrimPrefix(line, "title: ")
 		}
-
-    if strings.HasPrefix(line, "order: ") {
-      i, err := strconv.Atoi(strings.TrimPrefix(line, "order: "))
-      if err != nil {
-        return title, order, errors.New("Order must be an integer")
-      }
-      order = i
-    }
 	}
 
-  if title == "" {
-	  return title, 0, errors.New("Every file must contain a 'title'")
-  }
+	if title == "" {
+		return title, 0, errors.New("Every file must contain a 'title'")
+	}
 
-  if order == -1 {
-    return title, 0, errors.New("Every file must contain an 'order'")
-  }
-
-  return title, order, nil
+	return title, order, nil
 }
 
 func IndexOfSubstring(str, subStr string) int {

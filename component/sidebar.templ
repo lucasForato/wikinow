@@ -18,6 +18,10 @@ templ Sidebar(fileTree *utils.TreeNode) {
 		</div>
 		<nav class="flex min-w-[240px] ml-1 flex-col font-sans text-base font-normal text-white">
 			<div class="flex flex-col gap-0.5">
+				<a
+					href={ templ.SafeURL(fileTree.RelativePath) }
+					class="text-white ml-4"
+				>{ fileTree.Title }</a>
 				for _, node := range fileTree.Children {
 					@Node(&node, 1)
 				}
@@ -33,6 +37,12 @@ templ Node(node *utils.TreeNode, level int) {
 			class="text-white ml-4"
 		>{ node.Title }</a>
 	} else {
+		if node.Title != "" && node.RelativePath != "" {
+			<a
+				href={ templ.SafeURL(node.RelativePath) }
+				class="text-white ml-4"
+			>{ node.Title }</a>
+		}
 		<div class={ utils.GetLevelClasses(level) }>
 			for _, child := range node.Children {
 				@Node(&child, level+1)

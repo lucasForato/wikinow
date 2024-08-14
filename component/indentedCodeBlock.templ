@@ -9,7 +9,7 @@ import (
 templ IndentedCodeBlock(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	<pre class="bg-[#2D2D2D] rounded p-4 my-4">
 		<code>
-			{ utils.GetCode(*lines, node) }
+			{ utils.GetIndentedCode(*lines, node) }
 		</code>
 	</pre>
 }

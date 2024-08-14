@@ -64,7 +64,10 @@ func Render(ctx echo.Context, statusCode int, t templ.Component) error {
 
 func handler(ctx echo.Context) error {
 	path := handlePath(ctx)
-	lines := utils.ReadMarkdown(path)
+	lines, err := utils.ReadMarkdown(path)
+	if err != nil {
+		return Render(ctx, http.StatusInternalServerError, component.Error(err))
+	}
 
 	astParser := sitter.NewParser()
 	astParser.SetLanguage(markdown.GetLanguage())
@@ -76,20 +79,20 @@ func handler(ctx echo.Context) error {
 		return Render(ctx, http.StatusInternalServerError, component.Error(err))
 	}
 
-	path, err := os.Getwd()
+	path, err = os.Getwd()
 	if err != nil {
 		log.Fatal("Error while retrieving the current directory.")
 	}
 
-	rootPath := filepath.Join(path, "wiki")
-	if err := os.MkdirAll(rootPath, fs.ModePerm); err != nil {
+	rootUrl := filepath.Join(path, "wiki")
+	if err := os.MkdirAll(rootUrl, fs.ModePerm); err != nil {
 		log.WithFields(log.Fields{
-			"directory": rootPath,
+			"directory": rootUrl,
 		}).Fatal("Error creating directory.")
 	}
 
-  treeRoot := utils.GetFileTree(rootPath)
-  treeRoot.PrintTreeAsJSON()
+	treeRoot := utils.GetFileTree(rootUrl, ctx.Request().URL.Path)
+	treeRoot.PrintTreeAsJSON()
 
 	tree, err := astParser.ParseCtx(context.Background(), nil, sourceCode)
 	if err != nil {
@@ -106,9 +109,10 @@ func handler(ctx echo.Context) error {
 func handlePath(ctx echo.Context) string {
 	url := ctx.Request().URL.Path
 
-	if url == "/" {
-		url = "/main"
+	if url[len(url)-1] == '/' {
+		url += "main"
 	}
+
 	file := strings.Join([]string{url, "md"}, ".")
 	return path.Join("wiki", file)
 }
