@@ -151,7 +151,7 @@ func ParseAnchor(node TreeNode) template.HTML {
 	return template.HTML(fmt.Sprintf(`<a href="%s" class="text-amber-600">%s</a>`, node.RelativePath, node.Title))
 }
 
-func GetLevelClasses(level int) string {
-	str := fmt.Sprintf("%dpx", (level * 15))
-	return fmt.Sprintf("ml-[%s] border-l-2 gap-0.5 border-neutral-700 flex flex-col", str)
+func GetIconClasses(level int) string {
+	str := fmt.Sprintf("%dpx", (level * 8))
+	return fmt.Sprintf("ml-[%s]", str)
 }
