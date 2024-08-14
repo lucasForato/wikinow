@@ -22,6 +22,7 @@ const (
 
 type TreeNode struct {
 	Title        string       `json:"title"`
+	IsActive     bool         `json:"isActive"`
 	Order        int64        `json:"order"`
 	Type         TreeNodeType `json:"type"`
 	Path         string       `json:"path"`
@@ -31,15 +32,19 @@ type TreeNode struct {
 
 func GetFileTree(rootPath string, currentPath string) *TreeNode {
 	rootNode := &TreeNode{
-		Title:    "root",
-		Type:     Root,
-		Path:     rootPath,
-    RelativePath: "./",
-		Children: []TreeNode{},
+		Title:        "root",
+		Type:         Root,
+		Path:         rootPath,
+		RelativePath: "./",
+		Children:     []TreeNode{},
 	}
 
-  dir := filepath.Dir(rootPath+currentPath)
-	err := buildTree(rootNode, rootPath, dir)
+	if currentPath == "/" {
+		rootNode.IsActive = true
+	}
+
+	dir := filepath.Dir(rootPath + currentPath)
+	err := buildTree(rootNode, rootPath, dir, rootPath+currentPath)
 	if err != nil {
 		log.Fatal("Error while building the file tree:", err)
 	}
@@ -47,15 +52,29 @@ func GetFileTree(rootPath string, currentPath string) *TreeNode {
 	return rootNode
 }
 
-func buildTree(parentNode *TreeNode, currentPath string, directory string) error {
+func buildTree(parentNode *TreeNode, currentPath string, directory string, accessedPath string) error {
 	entries, err := os.ReadDir(currentPath)
 	if err != nil {
 		return err
 	}
 
+  if parentNode.Type == Root {
+    relativePath, err := filepath.Rel(directory, currentPath)
+    if err != nil {
+			return errors.New("Error while getting relative path")
+		}
+    if strings.Contains(relativePath, ".md") {
+			parentNode.RelativePath = strings.TrimRight(relativePath, ".md")
+		} else {
+			parentNode.RelativePath = strings.Join([]string{relativePath, "/"}, "")
+		}
+  }
+
 	for _, entry := range entries {
 		path := filepath.Join(currentPath, entry.Name())
+
 		relativePath, err := filepath.Rel(directory, path)
+
 		if err != nil {
 			return errors.New("Error while getting relative path")
 		}
@@ -64,6 +83,19 @@ func buildTree(parentNode *TreeNode, currentPath string, directory string) error
 			Path:     path,
 			Children: []TreeNode{},
 		}
+
+    if accessedPath[len(accessedPath)-1] == '/' {
+      alteredPath := accessedPath + "main.md"
+      if alteredPath == path {
+        parentNode.IsActive = true
+      }
+    } else {
+      alteredPath := accessedPath + ".md"
+      if alteredPath == path {
+        node.IsActive = true
+      }
+    }
+
 
 		if strings.Contains(relativePath, ".md") {
 			node.RelativePath = strings.TrimRight(relativePath, ".md")
@@ -81,7 +113,7 @@ func buildTree(parentNode *TreeNode, currentPath string, directory string) error
 
 		} else if entry.IsDir() {
 			node.Type = Dir
-			err = buildTree(&node, path, directory)
+			err = buildTree(&node, path, directory, accessedPath)
 			if err != nil {
 				return err
 			}

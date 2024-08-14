@@ -18,10 +18,7 @@ templ Sidebar(fileTree *utils.TreeNode) {
 		</div>
 		<nav class="flex min-w-[240px] ml-1 flex-col font-sans text-base font-normal text-white">
 			<div class="flex flex-col gap-0.5">
-				<a
-					href={ templ.SafeURL(fileTree.RelativePath) }
-					class="text-white ml-4"
-				>{ fileTree.Title }</a>
+				@ActiveNode(fileTree, 1)
 				for _, node := range fileTree.Children {
 					@Node(&node, 1)
 				}
@@ -32,21 +29,29 @@ templ Sidebar(fileTree *utils.TreeNode) {
 
 templ Node(node *utils.TreeNode, level int) {
 	if node.Type == utils.File {
-		<a
-			href={ templ.SafeURL(node.RelativePath) }
-			class="text-white ml-4"
-		>{ node.Title }</a>
+		@ActiveNode(node, level)
 	} else {
 		if node.Title != "" && node.RelativePath != "" {
-			<a
-				href={ templ.SafeURL(node.RelativePath) }
-				class="text-white ml-4"
-			>{ node.Title }</a>
+			@ActiveNode(node, level)
 		}
 		<div class={ utils.GetLevelClasses(level) }>
 			for _, child := range node.Children {
 				@Node(&child, level+1)
 			}
 		</div>
+	}
+}
+
+templ ActiveNode(node *utils.TreeNode, level int) {
+	if node.IsActive {
+		<a
+			href={ templ.SafeURL(node.RelativePath) }
+			class="text-amber-500 ml-4"
+		>{ node.Title }</a>
+	} else {
+		<a
+			href={ templ.SafeURL(node.RelativePath) }
+			class="text-white ml-4"
+		>{ node.Title }</a>
 	}
 }

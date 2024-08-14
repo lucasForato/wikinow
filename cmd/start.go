@@ -92,7 +92,7 @@ func handler(ctx echo.Context) error {
 	}
 
 	treeRoot := utils.GetFileTree(rootUrl, ctx.Request().URL.Path)
-	treeRoot.PrintTreeAsJSON()
+	// treeRoot.PrintTreeAsJSON()
 
 	tree, err := astParser.ParseCtx(context.Background(), nil, sourceCode)
 	if err != nil {
