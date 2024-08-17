@@ -9,6 +9,7 @@ import (
 	"wikinow/component"
 	"wikinow/internal/parser"
 	"wikinow/internal/utils"
+	"wikinow/internal/utils/filetree"
 
 	log "github.com/sirupsen/logrus"
 	sitter "github.com/smacker/go-tree-sitter"
@@ -69,7 +70,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("Error creating directory: %s", rootUrl)
 	}
 
-	treeRoot := utils.GetFileTree(rootUrl, r.URL.Path)
+	treeRoot := filetree.GetFileTree(rootUrl, r.URL.Path)
 
 	tree, err := astParser.ParseCtx(r.Context(), nil, source)
 	if err != nil {

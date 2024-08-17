@@ -1,14 +1,14 @@
 package component
 
 import (
-	"wikinow/internal/utils"
 	"html/template"
 	"wikinow/component/icons"
+	"wikinow/internal/utils/filetree"
 )
 
 var anchor = template.Must(template.New("inline").Parse("{{ . }}"))
 
-templ Sidebar(fileTree *utils.TreeNode) {
+templ Sidebar(fileTree *filetree.TreeNode) {
 	<div
 		class="flex flex-col bg-neutral-800 py-1 pl-2 pr-5 fixed h-screen"
 	>
@@ -31,8 +31,8 @@ templ Sidebar(fileTree *utils.TreeNode) {
 	</div>
 }
 
-templ Node(node *utils.TreeNode, level int) {
-	if node.Type == utils.File {
+templ Node(node *filetree.TreeNode, level int) {
+	if node.Type == filetree.File {
 		<div class={ "flex items-center gap-1", templ.KV("ml-5", level > 0) }>
 			@icons.Document("")
 			@ActiveNode(node, level)
@@ -56,7 +56,7 @@ templ Node(node *utils.TreeNode, level int) {
 	}
 }
 
-templ ActiveNode(node *utils.TreeNode, level int) {
+templ ActiveNode(node *filetree.TreeNode, level int) {
 	if node.IsActive {
 		<a
 			href={ templ.SafeURL(node.RelativePath) }

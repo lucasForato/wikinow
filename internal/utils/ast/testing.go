@@ -1,10 +1,9 @@
-package utils
+package ast
 
 import (
 	"encoding/json"
-	"wikinow/internal/utils/ast"
+	"log"
 
-	log "github.com/sirupsen/logrus"
 	sitter "github.com/smacker/go-tree-sitter"
 )
 
@@ -23,7 +22,7 @@ func ConvertTreeToJson(node *sitter.Node, lines []string) string {
 	}
 
 	maps[node.Type()] = map[string]interface{}{
-		"content":  ast.GetText(lines, node),
+		"content":  GetText(lines, node),
 		"children": children,
 	}
 

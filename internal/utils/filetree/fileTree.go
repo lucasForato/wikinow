@@ -1,12 +1,14 @@
-package utils
+// package filetree provides utility function to create and manipulate the filetree
+package filetree
 
 import (
 	"errors"
-	"log"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+
+  log "github.com/sirupsen/logrus"
 )
 
 type TreeNodeType string
@@ -55,23 +57,22 @@ func buildTree(parentNode *TreeNode, currentPath string, directory string, acces
 		return err
 	}
 
-  if parentNode.Type == Root {
-    relativePath, err := filepath.Rel(directory, currentPath)
-    if err != nil {
+	if parentNode.Type == Root {
+		relativePath, err := filepath.Rel(directory, currentPath)
+		if err != nil {
 			return errors.New("Error while getting relative path")
 		}
-    if strings.Contains(relativePath, ".md") {
+		if strings.Contains(relativePath, ".md") {
 			parentNode.RelativePath = strings.TrimRight(relativePath, ".md")
 		} else {
 			parentNode.RelativePath = strings.Join([]string{relativePath, "/"}, "")
 		}
-  }
+	}
 
 	for _, entry := range entries {
 		path := filepath.Join(currentPath, entry.Name())
 
 		relativePath, err := filepath.Rel(directory, path)
-
 		if err != nil {
 			return errors.New("Error while getting relative path")
 		}
@@ -81,18 +82,17 @@ func buildTree(parentNode *TreeNode, currentPath string, directory string, acces
 			Children: []TreeNode{},
 		}
 
-    if accessedPath[len(accessedPath)-1] == '/' {
-      alteredPath := accessedPath + "main.md"
-      if alteredPath == path {
-        parentNode.IsActive = true
-      }
-    } else {
-      alteredPath := accessedPath + ".md"
-      if alteredPath == path {
-        node.IsActive = true
-      }
-    }
-
+		if accessedPath[len(accessedPath)-1] == '/' {
+			alteredPath := accessedPath + "main.md"
+			if alteredPath == path {
+				parentNode.IsActive = true
+			}
+		} else {
+			alteredPath := accessedPath + ".md"
+			if alteredPath == path {
+				node.IsActive = true
+			}
+		}
 
 		if strings.Contains(relativePath, ".md") {
 			node.RelativePath = strings.TrimRight(relativePath, ".md")
@@ -133,4 +133,37 @@ func buildTree(parentNode *TreeNode, currentPath string, directory string, acces
 	}
 
 	return nil
+}
+
+func GetFileTitleAndOrder(path string) (string, int64, error) {
+	mainInput, err := os.ReadFile(path)
+	if err != nil {
+		log.WithError(err).Fatal("Error reading main documentation file.")
+	}
+
+	file := string(mainInput)
+	split := strings.Split(file, "---")
+	if len(split) < 2 {
+		return "", 0, errors.New("File format is incorrect")
+	}
+
+	info, err := os.Stat(path)
+	if err != nil {
+		return "", 0, errors.New("Could not retrieve last update date from file")
+	}
+	order := info.ModTime().Unix()
+	title := ""
+	metadata := strings.Split(split[1], "\n")
+	for _, line := range metadata {
+		line = strings.TrimSpace(line)
+		if strings.HasPrefix(line, "title: ") {
+			title = strings.TrimPrefix(line, "title: ")
+		}
+	}
+
+	if title == "" {
+		return title, 0, errors.New("Every file must contain a 'title'")
+	}
+
+	return title, order, nil
 }

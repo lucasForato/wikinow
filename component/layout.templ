@@ -3,10 +3,10 @@ package component
 import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/internal/parser"
-	"wikinow/internal/utils"
+	"wikinow/internal/utils/filetree"
 )
 
-templ Layout(node *sitter.Node, lines *[]string, fileTree *utils.TreeNode, c *parser.Ctx) {
+templ Layout(node *sitter.Node, lines *[]string, fileTree *filetree.TreeNode, c *parser.Ctx) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
