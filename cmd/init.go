@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"embed"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -8,6 +9,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
+
+//go:embed files
+var files embed.FS
 
 var initCmd = &cobra.Command{
 	Use:   "init",
@@ -21,50 +25,34 @@ var initCmd = &cobra.Command{
   `,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Info("Initializing wikinow...")
-
-		path, err := os.Getwd()
+		workingDir, err := os.Getwd()
 		if err != nil {
-			log.Fatal("Error while retrieving the current directory.")
+			log.WithError(err).Fatal("Error retrieving working directory.")
 		}
 
-		wikiDir := filepath.Join(path, "wiki")
+		wikiDir := filepath.Join(workingDir, "wiki")
 		if err := os.MkdirAll(wikiDir, fs.ModePerm); err != nil {
-			log.WithFields(log.Fields{
-				"directory": wikiDir,
-			}).Fatal("Error creating directory.")
+			log.WithError(err).Fatal("Error creating directory.")
 		}
 
-    mainFileSource := "./files/main.md"
+		mainFileOrigin, err := files.ReadFile("files/main.md")
+		if err != nil {
+			log.WithError(err).Fatal("Error retrieving main documentation file.")
+		}
 		mainFileDest := filepath.Join(wikiDir, "main.md")
-		mainInput, err := os.ReadFile(mainFileSource)
+		err = os.WriteFile(mainFileDest, mainFileOrigin, 0644)
 		if err != nil {
-			log.WithFields(log.Fields{
-				"source": mainFileSource,
-			}).Fatal("Error reading main documentation file.")
+			log.WithError(err).Fatal("Error creating main documentation file.")
 		}
 
-		err = os.WriteFile(mainFileDest, mainInput, 0644)
+		configFileOrigin, err := files.ReadFile("files/config.yml")
 		if err != nil {
-			log.WithFields(log.Fields{
-				"destination": mainFileDest,
-			}).Fatal("Error creating main documentation file.")
+			log.WithError(err).Fatal("Error reading config file.")
 		}
-
-		configFileSource := "./files/config.yml"
-		configFileDest := filepath.Join(path, "config.yml")
-		configInput, err := os.ReadFile(configFileSource)
+		configFileDest := filepath.Join(workingDir, "config.yml")
+		err = os.WriteFile(configFileDest, configFileOrigin, 0644)
 		if err != nil {
-			log.WithFields(log.Fields{
-				"source": configFileSource,
-			}).Fatal("Error reading config file.")
-		}
-
-		err = os.WriteFile(configFileDest, configInput, 0644)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"destination": configFileDest,
-			}).Fatal("Error creating config file.")
+			log.WithError(err).Fatal("Error creating config file.")
 		}
 
 		log.Info("Initialization complete.")
