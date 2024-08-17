@@ -25,12 +25,12 @@ var initCmd = &cobra.Command{
   `,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		workingDir, err := os.Getwd()
+		wd, err := os.Getwd()
 		if err != nil {
 			log.WithError(err).Fatal("Error retrieving working directory.")
 		}
 
-		wikiDir := filepath.Join(workingDir, "wiki")
+		wikiDir := filepath.Join(wd, "wiki")
 		if err := os.MkdirAll(wikiDir, fs.ModePerm); err != nil {
 			log.WithError(err).Fatal("Error creating directory.")
 		}
@@ -49,7 +49,7 @@ var initCmd = &cobra.Command{
 		if err != nil {
 			log.WithError(err).Fatal("Error reading config file.")
 		}
-		configFileDest := filepath.Join(workingDir, "config.yml")
+		configFileDest := filepath.Join(wd, "config.yml")
 		err = os.WriteFile(configFileDest, configFileOrigin, 0644)
 		if err != nil {
 			log.WithError(err).Fatal("Error creating config file.")

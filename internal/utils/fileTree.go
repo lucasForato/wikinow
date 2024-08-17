@@ -1,10 +1,7 @@
 package utils
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
-	"html/template"
 	"log"
 	"os"
 	"path/filepath"
@@ -136,22 +133,4 @@ func buildTree(parentNode *TreeNode, currentPath string, directory string, acces
 	}
 
 	return nil
-}
-
-// PrintTreeAsJSON prints the TreeNode as JSON
-func (n *TreeNode) PrintTreeAsJSON() {
-	jsonData, err := json.MarshalIndent(n, "", "  ")
-	if err != nil {
-		log.Fatal("Error while marshalling tree to JSON:", err)
-	}
-	log.Println(string(jsonData))
-}
-
-func ParseAnchor(node TreeNode) template.HTML {
-	return template.HTML(fmt.Sprintf(`<a href="%s" class="text-amber-600">%s</a>`, node.RelativePath, node.Title))
-}
-
-func GetIconClasses(level int) string {
-	str := fmt.Sprintf("%dpx", (level * 8))
-	return fmt.Sprintf("ml-[%s]", str)
 }

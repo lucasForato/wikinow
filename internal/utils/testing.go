@@ -1,7 +1,11 @@
 package utils
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"html/template"
+	"log"
 	"strings"
 )
 
@@ -29,4 +33,32 @@ func RemoveClass(s template.HTML) string {
 		str = str[end+1:]
 	}
 	return result.String()
+}
+
+func JsonPrettyPrint(in string) *error {
+	var out bytes.Buffer
+	err := json.Indent(&out, []byte(in), "", "  ")
+	if err != nil {
+		return &err
+	}
+	fmt.Print(out.String())
+	return nil
+}
+
+// PrintTreeAsJSON prints the TreeNode as JSON
+func (n *TreeNode) PrintTreeAsJSON() {
+	jsonData, err := json.MarshalIndent(n, "", "  ")
+	if err != nil {
+		log.Fatal("Error while marshalling tree to JSON:", err)
+	}
+	log.Println(string(jsonData))
+}
+
+func ParseAnchor(node TreeNode) template.HTML {
+	return template.HTML(fmt.Sprintf(`<a href="%s" class="text-amber-600">%s</a>`, node.RelativePath, node.Title))
+}
+
+func GetIconClasses(level int) string {
+	str := fmt.Sprintf("%dpx", (level * 8))
+	return fmt.Sprintf("ml-[%s]", str)
 }

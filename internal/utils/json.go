@@ -1,9 +1,7 @@
 package utils
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
 
 	log "github.com/sirupsen/logrus"
 	sitter "github.com/smacker/go-tree-sitter"
@@ -33,14 +31,4 @@ func ConvertTreeToJson(node *sitter.Node, lines []string) string {
 		log.Fatal("failed to parse json", err)
 	}
 	return string(item)
-}
-
-func JsonPrettyPrint(in string) *error {
-	var out bytes.Buffer
-	err := json.Indent(&out, []byte(in), "", "  ")
-	if err != nil {
-		return &err
-	}
-	fmt.Print(out.String())
-	return nil
 }
