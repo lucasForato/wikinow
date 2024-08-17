@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"io/fs"
 	"net/http"
 	"os"
@@ -13,7 +12,6 @@ import (
 	"wikinow/internal/utils"
 
 	"github.com/a-h/templ"
-	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
 	sitter "github.com/smacker/go-tree-sitter"
 	markdown "github.com/smacker/go-tree-sitter/markdown/tree-sitter-markdown"
@@ -33,40 +31,37 @@ var startCmd = &cobra.Command{
   `,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Info("Starting server...")
-		main()
+		mux := http.NewServeMux()
+		mux.HandleFunc("/", handler)
+		mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusNoContent)
+		})
+
+		log.Info("Starting server at port 4000")
+		log.Fatal(http.ListenAndServe(":4000", mux))
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(startCmd)
-}
-
-func main() {
-	app := echo.New()
-	app.GET("/*", handler)
-	app.GET("/favicon.ico", func(ctx echo.Context) error {
-		return ctx.NoContent(http.StatusNoContent)
-	})
-	app.Logger.Fatal(app.Start(":4000"))
-}
-
-func Render(ctx echo.Context, statusCode int, t templ.Component) error {
+func Render(w http.ResponseWriter, r *http.Request, statusCode int, t templ.Component) {
 	buf := templ.GetBuffer()
 	defer templ.ReleaseBuffer(buf)
 
-	if err := t.Render(ctx.Request().Context(), buf); err != nil {
-		return err
+	if err := t.Render(r.Context(), buf); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	return ctx.HTML(statusCode, buf.String())
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(statusCode)
+	w.Write([]byte(buf.String()))
 }
 
-func handler(ctx echo.Context) error {
-	path := handlePath(ctx)
+func handler(w http.ResponseWriter, r *http.Request) {
+	path := handlePath(r)
 	lines, err := utils.ReadMarkdown(path)
 	if err != nil {
-		return Render(ctx, http.StatusInternalServerError, component.Error(err))
+		Render(w, r, http.StatusInternalServerError, component.Error(err))
+		return
 	}
 
 	astParser := sitter.NewParser()
@@ -74,40 +69,37 @@ func handler(ctx echo.Context) error {
 
 	sourceCode := []byte(strings.Join(lines, "\n"))
 
-	c := parser.CreateCtx()
-	if err := parser.LoadCtx(c, &lines); err != nil {
-		return Render(ctx, http.StatusInternalServerError, component.Error(err))
+	ctx := parser.CreateCtx()
+	err = parser.LoadCtx(ctx, &lines)
+	if err != nil {
+		Render(w, r, http.StatusInternalServerError, component.Error(err))
+		return
 	}
 
-	path, err = os.Getwd()
+	wd, err := os.Getwd()
 	if err != nil {
 		log.Fatal("Error while retrieving the current directory.")
 	}
 
-	rootUrl := filepath.Join(path, "wiki")
+	rootUrl := filepath.Join(wd, "wiki")
 	if err := os.MkdirAll(rootUrl, fs.ModePerm); err != nil {
-		log.WithFields(log.Fields{
-			"directory": rootUrl,
-		}).Fatal("Error creating directory.")
+		log.Fatalf("Error creating directory: %s", rootUrl)
 	}
 
-	treeRoot := utils.GetFileTree(rootUrl, ctx.Request().URL.Path)
-	// treeRoot.PrintTreeAsJSON()
+	treeRoot := utils.GetFileTree(rootUrl, r.URL.Path)
 
-	tree, err := astParser.ParseCtx(context.Background(), nil, sourceCode)
+	tree, err := astParser.ParseCtx(r.Context(), nil, sourceCode)
 	if err != nil {
 		log.Fatal("Failed to parse source code", err)
 	}
 
 	root := tree.RootNode()
-	// str := utils.ConvertTreeToJson(root, lines)
-	// utils.JsonPrettyPrint(str)
 
-	return Render(ctx, http.StatusOK, component.Layout(root, &lines, treeRoot, c))
+	Render(w, r, http.StatusOK, component.Layout(root, &lines, treeRoot, ctx))
 }
 
-func handlePath(ctx echo.Context) string {
-	url := ctx.Request().URL.Path
+func handlePath(r *http.Request) string {
+	url := r.URL.Path
 
 	if url[len(url)-1] == '/' {
 		url += "main"
@@ -115,4 +107,8 @@ func handlePath(ctx echo.Context) string {
 
 	file := strings.Join([]string{url, "md"}, ".")
 	return path.Join("wiki", file)
+}
+
+func init() {
+	rootCmd.AddCommand(startCmd)
 }
