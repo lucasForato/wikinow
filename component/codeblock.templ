@@ -2,67 +2,67 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
-	"wikinow/internal/utils"
 	"wikinow/internal/parser"
 	"wikinow/internal/types"
+	"wikinow/internal/utils/ast"
 )
 
 templ CodeBlock(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	<pre class="bg-[#2D2D2D] rounded p-4 my-4">
 		for i := 0; i < int(node.NamedChildCount()); i++ {
 			if node.NamedChild(i).Type() == "code_fence_content" {
-				switch utils.GetLanguage(node, *lines) {
+				switch ast.GetLanguage(node, *lines) {
 					case types.JavaScript:
 						<code class="language-javascript">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.TypeScript:
 						<code class="language-typescript">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.Go:
 						<code class="language-go">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.Python:
 						<code class="language-python">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.C:
 						<code class="language-c">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.Cpp:
 						<code class="language-cpp">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.CSharp:
 						<code class="language-csharp">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.Ruby:
 						<code class="language-ruby">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.PHP:
 						<code class="language-php">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.HTML:
 						<code class="language-html">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.CSS:
 						<code class="language-css">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					case types.Rust:
 						<code class="language-rust">
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 					default:
 						<code>
-							{ utils.GetCode(*lines, node.NamedChild(i)) }
+							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
 				}
 			}

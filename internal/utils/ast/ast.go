@@ -1,39 +1,12 @@
-package utils
+package ast
 
 import (
-	"html/template"
 	"regexp"
 	"strings"
 	"wikinow/internal/types"
 
 	sitter "github.com/smacker/go-tree-sitter"
 )
-
-func HasListChild(node *sitter.Node) bool {
-	for {
-		if node.NextSibling() == nil {
-			break
-		}
-		if node.NextSibling().Type() == "list" {
-			return true
-		}
-		node = node.NextSibling()
-	}
-	return false
-}
-
-func GetListChild(node *sitter.Node) *sitter.Node {
-	for {
-		if node.NextSibling() == nil {
-			break
-		}
-		if node.NextSibling().Type() == "list" {
-			return node.NextSibling()
-		}
-		node = node.NextSibling()
-	}
-	return nil
-}
 
 func IsOrderedList(node *sitter.Node) bool {
 	if node.Type() != "list" || node.ChildCount() == 0 {
@@ -67,15 +40,6 @@ func HasNestedList(node *sitter.Node) bool {
 func GetNestedListNode(node *sitter.Node) *sitter.Node {
 	for i := 0; i < int(node.ChildCount()); i++ {
 		if node.Child(i).Type() == "list" {
-			return node.Child(i)
-		}
-	}
-	return nil
-}
-
-func GetParagraphChild(node *sitter.Node) *sitter.Node {
-	for i := 0; i < int(node.ChildCount()); i++ {
-		if node.Child(i).Type() == "paragraph" {
 			return node.Child(i)
 		}
 	}
@@ -150,7 +114,7 @@ func GetCode(lines []string, node *sitter.Node) string {
 func GetIndentedCode(lines []string, node *sitter.Node) string {
 	lineCount := int(node.ChildCount())
 	content := GetText(lines, node)
-	indentText := GetText(lines, node.NamedChild(0))
+	indentText :=GetText(lines, node.NamedChild(0))
 	content = strings.Replace(content, indentText, "\n", lineCount)
   content = strings.Replace(content, "\n", "", 1)
   
@@ -168,10 +132,6 @@ func GetLanguage(node *sitter.Node, lines []string) types.Language {
 
 func IsLanguage(node *sitter.Node, language string, lines []string) bool {
 	return GetText(lines, node) == language
-}
-
-func RemoveHashtags(html template.HTML) template.HTML {
-	return template.HTML(strings.Replace(string(html), "#", "", -1))
 }
 
 func IsFootnoteRef(node *sitter.Node, lines *[]string) bool {

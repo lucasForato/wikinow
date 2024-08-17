@@ -4,7 +4,7 @@ import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/internal/parser"
 	"html/template"
-	"wikinow/internal/utils"
+	"wikinow/internal/utils/ast"
 )
 
 var goTemplate = template.Must(template.New("inline").Parse("<span class=\"leading-relaxed pb-5 inline-block\">{{ . }}</span>"))
@@ -17,9 +17,9 @@ templ Inline(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 			}
 		case "inline":
 			if node.Parent().Type() == "atx_heading" {
-				@templ.FromGoHTML(goTemplate, parser.ParseInline(utils.GetText(*lines, node), c, &[]parser.Extra{"title"}))
-			} else if !utils.IsFootnoteRef(node, lines) {
-				@templ.FromGoHTML(goTemplate, parser.ParseInline(utils.GetText(*lines, node), c, nil))
+				@templ.FromGoHTML(goTemplate, parser.ParseInline(ast.GetText(*lines, node), c, &[]parser.Extra{"title"}))
+			} else if !ast.IsFootnoteRef(node, lines) {
+				@templ.FromGoHTML(goTemplate, parser.ParseInline(ast.GetText(*lines, node), c, nil))
 			}
 	}
 }

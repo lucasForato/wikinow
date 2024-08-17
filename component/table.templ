@@ -4,7 +4,7 @@ import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"strings"
 	"wikinow/internal/parser"
-	"wikinow/internal/utils"
+	"wikinow/internal/utils/ast"
 )
 
 templ Table(node *sitter.Node, lines *[]string, c *parser.Ctx) {
@@ -20,7 +20,7 @@ templ Table(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 				<tr>
 					for i := 0; i < int(node.NamedChildCount()); i++ {
 						<th class="px-4 py-2 text-left border-b border-l border-amber-800">
-							{ strings.TrimSpace(utils.GetText(*lines, node.NamedChild(i))) }
+							{ strings.TrimSpace(ast.GetText(*lines, node.NamedChild(i))) }
 						</th>
 					}
 				</tr>
@@ -29,7 +29,7 @@ templ Table(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 			<tr class="hover:bg-[#2D2D2D]">
 				for i := 0; i < int(node.NamedChildCount()); i++ {
 					<td class="px-4 py-2 border-l text-left border-b border-zinc-500">
-						{ strings.TrimSpace(utils.GetText(*lines, node.NamedChild(i))) }
+						{ strings.TrimSpace(ast.GetText(*lines, node.NamedChild(i))) }
 					</td>
 				}
 			</tr>

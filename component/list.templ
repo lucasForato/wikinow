@@ -3,13 +3,13 @@ package component
 import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/internal/parser"
-	"wikinow/internal/utils"
+	"wikinow/internal/utils/ast"
 )
 
 templ List(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	switch node.Type() {
 		case "list":
-			if utils.IsOrderedList(node) {
+			if ast.IsOrderedList(node) {
 				<ol class="list-decimal list-inside">
 					for i := 0; i < int(node.NamedChildCount()); i++ {
 						@Parser(node.NamedChild(i), lines, c)
@@ -23,10 +23,10 @@ templ List(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 				</ul>
 			}
 		case "list_item":
-			if utils.HasNestedList(node) {
+			if ast.HasNestedList(node) {
 				<li>
 					@Parser(node.NamedChild(0), lines, c)
-					@Parser(utils.GetNestedListNode(node), lines, c)
+					@Parser(ast.GetNestedListNode(node), lines, c)
 				</li>
 			} else {
 				<li>
