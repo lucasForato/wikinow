@@ -4,7 +4,7 @@ import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/internal/parser"
 	"html/template"
-	"wikinow/internal/utils/ast"
+	"wikinow/internal/ast"
 )
 
 var goTemplate = template.Must(template.New("inline").Parse("<span class=\"leading-relaxed pb-5 inline-block\">{{ . }}</span>"))

@@ -9,7 +9,7 @@ import (
 	"wikinow/component"
 	"wikinow/internal/parser"
 	"wikinow/internal/utils"
-	"wikinow/internal/utils/filetree"
+	"wikinow/internal/filetree"
 
 	log "github.com/sirupsen/logrus"
 	sitter "github.com/smacker/go-tree-sitter"
