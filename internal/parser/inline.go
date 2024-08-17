@@ -21,6 +21,7 @@ const (
 func ParseInline(str string, c *Ctx, extra *[]Extra) template.HTML {
 	str = parseBold(str)
 	str = parseItalic(str)
+  str = parseStrikeThrough(str)
 	str = parseImage(str)
 	str = parseRefImage(str, c)
 	str = parseInlineLink(str)
@@ -80,6 +81,25 @@ func parseItalic(str string) string {
 		str = str[:fromStart] + "<i class=\"italic\">" + str[fromStart+1:fromEnd] + "</i>" + str[fromEnd+1:]
 	}
 	return str
+}
+
+func parseStrikeThrough(str string) string {
+for {
+		fromStart := strings.Index(str, "~~")
+		if fromStart == -1 {
+			break
+		}
+
+		fromEnd := strings.Index(str[fromStart+2:], str[fromStart:fromStart+2])
+		if fromEnd == -1 {
+			break
+		}
+		fromEnd += fromStart + 2
+
+		str = str[:fromStart] + "<s>" + str[fromStart+2:fromEnd] + "</s>" + str[fromEnd+2:]
+	}
+	return str
+
 }
 
 func parseInlineLink(str string) string {

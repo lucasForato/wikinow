@@ -3,6 +3,7 @@ package component
 import (
 	"wikinow/internal/utils"
 	"html/template"
+	"wikinow/component/icons"
 )
 
 var anchor = template.Must(template.New("inline").Parse("{{ . }}"))
@@ -18,7 +19,10 @@ templ Sidebar(fileTree *utils.TreeNode) {
 		</div>
 		<nav class="flex min-w-[240px] ml-4 flex-col font-sans text-base font-normal text-white">
 			<div class="flex flex-col gap-1">
-				@ActiveNode(fileTree, 0)
+				<div class="flex items-center gap-1">
+					@icons.Document("")
+					@ActiveNode(fileTree, 0)
+				</div>
 				for _, node := range fileTree.Children {
 					@Node(&node, 0)
 				}
@@ -29,16 +33,26 @@ templ Sidebar(fileTree *utils.TreeNode) {
 
 templ Node(node *utils.TreeNode, level int) {
 	if node.Type == utils.File {
-		@ActiveNode(node, level)
+		<div class={ "flex items-center gap-1", templ.KV("ml-5", level > 0) }>
+			@icons.Document("")
+			@ActiveNode(node, level)
+		</div>
 	} else {
 		if node.Title != "" && node.RelativePath != "" {
-			@ActiveNode(node, level)
+			<div class={ "flex items-center gap-1", templ.KV("ml-5", level > 0) }>
+				@icons.ChevronDown("")
+				@icons.Folder("")
+				@ActiveNode(node, level)
+			</div>
 		}
-		<div class={ "border-l-2 gap-0.5 border-neutral-700 flex flex-col", templ.KV("ml-5", level > 0) }>
-			for _, child := range node.Children {
-				@Node(&child, level+1)
-			}
-		</div>
+		if node.Children != nil && len(node.Children) > 0 {
+			<div class={ "gap-0.5 relative flex flex-col", templ.KV("ml-5", level > 0) }>
+				<div class="border-l mb-2.5 border-b border-neutral-500 w-2.5 absolute inset-y-0 left-1.5"></div>
+				for _, child := range node.Children {
+					@Node(&child, level+1)
+				}
+			</div>
+		}
 	}
 }
 
@@ -46,12 +60,12 @@ templ ActiveNode(node *utils.TreeNode, level int) {
 	if node.IsActive {
 		<a
 			href={ templ.SafeURL(node.RelativePath) }
-			class={ "text-amber-500", templ.KV("ml-5", level > 0) }
+			class="text-amber-500"
 		>{ node.Title }</a>
 	} else {
 		<a
 			href={ templ.SafeURL(node.RelativePath) }
-			class={ "text-white", templ.KV("ml-5", level > 0) }
+			class="text-white"
 		>{ node.Title }</a>
 	}
 }
