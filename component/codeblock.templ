@@ -3,7 +3,6 @@ package component
 import (
 	sitter "github.com/smacker/go-tree-sitter"
 	"wikinow/internal/parser"
-	"wikinow/internal/types"
 	"wikinow/internal/utils/ast"
 )
 
@@ -12,51 +11,51 @@ templ CodeBlock(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 		for i := 0; i < int(node.NamedChildCount()); i++ {
 			if node.NamedChild(i).Type() == "code_fence_content" {
 				switch ast.GetLanguage(node, *lines) {
-					case types.JavaScript:
+					case ast.JavaScript:
 						<code class="language-javascript">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.TypeScript:
+					case ast.TypeScript:
 						<code class="language-typescript">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.Go:
+					case ast.Go:
 						<code class="language-go">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.Python:
+					case ast.Python:
 						<code class="language-python">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.C:
+					case ast.C:
 						<code class="language-c">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.Cpp:
+					case ast.Cpp:
 						<code class="language-cpp">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.CSharp:
+					case ast.CSharp:
 						<code class="language-csharp">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.Ruby:
+					case ast.Ruby:
 						<code class="language-ruby">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.PHP:
+					case ast.PHP:
 						<code class="language-php">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.HTML:
+					case ast.HTML:
 						<code class="language-html">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.CSS:
+					case ast.CSS:
 						<code class="language-css">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
-					case types.Rust:
+					case ast.Rust:
 						<code class="language-rust">
 							{ ast.GetCode(*lines, node.NamedChild(i)) }
 						</code>
