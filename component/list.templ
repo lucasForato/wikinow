@@ -10,13 +10,13 @@ templ List(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 	switch node.Type() {
 		case "list":
 			if ast.IsOrderedList(node) {
-				<ol class="list-decimal list-inside">
+				<ol class="list-decimal list-outside ml-5">
 					for i := 0; i < int(node.NamedChildCount()); i++ {
 						@Parser(node.NamedChild(i), lines, c)
 					}
 				</ol>
 			} else {
-				<ul class="list-disc list-inside">
+				<ul class="list-disc list-outside ml-5">
 					for i := 0; i < int(node.NamedChildCount()); i++ {
 						@Parser(node.NamedChild(i), lines, c)
 					}

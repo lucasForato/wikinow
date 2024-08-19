@@ -98,6 +98,12 @@ func (s *InlineSuite) Test_should_parse_image_by_reference() {
 	s.Equal("<img src=\"src\" alt=\"alt\" />", utils.RemoveClass(result))
 }
 
+func (s *InlineSuite) Test_should_parse_image_without_alt() {
+	str := "![](src)"
+	result := ParseInline(str, s.ctx, nil)
+	s.Equal("<img src=\"src\" alt=\"\" />", utils.RemoveClass(result))
+}
+
 // Link ------------------------------------------------------------------------
 
 func (s *InlineSuite) Test_should_parse_link() {
@@ -168,19 +174,19 @@ func (s *InlineSuite) Test_should_parse_code_block() {
 // Link to another file --------------------------------------------------------
 
 func (s *InlineSuite) Test_should_parse_link_to_another_file() {
-  lines := []string{
-    "---",
-    "title: test",
-    "file: testdata/testfile.md",
-    "---",
-  }
-  if err := LoadCtx(s.ctx, &lines); err != nil {
-    s.Fail(err.Error())
-    return
-  }
-  str := "$link(text, testdata/testfile.md)"
-  result := ParseInline(str, s.ctx, nil)
-  s.Equal("<a href=\"testdata/testfile.md\">text</a>", utils.RemoveClass(result))
+	lines := []string{
+		"---",
+		"title: test",
+		"file: testdata/testfile.md",
+		"---",
+	}
+	if err := LoadCtx(s.ctx, &lines); err != nil {
+		s.Fail(err.Error())
+		return
+	}
+	str := "$link(text, testdata/testfile.md)"
+	result := ParseInline(str, s.ctx, nil)
+	s.Equal("<a href=\"testdata/testfile.md\">text</a>", utils.RemoveClass(result))
 }
 
 // Mocks -----------------------------------------------------------------------

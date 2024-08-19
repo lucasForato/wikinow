@@ -165,7 +165,7 @@ func parseInlineCode(str string) string {
 }
 
 func parseImage(str string) string {
-	re := regexp.MustCompile(`!\[([^\]]+)\]\(([^)]+)\)`)
+	re := regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
 	str = re.ReplaceAllString(str, `<img src="$2" alt="$1" class="w-full" />`)
 	return str
 }
