@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 	"wikinow/component"
+	"wikinow/internal/filetree"
 	"wikinow/internal/parser"
 	"wikinow/internal/utils"
-	"wikinow/internal/filetree"
 
 	log "github.com/sirupsen/logrus"
 	sitter "github.com/smacker/go-tree-sitter"
@@ -31,6 +31,10 @@ var startCmd = &cobra.Command{
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		mux := http.NewServeMux()
+
+		fileServer := http.FileServer(http.Dir("./static/"))
+		mux.Handle("/static/*", http.StripPrefix("/static/", fileServer))
+
 		mux.HandleFunc("/*", handler)
 		mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNoContent)
@@ -78,6 +82,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	root := tree.RootNode()
+
 
 	utils.Render(w, r, http.StatusOK, component.Layout(root, &lines, treeRoot, ctx))
 }

@@ -16,6 +16,9 @@ func Render(w http.ResponseWriter, r *http.Request, statusCode int, t templ.Comp
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	// simpleTemplate := `<html><head><link href="./static/css/style.css" rel="stylesheet"></head><body><h1 class="bg-red-500">Test</h1></body></html>`
+	// w.Header().Set("Content-Type", "text/html")
+	// w.Write([]byte(simpleTemplate))
 
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(statusCode)

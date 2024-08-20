@@ -12,19 +12,9 @@ templ Layout(node *sitter.Node, lines *[]string, fileTree *filetree.TreeNode, c 
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<script src="https://cdn.tailwindcss.com"></script>
 			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
-			<style type="text/css">
-      li span.pb-5 {
-        padding-bottom: 0 !important;
-      }
-      li ul {
-        margin-left: 2rem !important;
-      }
-      li ol {
-        margin-left: 2rem !important;
-      }
-    </style>
+			<link href="static/css/style.css" rel="stylesheet"/>
+			<link href="static/css/globals.css" rel="stylesheet"/>
 			<title>{ parser.ReadCtxSkipError(c, "title") }</title>
 		</head>
 		<body class="bg-neutral-900 w-full flex text-neutral-100">
