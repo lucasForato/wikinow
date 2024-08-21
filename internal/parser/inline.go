@@ -21,7 +21,7 @@ const (
 func ParseInline(str string, c *Ctx, extra *[]Extra) template.HTML {
 	str = parseBold(str)
 	str = parseItalic(str)
-  str = parseStrikeThrough(str)
+	str = parseStrikeThrough(str)
 	str = parseImage(str)
 	str = parseRefImage(str, c)
 	str = parseInlineLink(str)
@@ -84,7 +84,7 @@ func parseItalic(str string) string {
 }
 
 func parseStrikeThrough(str string) string {
-for {
+	for {
 		fromStart := strings.Index(str, "~~")
 		if fromStart == -1 {
 			break
@@ -99,12 +99,11 @@ for {
 		str = str[:fromStart] + "<s>" + str[fromStart+2:fromEnd] + "</s>" + str[fromEnd+2:]
 	}
 	return str
-
 }
 
 func parseInlineLink(str string) string {
 	re := regexp.MustCompile(`\[(.*?)\]\((.*?)\)`)
-  str = re.ReplaceAllString(str, `<a href="$2" class="text-yellow-400 hover:underline" target="_blank">$1</a>`)
+	str = re.ReplaceAllString(str, `<a href="$2" class="text-yellow-400 hover:underline" target="_blank">$1</a>`)
 
 	return str
 }
@@ -121,17 +120,17 @@ func parseRefLink(str string, c *Ctx) string {
 	if !ok {
 		return str
 	}
-  str = re.ReplaceAllString(str, `<a href="`+value+`" class="text-yellow-400 hover:underline" target="_blank">$1</a>`)
+	str = re.ReplaceAllString(str, `<a href="`+value+`" class="text-yellow-400 hover:underline" target="_blank">$1</a>`)
 	return str
 }
 
 func parseRefFootnote(str string) string {
-  re := regexp.MustCompile(`\[\^([^\]]+)\]`)
-  match := re.FindStringSubmatch(str)
+	re := regexp.MustCompile(`\[\^([^\]]+)\]`)
+	match := re.FindStringSubmatch(str)
 	if len(match) == 0 {
 		return str
 	}
-  str = re.ReplaceAllString(str, `<a href="#`+match[1]+`" class="text-yellow-400 hover:underline">$1</a>`)
+	str = re.ReplaceAllString(str, `<a href="#`+match[1]+`" class="text-yellow-400 hover:underline">$1</a>`)
 	return str
 }
 
@@ -209,6 +208,7 @@ func parseCodeBlock(str string, c *Ctx, reader FileReader) string {
 
 		within := str[fromStart+6 : fromEnd]
 		split := strings.Split(within, ",")
+
 		for i := range split {
 			split[i] = strings.TrimSpace(split[i])
 		}
@@ -226,6 +226,20 @@ func parseCodeBlock(str string, c *Ctx, reader FileReader) string {
 		}
 		file := string(bytes)
 		lines := strings.Split(file, "\n")
+
+		if len(split) == 2 {
+			split = append(split, strconv.Itoa(len(lines)))
+		}
+
+		if len(split) == 1 {
+			split = append(split, "0")
+			split = append(split, strconv.Itoa(len(lines)))
+		}
+
+    if len(split) > 3 {
+      log.Fatal("Invalid number of arguments for $code()")
+    }
+
 		start, err := strconv.Atoi(split[1])
 		if err != nil {
 			log.Fatal("Error parsing start line")
