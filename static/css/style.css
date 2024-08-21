@@ -620,6 +620,16 @@ video {
   margin-right: auto;
 }
 
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.my-3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -775,14 +785,19 @@ video {
   border-color: rgb(177 98 134 / var(--tw-border-opacity));
 }
 
-.border-amber-800 {
+.border-gray-600 {
   --tw-border-opacity: 1;
-  border-color: rgb(146 64 14 / var(--tw-border-opacity));
+  border-color: rgb(80 73 69 / var(--tw-border-opacity));
 }
 
 .border-neutral-500 {
   --tw-border-opacity: 1;
   border-color: rgb(115 115 115 / var(--tw-border-opacity));
+}
+
+.border-orange-400 {
+  --tw-border-opacity: 1;
+  border-color: rgb(254 128 25 / var(--tw-border-opacity));
 }
 
 .border-zinc-500 {
@@ -795,11 +810,6 @@ video {
   background-color: rgb(45 45 45 / var(--tw-bg-opacity));
 }
 
-.bg-amber-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(217 119 6 / var(--tw-bg-opacity));
-}
-
 .bg-gray-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(40 40 40 / var(--tw-bg-opacity));
@@ -808,6 +818,11 @@ video {
 .bg-gray-900 {
   --tw-bg-opacity: 1;
   background-color: rgb(29 32 33 / var(--tw-bg-opacity));
+}
+
+.bg-orange-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 128 25 / var(--tw-bg-opacity));
 }
 
 .bg-zinc-800 {
@@ -922,9 +937,28 @@ video {
   color: rgb(214 93 14 / var(--tw-text-opacity));
 }
 
+.text-orange-400 {
+  --tw-text-opacity: 1;
+  color: rgb(254 128 25 / var(--tw-text-opacity));
+}
+
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-yellow {
+  --tw-text-opacity: 1;
+  color: rgb(215 153 33 / var(--tw-text-opacity));
+}
+
+.text-yellow-400 {
+  --tw-text-opacity: 1;
+  color: rgb(250 189 47 / var(--tw-text-opacity));
+}
+
+.underline-offset-4 {
+  text-underline-offset: 4px;
 }
 
 .antialiased {
@@ -935,4 +969,8 @@ video {
 .hover\:bg-\[\#2D2D2D\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(45 45 45 / var(--tw-bg-opacity));
+}
+
+.hover\:underline:hover {
+  text-decoration-line: underline;
 }

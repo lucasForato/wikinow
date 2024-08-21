@@ -16,10 +16,10 @@ templ Table(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 				}
 			</table>
 		case "pipe_table_header":
-			<thead class="bg-amber-600">
+			<thead class="bg-orange-400">
 				<tr>
 					for i := 0; i < int(node.NamedChildCount()); i++ {
-						<th class="px-4 py-2 text-left border-b border-l border-amber-800">
+						<th class="px-4 py-2 text-left border-b border-l border-orange-400">
 							{ strings.TrimSpace(ast.GetText(*lines, node.NamedChild(i))) }
 						</th>
 					}

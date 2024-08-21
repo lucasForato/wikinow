@@ -104,7 +104,7 @@ for {
 
 func parseInlineLink(str string) string {
 	re := regexp.MustCompile(`\[(.*?)\]\((.*?)\)`)
-	str = re.ReplaceAllString(str, `<a href="$2" class="text-amber-600" target="_blank">$1</a>`)
+  str = re.ReplaceAllString(str, `<a href="$2" class="text-yellow-400 hover:underline" target="_blank">$1</a>`)
 
 	return str
 }
@@ -121,7 +121,7 @@ func parseRefLink(str string, c *Ctx) string {
 	if !ok {
 		return str
 	}
-	str = re.ReplaceAllString(str, `<a href="`+value+`" class="text-amber-600" target="_blank">$1</a>`)
+  str = re.ReplaceAllString(str, `<a href="`+value+`" class="text-yellow-400 hover:underline" target="_blank">$1</a>`)
 	return str
 }
 
@@ -131,7 +131,7 @@ func parseRefFootnote(str string) string {
 	if len(match) == 0 {
 		return str
 	}
-	str = re.ReplaceAllString(str, `<a href="#`+match[1]+`" class="text-amber-600">$1</a>`)
+  str = re.ReplaceAllString(str, `<a href="#`+match[1]+`" class="text-yellow-400 hover:underline">$1</a>`)
 	return str
 }
 
@@ -160,7 +160,7 @@ func parseVariable(str string, c *Ctx) string {
 
 func parseInlineCode(str string) string {
 	re := regexp.MustCompile("`([^`]+)`")
-	str = re.ReplaceAllString(str, `<code class="bg-[#2D2D2D] p-1 rounded text-amber-600">$1</code>`)
+	str = re.ReplaceAllString(str, `<code class="bg-gray-900 p-1 rounded text-yellow-400">$1</code>`)
 	return str
 }
 
@@ -240,7 +240,7 @@ func parseCodeBlock(str string, c *Ctx, reader FileReader) string {
 
 		code := strings.Join(lines, "\n")
 
-		html := fmt.Sprintf(`<pre class="bg-[#2D2D2D] p-1 rounded text-amber-600"><code class="%s">%s</code></pre>`, getFileType(path), code)
+		html := fmt.Sprintf(`<pre class="bg-[#2D2D2D] p-1 rounded text-yellow-400"><code class="%s">%s</code></pre>`, getFileType(path), code)
 		return html
 	}
 	return str
@@ -279,7 +279,7 @@ func parseLinkToAnotherFile(str string) string {
 
 		path := split[1]
 
-		link := fmt.Sprintf(`<a href="%s" class="text-amber-600">%s</a>`, path, split[0])
+		link := fmt.Sprintf(`<a href="%s" class="text-yellow-400 underline">%s</a>`, path, split[0])
 		str = str[:fromStart] + link + str[fromEnd+1:]
 
 	}

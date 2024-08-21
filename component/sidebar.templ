@@ -58,7 +58,7 @@ templ ActiveNode(node *filetree.TreeNode, level int) {
 	if node.IsActive {
 		<a
 			href={ templ.SafeURL(node.RelativePath) }
-			class="text-orange"
+			class="text-orange-400"
 		>{ node.Title }</a>
 	} else {
 		<a
