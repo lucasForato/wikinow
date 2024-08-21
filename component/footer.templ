@@ -11,7 +11,7 @@ templ Footer(c *parser.Ctx) {
 		<ol class="list-decimal list-inside">
 			for k, v := range (*c).Value(parser.MapKey).(map[string]string) {
 				if strings.Contains(k, "^") {
-					<li class="text-amber-500 font-semibold" id={ strings.TrimLeft(k, "^") }><span class="text-white font-normal">{ v }</span></li>
+					<li class="text-orange font-semibold" id={ strings.TrimLeft(k, "^") }><span class="text-white font-normal">{ v }</span></li>
 				}
 			}
 		</ol>

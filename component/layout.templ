@@ -8,20 +8,21 @@ import (
 
 templ Layout(node *sitter.Node, lines *[]string, fileTree *filetree.TreeNode, c *parser.Ctx) {
 	<!DOCTYPE html>
-	<html lang="en">
+	<html lang="en" class="dark">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
-			<link href="static/css/style.css" rel="stylesheet"/>
-			<link href="static/css/globals.css" rel="stylesheet"/>
+			<link href="/static/css/style.css" rel="stylesheet"/>
+			<link href="/static/css/globals.css" rel="stylesheet"/>
+			<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet"/>
 			<title>{ parser.ReadCtxSkipError(c, "title") }</title>
 		</head>
-		<body class="bg-neutral-900 w-full flex text-neutral-100">
+		<body class="bg-gray-900 scrollbar-dark w-full flex text-white">
 			@Sidebar(fileTree)
 			<div class="m-10 w-full h-full flex flex-col items-center">
 				<main class="flex flex-col w-[800px]">
-					<h1 class="text-4xl font-bold my-4 text-amber-500">{ parser.ReadCtxSkipError(c, "title") }</h1>
+					<h1 class="text-4xl font-bold my-4 text-orange">{ parser.ReadCtxSkipError(c, "title") }</h1>
 					<hr class="my-4"/>
 					@Parser(node, lines, c)
 				</main>

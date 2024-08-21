@@ -1,11 +1,14 @@
-install:
-	templ generate && go install .
+tailwind-build:
+	npx tailwindcss -i ./static/css/input.css -o ./static/css/style.css
+
+templ-generate:
+	templ generate
+
+dev:
+	make templ-generate 
+	make tailwind-build 
+	go install . 
+	wikinow start
 
 test:
-	cd ~/Projects/wikinow/ && go test -v ./...
-
-testq:
-	cd ~/Projects/wikinow/ && go test ./...
-
-tailwind:
-	npx tailwindcss -i static/css/input.css -o static/css/style.css
+	  go test -race -v -timeout 30s ./...
