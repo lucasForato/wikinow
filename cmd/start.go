@@ -84,7 +84,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	root := tree.RootNode()
 
 
-	utils.Render(w, r, http.StatusOK, component.Layout(root, &lines, treeRoot, ctx))
+	utils.Render(w, r, http.StatusOK, component.Layout(root, &lines, treeRoot, ctx, r.URL.Path))
 }
 
 func init() {

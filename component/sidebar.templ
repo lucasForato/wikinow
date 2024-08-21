@@ -9,9 +9,7 @@ import (
 var anchor = template.Must(template.New("inline").Parse("{{ . }}"))
 
 templ Sidebar(fileTree *filetree.TreeNode) {
-	<div
-		class="flex flex-col overflow-y-auto fixed py-1 pl-2 pr-5 h-screen"
-	>
+	<div class="flex flex-col overflow-y-auto bg-gray-800 fixed py-1 pl-2 pr-5 h-screen">
 		<div class="p-4 mb-2">
 			<h5 class="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
 				Sidebar

@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-  log "github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 type TreeNodeType string
@@ -166,4 +166,13 @@ func GetFileTitleAndOrder(path string) (string, int64, error) {
 	}
 
 	return title, order, nil
+}
+
+func GetRelativePath(url string, path string) string {
+	relativePath, err := filepath.Rel(url, path)
+	if err != nil {
+		log.Fatal("Error while getting relative path")
+	}
+
+	return relativePath
 }
