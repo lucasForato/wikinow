@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -26,5 +28,15 @@ func HandlePath(r *http.Request) string {
 		url += "main"
 	}
 
-  return strings.Join([]string{url[1:], "md"}, ".")
+	return strings.Join([]string{url[1:], "md"}, ".")
+}
+
+func GetJSONBody(c echo.Context) (map[string]interface{}, error) {
+	jsonBody := make(map[string]interface{})
+
+	if err := json.NewDecoder(c.Request().Body).Decode(&jsonBody); err != nil {
+		return jsonBody, errors.New("Error parsing request body.")
+	}
+
+	return jsonBody, nil
 }

@@ -24,6 +24,7 @@ var startCmd = &cobra.Command{
 		e.Static("/static", "static")
 		e.GET("/wiki/*", handler.Wiki)
 		e.GET("favicon.ico", handler.Favicon)
+    e.POST("/api/filetree", handler.Filetree)
 
 		e.Logger.Fatal(e.Start(":4000"))
 	},
