@@ -1,4 +1,3 @@
-
 document.addEventListener("htmx:afterRequest", function(event) {
   document.querySelectorAll(".sidebar-btn").forEach(btn => {
     btn.classList.add("text-white");
