@@ -11,6 +11,8 @@ import (
 	"wikinow/internal/parser"
 	"wikinow/internal/utils"
 
+	"github.com/labstack/echo/v4"
+
 	log "github.com/sirupsen/logrus"
 	sitter "github.com/smacker/go-tree-sitter"
 	markdown "github.com/smacker/go-tree-sitter/markdown/tree-sitter-markdown"
@@ -30,27 +32,33 @@ var startCmd = &cobra.Command{
   `,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		mux := http.NewServeMux()
+		e := echo.New()
+		// mux := http.NewServeMux()
 
-		fileServer := http.FileServer(http.Dir("./static/"))
-		mux.Handle("/static/*", http.StripPrefix("/static/", fileServer))
+		e.Static("/static", "static")
 
-		mux.HandleFunc("/*", handler)
-		mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusNoContent)
+		// fileServer := http.FileServer(http.Dir("./static/"))
+		// mux.Handle("/static/*", http.StripPrefix("/static/", fileServer))
+
+		e.GET("/*", handler)
+		e.GET("favicon.ico", func(c echo.Context) error {
+			return nil
 		})
 
-		log.Info("Starting server at port 4000")
-		log.Fatal(http.ListenAndServe(":4000", mux))
+		// mux.HandleFunc("/*", handler)
+		// mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		// 	w.WriteHeader(http.StatusNoContent)
+		// })
+
+		e.Logger.Fatal(e.Start(":4000"))
 	},
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	path := utils.HandlePath(r)
+func handler(c echo.Context) error {
+	path := utils.HandlePath(c.Request())
 	lines, err := utils.ReadMarkdown(path)
 	if err != nil {
-		utils.Render(w, r, http.StatusInternalServerError, component.Error(err))
-		return
+		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
 	}
 
 	astParser := sitter.NewParser()
@@ -60,8 +68,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	ctx := parser.CreateCtx()
 	err = parser.LoadCtx(ctx, &lines)
 	if err != nil {
-		utils.Render(w, r, http.StatusInternalServerError, component.Error(err))
-		return
+		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
 	}
 
 	wd, err := os.Getwd()
@@ -74,17 +81,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("Error creating directory: %s", rootUrl)
 	}
 
-	treeRoot := filetree.GetFileTree(rootUrl, r.URL.Path)
+	treeRoot := filetree.GetFileTree(rootUrl, c.Request().URL.Path)
 
-	tree, err := astParser.ParseCtx(r.Context(), nil, source)
+	tree, err := astParser.ParseCtx(c.Request().Context(), nil, source)
 	if err != nil {
 		log.Fatal("Failed to parse source code", err)
 	}
 
 	root := tree.RootNode()
 
-
-	utils.Render(w, r, http.StatusOK, component.Layout(root, &lines, treeRoot, ctx, r.URL.Path))
+	return utils.Render(c, http.StatusOK, component.Layout(root, &lines, treeRoot, ctx, c.Request().URL.Path))
 }
 
 func init() {
