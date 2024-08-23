@@ -13,11 +13,11 @@ import (
 )
 
 func Filetree(c echo.Context) error {
-
-  body, err := utils.GetJSONBody(c)
-  if err != nil {
-    return c.String(http.StatusInternalServerError, err.Error())
-  }
+	body := make(map[string]interface{})
+	err := utils.GetRequestBody(c.Request(), &body)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -30,5 +30,5 @@ func Filetree(c echo.Context) error {
 	}
 
 	treeRoot := filetree.GetFileTree(rootUrl, body["path"].(string))
-  return c.JSON(http.StatusOK, treeRoot)
+	return c.JSON(http.StatusOK, treeRoot)
 }

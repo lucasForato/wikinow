@@ -1,8 +1,11 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -31,12 +34,48 @@ func HandlePath(r *http.Request) string {
 	return strings.Join([]string{url[1:], "md"}, ".")
 }
 
-func GetJSONBody(c echo.Context) (map[string]interface{}, error) {
-	jsonBody := make(map[string]interface{})
-
-	if err := json.NewDecoder(c.Request().Body).Decode(&jsonBody); err != nil {
-		return jsonBody, errors.New("Error parsing request body.")
+func GetRequestBody[T any](req *http.Request, out *T) error {
+	if req.Body == nil {
+		return errors.New("request body is empty")
 	}
 
-	return jsonBody, nil
+	buf := new(bytes.Buffer)
+	if _, err := buf.ReadFrom(req.Body); err != nil {
+		return fmt.Errorf("error reading request body: %w", err)
+	}
+
+	if buf.Len() == 0 {
+		return errors.New("request body is empty")
+	}
+
+	req.Body = io.NopCloser(buf)
+
+	if err := json.NewDecoder(req.Body).Decode(out); err != nil {
+		return fmt.Errorf("error parsing request body: %w", err)
+	}
+
+	return nil
+}
+
+func GetResponseBody[T any](res *http.Response, out *T) error {
+	if res.Body == nil {
+		return errors.New("request body is empty")
+	}
+
+	buf := new(bytes.Buffer)
+	if _, err := buf.ReadFrom(res.Body); err != nil {
+		return fmt.Errorf("error reading request body: %w", err)
+	}
+
+	if buf.Len() == 0 {
+		return errors.New("request body is empty")
+	}
+
+	res.Body = io.NopCloser(buf)
+
+	if err := json.NewDecoder(res.Body).Decode(out); err != nil {
+		return fmt.Errorf("error parsing request body: %w", err)
+	}
+
+	return nil
 }

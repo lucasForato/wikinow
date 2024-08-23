@@ -1,14 +1,11 @@
 package handler
 
 import (
-	"io/fs"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 	"wikinow/component"
-	"wikinow/internal/filetree"
 	"wikinow/internal/parser"
+	"wikinow/internal/service"
 	"wikinow/internal/utils"
 
 	"github.com/labstack/echo/v4"
@@ -24,34 +21,25 @@ func Wiki(c echo.Context) error {
 		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
 	}
 
-	astParser := sitter.NewParser()
-	astParser.SetLanguage(markdown.GetLanguage())
-	source := []byte(strings.Join(lines, "\n"))
-
 	ctx := parser.CreateCtx()
 	err = parser.LoadCtx(ctx, &lines)
 	if err != nil {
 		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
 	}
 
-	wd, err := os.Getwd()
-	if err != nil {
-		log.Fatal("Error while retrieving the current directory.")
-	}
-
-	rootUrl := filepath.Join(wd, "wiki")
-	if err := os.MkdirAll(rootUrl, fs.ModePerm); err != nil {
-		log.Fatalf("Error creating directory: %s", rootUrl)
-	}
-
-	treeRoot := filetree.GetFileTree(rootUrl, c.Request().URL.Path)
-
-	tree, err := astParser.ParseCtx(c.Request().Context(), nil, source)
+	astParser := sitter.NewParser()
+	astParser.SetLanguage(markdown.GetLanguage())
+	source := []byte(strings.Join(lines, "\n"))
+	astTree, err := astParser.ParseCtx(c.Request().Context(), nil, source)
 	if err != nil {
 		log.Fatal("Failed to parse source code", err)
 	}
+	root := astTree.RootNode()
 
-	root := tree.RootNode()
+	fileTree, err := service.GetFiletree(c)
+	if err != nil {
+		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
+	}
 
-	return utils.Render(c, http.StatusOK, component.Layout(root, &lines, treeRoot, ctx, c.Request().URL.Path))
+	return utils.Render(c, http.StatusOK, component.Layout(root, &lines, fileTree, ctx, c.Request().URL.Path))
 }
