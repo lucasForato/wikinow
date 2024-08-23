@@ -22,7 +22,7 @@ var startCmd = &cobra.Command{
 		e := echo.New()
 
 		e.Static("/static", "static")
-		e.GET("/*", handler.Wiki)
+		e.GET("/wiki/*", handler.Wiki)
 		e.GET("favicon.ico", handler.Favicon)
 
 		e.Logger.Fatal(e.Start(":4000"))

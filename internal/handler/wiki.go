@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"io/fs"
 	"net/http"
 	"os"
@@ -40,6 +41,7 @@ func Wiki(c echo.Context) error {
 	}
 
 	rootUrl := filepath.Join(wd, "wiki")
+  fmt.Println(rootUrl)
 	if err := os.MkdirAll(rootUrl, fs.ModePerm); err != nil {
 		log.Fatalf("Error creating directory: %s", rootUrl)
 	}

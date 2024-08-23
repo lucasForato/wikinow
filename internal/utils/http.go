@@ -2,7 +2,6 @@ package utils
 
 import (
 	"net/http"
-	"path"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -27,6 +26,5 @@ func HandlePath(r *http.Request) string {
 		url += "main"
 	}
 
-	file := strings.Join([]string{url, "md"}, ".")
-	return path.Join("wiki", file)
+  return strings.Join([]string{url[1:], "md"}, ".")
 }

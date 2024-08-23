@@ -30,6 +30,7 @@ type TreeNode struct {
 }
 
 func GetFileTree(rootPath string, currentPath string) *TreeNode {
+  currentPath = strings.Replace(currentPath, "/wiki", "", 1)
 	rootNode := &TreeNode{
 		Title:        "root",
 		Type:         Root,
