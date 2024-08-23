@@ -58,7 +58,6 @@ templ ActiveNode(node *filetree.TreeNode, level int) {
 	if node.IsActive {
 		<button
 			hx-get={ node.Path }
-			data-path={ node.Path }
 			hx-trigger="click"
 			hx-target="#content"
 			hx-swap="outerHTML"
@@ -68,7 +67,6 @@ templ ActiveNode(node *filetree.TreeNode, level int) {
 	} else {
 		<button
 			hx-get={ node.Path }
-			data-path={ node.Path }
 			hx-trigger="click"
 			hx-target="#content"
 			hx-swap="outerHTML"

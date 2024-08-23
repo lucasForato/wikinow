@@ -1,15 +1,17 @@
 package handler
 
 import (
+	"io/fs"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"wikinow/component"
+	"wikinow/internal/filetree"
 	"wikinow/internal/parser"
-	"wikinow/internal/service"
 	"wikinow/internal/utils"
 
 	"github.com/labstack/echo/v4"
-	log "github.com/sirupsen/logrus"
 	sitter "github.com/smacker/go-tree-sitter"
 	markdown "github.com/smacker/go-tree-sitter/markdown/tree-sitter-markdown"
 )
@@ -20,7 +22,6 @@ func Wiki(c echo.Context) error {
 	if err != nil {
 		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
 	}
-	isHTMX := c.Request().Header.Get("HX-Request") == "true"
 
 	ctx := parser.CreateCtx()
 	err = parser.LoadCtx(ctx, &lines)
@@ -28,22 +29,43 @@ func Wiki(c echo.Context) error {
 		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
 	}
 
+	astRoot, err := getAstTree(lines, c)
+	if err != nil {
+		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
+	}
+
+	filetreeRoot, err := getFileTree(c)
+	if err != nil {
+		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
+	}
+
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return utils.Render(c, http.StatusOK, component.Content(astRoot, &lines, ctx))
+	}
+	return utils.Render(c, http.StatusOK, component.Layout(astRoot, &lines, filetreeRoot, ctx, c.Request().URL.Path))
+}
+
+func getAstTree(lines []string, c echo.Context) (*sitter.Node, error) {
 	astParser := sitter.NewParser()
 	astParser.SetLanguage(markdown.GetLanguage())
 	source := []byte(strings.Join(lines, "\n"))
 	astTree, err := astParser.ParseCtx(c.Request().Context(), nil, source)
 	if err != nil {
-		log.Fatal("Failed to parse source code", err)
+		return nil, err
 	}
-	root := astTree.RootNode()
+	astRoot := astTree.RootNode()
+	return astRoot, nil
+}
 
-	fileTree, err := service.GetFiletree(c)
+func getFileTree(c echo.Context) (*filetree.TreeNode, error) {
+	wd, err := os.Getwd()
 	if err != nil {
-		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
+		return nil, err
 	}
-
-	if isHTMX {
-		return utils.Render(c, http.StatusOK, component.Content(root, &lines, ctx))
+	rootPath := filepath.Join(wd, "wiki")
+	if err := os.MkdirAll(rootPath, fs.ModePerm); err != nil {
+		return nil, err
 	}
-	return utils.Render(c, http.StatusOK, component.Layout(root, &lines, fileTree, ctx, c.Request().URL.Path))
+	filetreeRoot, _ := filetree.GetFileTree(rootPath, c.Request().URL.Path)
+	return filetreeRoot, nil
 }
