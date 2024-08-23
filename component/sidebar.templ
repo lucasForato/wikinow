@@ -56,14 +56,24 @@ templ Node(node *filetree.TreeNode, level int) {
 
 templ ActiveNode(node *filetree.TreeNode, level int) {
 	if node.IsActive {
-		<a
-			href={ templ.SafeURL(node.RelativePath) }
-			class="text-orange-400"
-		>{ node.Title }</a>
+		<button
+			hx-get={ node.RelativePath }
+			data-path={ node.Path }
+			hx-trigger="click"
+			hx-target="#content"
+			hx-swap="outerHTML"
+			hx-replace-url="true"
+			class="text-orange-400 sidebar-btn"
+		>{ node.Title }</button>
 	} else {
-		<a
-			href={ templ.SafeURL(node.RelativePath) }
-			class="text-white"
-		>{ node.Title }</a>
+		<button
+			hx-get={ node.RelativePath }
+			data-path={ node.Path }
+			hx-trigger="click"
+			hx-target="#content"
+			hx-swap="outerHTML"
+			hx-replace-url="true"
+			class="text-white sidebar-btn"
+		>{ node.Title }</button>
 	}
 }

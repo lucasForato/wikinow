@@ -20,6 +20,7 @@ func Wiki(c echo.Context) error {
 	if err != nil {
 		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
 	}
+	isHTMX := c.Request().Header.Get("HX-Request") == "true"
 
 	ctx := parser.CreateCtx()
 	err = parser.LoadCtx(ctx, &lines)
@@ -41,5 +42,8 @@ func Wiki(c echo.Context) error {
 		return utils.Render(c, http.StatusInternalServerError, component.Error(err))
 	}
 
+	if isHTMX {
+		return utils.Render(c, http.StatusOK, component.Content(root, &lines, ctx))
+	}
 	return utils.Render(c, http.StatusOK, component.Layout(root, &lines, fileTree, ctx, c.Request().URL.Path))
 }
