@@ -29,6 +29,6 @@ func Filetree(c echo.Context) error {
 		log.Fatalf("Error creating directory: %s", rootUrl)
 	}
 
-	treeRoot := filetree.GetFileTree(rootUrl, body["path"].(string))
+	treeRoot, _ := filetree.GetFileTree(rootUrl, body["path"].(string))
 	return c.JSON(http.StatusOK, treeRoot)
 }

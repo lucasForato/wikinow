@@ -17,5 +17,5 @@ func (n *TreeNode) PrintTreeAsJSON() {
 }
 
 func ParseAnchor(node TreeNode) template.HTML {
-  return template.HTML(fmt.Sprintf(`<a href="%s" class="text-orange-400">%s</a>`, node.RelativePath, node.Title))
+  return template.HTML(fmt.Sprintf(`<a href="%s" class="text-orange-400">%s</a>`, node.Path, node.Title))
 }

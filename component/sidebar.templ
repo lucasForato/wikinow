@@ -36,7 +36,7 @@ templ Node(node *filetree.TreeNode, level int) {
 			@ActiveNode(node, level)
 		</div>
 	} else {
-		if node.Title != "" && node.RelativePath != "" {
+		if node.Title != "" && node.Path != "" {
 			<div class={ "flex items-center gap-1", templ.KV("ml-5", level > 0) }>
 				@icons.ChevronDown("")
 				@icons.Folder("")
@@ -57,7 +57,7 @@ templ Node(node *filetree.TreeNode, level int) {
 templ ActiveNode(node *filetree.TreeNode, level int) {
 	if node.IsActive {
 		<button
-			hx-get={ node.RelativePath }
+			hx-get={ node.Path }
 			data-path={ node.Path }
 			hx-trigger="click"
 			hx-target="#content"
@@ -67,7 +67,7 @@ templ ActiveNode(node *filetree.TreeNode, level int) {
 		>{ node.Title }</button>
 	} else {
 		<button
-			hx-get={ node.RelativePath }
+			hx-get={ node.Path }
 			data-path={ node.Path }
 			hx-trigger="click"
 			hx-target="#content"

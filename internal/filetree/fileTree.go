@@ -3,9 +3,10 @@ package filetree
 
 import (
 	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
-	"sort"
+	"slices"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -20,120 +21,161 @@ const (
 )
 
 type TreeNode struct {
-	Title        string       `json:"title"`
-	IsActive     bool         `json:"isActive"`
-	Order        int64        `json:"order"`
-	Type         TreeNodeType `json:"type"`
-	Path         string       `json:"path"`
-	RelativePath string       `json:"relativePath"`
-	Children     []TreeNode   `json:"children,omitempty"`
+	Title    string       `json:"title"`
+	IsActive bool         `json:"isActive"`
+	Order    int64        `json:"order"`
+	Type     TreeNodeType `json:"type"`
+	Path     string       `json:"path"`
+	Children []TreeNode   `json:"children,omitempty"`
 }
 
-func GetFileTree(rootPath string, currentPath string) *TreeNode {
-  currentPath = strings.Replace(currentPath, "/wiki", "", 1)
-	rootNode := &TreeNode{
-		Title:        "root",
-		Type:         Root,
-		Path:         rootPath,
-		RelativePath: "./",
-		Children:     []TreeNode{},
-	}
-
-	if currentPath == "/" {
-		rootNode.IsActive = true
-	}
-
-	dir := filepath.Dir(rootPath + currentPath)
-	err := buildTree(rootNode, rootPath, dir, rootPath+currentPath)
+// This function orchestrates the creation of file tree structures
+func GetFileTree(root string, currentPath string) (*TreeNode, error) {
+	output, err := walkDir(root)
 	if err != nil {
-		log.Fatal("Error while building the file tree:", err)
+		return nil, err
 	}
 
-	return rootNode
+	keys := getSortedKeys(output)
+	err = buildNodes(output, keys, root, currentPath)
+	if err != nil {
+		return nil, err
+	}
+	entrypoint := linkNodes(output, keys)
+
+	return output[entrypoint].(*TreeNode), nil
 }
 
-func buildTree(parentNode *TreeNode, currentPath string, directory string, accessedPath string) error {
-	entries, err := os.ReadDir(currentPath)
-	if err != nil {
-		return err
+// This function adds child nodes as children
+func linkNodes(input map[string]interface{}, keys []string) string {
+	entrypoint := keys[0]
+
+	for _, k := range keys {
+		v, ok := input[k].(*TreeNode)
+		if !ok {
+			continue
+		}
+		i := strings.LastIndex(k, "/")
+		if i == -1 {
+			continue
+		}
+		parentK := k[:i]
+		if parentNode, exists := input[parentK]; exists {
+			if parent, ok := parentNode.(*TreeNode); ok {
+				parent.Children = append(parent.Children, *v)
+			}
+		}
+		entrypoint = k
 	}
+	return entrypoint
+}
 
-	if parentNode.Type == Root {
-		relativePath, err := filepath.Rel(directory, currentPath)
+// This function converts the paths into TreeNodes
+func buildNodes(input map[string]interface{}, keys []string, root string, currentPath string) error {
+	for _, k := range keys {
+		parent := &TreeNode{
+			Path: k + "/" + "main.md",
+			Type: Dir,
+		}
+		title, order, err := GetFileTitleAndOrder(parent.Path)
 		if err != nil {
-			return errors.New("Error while getting relative path")
+			return err
 		}
-		if strings.Contains(relativePath, ".md") {
-			parentNode.RelativePath = strings.TrimRight(relativePath, ".md")
-		} else {
-			parentNode.RelativePath = strings.Join([]string{relativePath, "/"}, "")
-		}
-	}
+		parent.Title = title
+		parent.Order = order
+		parent.Path = normalizePath(parent.Path, root)
+		parent.IsActive = isActive(parent, currentPath)
 
-	for _, entry := range entries {
-		path := filepath.Join(currentPath, entry.Name())
+		if files, ok := input[k].([]string); ok {
+			for _, file := range files {
+				if file == "main.md" {
+					continue
+				}
 
-		relativePath, err := filepath.Rel(directory, path)
-		if err != nil {
-			return errors.New("Error while getting relative path")
-		}
+				child := &TreeNode{
+					Path: k + "/" + file,
+					Type: File,
+				}
+				title, order, err := GetFileTitleAndOrder(child.Path)
+				if err != nil {
+					return err
+				}
+				child.Title = title
+				child.Order = order
+				child.Path = normalizePath(child.Path, root)
+				child.IsActive = isActive(child, currentPath)
 
-		node := TreeNode{
-			Path:     path,
-			Children: []TreeNode{},
-		}
-
-		if accessedPath[len(accessedPath)-1] == '/' {
-			alteredPath := accessedPath + "main.md"
-			if alteredPath == path {
-				parentNode.IsActive = true
-			}
-		} else {
-			alteredPath := accessedPath + ".md"
-			if alteredPath == path {
-				node.IsActive = true
+				parent.Children = append(parent.Children, *child)
 			}
 		}
 
-		if strings.Contains(relativePath, ".md") {
-			node.RelativePath = strings.TrimRight(relativePath, ".md")
-		} else {
-			node.RelativePath = strings.Join([]string{relativePath, "/"}, "")
-		}
-
-		if entry.Name() == "main.md" {
-			title, order, err := GetFileTitleAndOrder(path)
-			if err != nil {
-				return err
-			}
-			(*parentNode).Title = title
-			(*parentNode).Order = order
-
-		} else if entry.IsDir() {
-			node.Type = Dir
-			err = buildTree(&node, path, directory, accessedPath)
-			if err != nil {
-				return err
-			}
-		} else {
-			title, order, err := GetFileTitleAndOrder(node.Path)
-			if err != nil {
-				return err
-			}
-			node.Type = File
-			node.Title = title
-			node.Order = order
-		}
-
-		// Append the node to the parent
-		sort.Slice(parentNode.Children, func(i, j int) bool {
-			return parentNode.Children[i].Order < parentNode.Children[j].Order
-		})
-
-		parentNode.Children = append(parentNode.Children, node)
+		input[k] = parent
 	}
 
 	return nil
+}
+
+func isActive(node *TreeNode, currentPath string) bool {
+	nodePath := node.Path
+	if node.Type == Dir {
+		if strings.HasSuffix(nodePath, "main") {
+      nodePath = strings.TrimRight(nodePath, "main")
+		}
+
+		if strings.HasSuffix(currentPath, "main") {
+			currentPath = strings.TrimRight(currentPath, "main")
+		}
+	}
+
+  return nodePath == currentPath
+}
+
+// Correct the path removing the .md extension and the root directory
+func normalizePath(input string, root string) string {
+	newPath := strings.ReplaceAll(input, root, "")
+	newPath = strings.ReplaceAll(newPath, ".md", "")
+	return "/wiki" + newPath
+}
+
+func getSortedKeys(input map[string]interface{}) []string {
+	keys := []string{}
+	for k := range input {
+		keys = append(keys, k)
+	}
+	slices.SortStableFunc(keys, func(a, b string) int {
+		return len(b) - len(a)
+	})
+
+	return keys
+}
+
+// walkDir traverses the root directory and builds a map of paths to files
+func walkDir(root string) (map[string]interface{}, error) {
+	output := make(map[string]interface{})
+
+	err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if entry.IsDir() {
+			output[path] = []string{}
+			return nil
+		}
+
+		i := strings.LastIndex(path, entry.Name())
+		key := path[:i-1]
+		if _, exists := output[key]; !exists {
+			output[key] = []string{}
+		}
+		output[key] = append(output[key].([]string), entry.Name())
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return output, nil
 }
 
 func GetFileTitleAndOrder(path string) (string, int64, error) {
