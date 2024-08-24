@@ -17,85 +17,79 @@ templ SearchBar() {
 
 templ SearchModal() {
 	<div id="searchModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-		<div class="bg-gray-900 text-gray-300 rounded-lg shadow-lg w-1/2 p-4">
-			<!-- Search Input -->
-			<div class="relative mb-4">
-				<input
-					type="text"
-					placeholder="Search documentation..."
-					class="w-full px-2 py-2 bg-gray-800 text-white rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-				/>
-				<button class="absolute right-2 top-2 text-gray-400">
+		<div class="bg-gray-900 text-gray-300 rounded-lg shadow-lg w-1/2">
+			<input
+				type="text"
+				placeholder="Search documentation..."
+				class="w-full bg-gray-900 p-4 text-white rounded-lg placeholder-gray-400 focus:outline-none"
+			/>
+		</div>
+	</div>
+}
+
+templ SearchModalRecent() {
+	<div>
+		<h2 class="text-gray-500 text-sm mb-2">Recent</h2>
+		<ul class="space-y-2">
+			<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+				<span>Padding</span>
+				<button class="text-gray-400">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>
-			</div>
-			<!-- Recent Section -->
-			<div>
-				<h2 class="text-gray-500 text-sm mb-2">Recent</h2>
-				<ul class="space-y-2">
-					<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
-						<span>Padding</span>
-						<button class="text-gray-400">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
-						</button>
-					</li>
-					<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
-						<span>Size</span>
-						<button class="text-gray-400">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
-						</button>
-					</li>
-					<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
-						<span>Font Family</span>
-						<button class="text-gray-400">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
-						</button>
-					</li>
-					<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
-						<span>Font Size</span>
-						<button class="text-gray-400">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
-						</button>
-					</li>
-					<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
-						<span class="flex items-center">
-							<span class="inline-block px-2 py-1 text-xs font-semibold text-gray-200 bg-gray-700 rounded mr-2">Border Radius</span>
-							Rounded corners
-						</span>
-						<button class="text-gray-400">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
-						</button>
-					</li>
-					<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
-						<span>Text Decoration Style</span>
-						<button class="text-gray-400">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
-						</button>
-					</li>
-					<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
-						<span>Text Underline Offset</span>
-						<button class="text-gray-400">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
-						</button>
-					</li>
-				</ul>
-			</div>
-		</div>
+			</li>
+			<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+				<span>Size</span>
+				<button class="text-gray-400">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</li>
+			<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+				<span>Font Family</span>
+				<button class="text-gray-400">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</li>
+			<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+				<span>Font Size</span>
+				<button class="text-gray-400">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</li>
+			<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+				<span class="flex items-center">
+					<span class="inline-block px-2 py-1 text-xs font-semibold text-gray-200 bg-gray-700 rounded mr-2">Border Radius</span>
+					Rounded corners
+				</span>
+				<button class="text-gray-400">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</li>
+			<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+				<span>Text Decoration Style</span>
+				<button class="text-gray-400">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</li>
+			<li class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+				<span>Text Underline Offset</span>
+				<button class="text-gray-400">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</li>
+		</ul>
 	</div>
 }
