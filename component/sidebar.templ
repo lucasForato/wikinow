@@ -15,6 +15,9 @@ templ Sidebar(fileTree *filetree.TreeNode, title string) {
 				{ title }
 			</h5>
 		</div>
+		<div class="pl-4 mb-4">
+			@SearchBar()
+		</div>
 		<nav class="flex min-w-[240px] ml-4 flex-col font-sans text-base font-normal text-white">
 			<div class="flex flex-col gap-1">
 				<div class="flex items-center gap-1">
