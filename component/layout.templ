@@ -13,12 +13,12 @@ templ Layout(node *sitter.Node, lines *[]string, fileTree *filetree.TreeNode, c 
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
-			<link href="/static/css/style.css?id=2" rel="stylesheet"/>
+			<link href="/static/css/style.css?id=3" rel="stylesheet"/>
 			<link href="/static/css/globals.css" rel="stylesheet"/>
 			<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet"/>
 			<title>{ title }</title>
 		</head>
-		<body class="bg-gray-900 scrollbar-dark w-full flex text-white">
+		<body id="body" class="bg-gray-900 scrollbar-dark w-full flex text-white">
 			@Sidebar(fileTree, title)
 			@Content(node, lines, c)
 		</body>
@@ -34,7 +34,7 @@ templ Content(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 		</main>
 		@Footer(c)
 		<script src="https://unpkg.com/htmx.org@2.0.2"></script>
-		<script src="/static/js/script.js"></script>
+		<script src="/static/js/script.js?id=3"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-core.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>

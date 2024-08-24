@@ -27,7 +27,7 @@ var startCmd = &cobra.Command{
 		e.Static("/static", "static")
 		e.GET("/wiki/*", handler.Wiki)
 		e.GET("favicon.ico", handler.Favicon)
-    e.POST("/api/search", handler.Search)
+    e.GET("/api/search", handler.GETSearch)
 
 		port, err := config.GetPort()
 		if err != nil {
