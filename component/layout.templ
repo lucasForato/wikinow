@@ -6,7 +6,7 @@ import (
 	"wikinow/internal/filetree"
 )
 
-templ Layout(node *sitter.Node, lines *[]string, fileTree *filetree.TreeNode, c *parser.Ctx, url string) {
+templ Layout(node *sitter.Node, lines *[]string, fileTree *filetree.TreeNode, c *parser.Ctx, url string, title string) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -16,10 +16,10 @@ templ Layout(node *sitter.Node, lines *[]string, fileTree *filetree.TreeNode, c 
 			<link href="/static/css/style.css" rel="stylesheet"/>
 			<link href="/static/css/globals.css" rel="stylesheet"/>
 			<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet"/>
-			<title>{ parser.ReadCtxSkipError(c, "title") }</title>
+			<title>{ title }</title>
 		</head>
 		<body class="bg-gray-900 scrollbar-dark w-full flex text-white">
-			@Sidebar(fileTree)
+			@Sidebar(fileTree, title)
 			@Content(node, lines, c)
 		</body>
 	</html>

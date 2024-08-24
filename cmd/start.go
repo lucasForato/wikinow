@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"wikinow/internal/config"
 	"wikinow/internal/handler"
 
 	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -19,13 +21,19 @@ var startCmd = &cobra.Command{
   `,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		e := echo.New()
+		config.SetupConfig()
 
+		e := echo.New()
 		e.Static("/static", "static")
 		e.GET("/wiki/*", handler.Wiki)
 		e.GET("favicon.ico", handler.Favicon)
 
-		e.Logger.Fatal(e.Start(":4000"))
+		port, err := config.GetPort()
+		if err != nil {
+			log.Fatal("Error reading port from config file.")
+		}
+
+		e.Logger.Fatal(e.Start(port))
 	},
 }
 
