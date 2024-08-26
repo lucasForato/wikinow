@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"wikinow/component"
 	"wikinow/internal/filetree"
 	"wikinow/internal/types"
@@ -34,22 +33,23 @@ func POSTSearch(c echo.Context) error {
 	output := []types.SearchResult{}
 
 	err = filepath.WalkDir(rootPath, func(path string, entry fs.DirEntry, err error) error {
-		if strings.Contains(utils.Normalize(path), q) {
-			lines, err := utils.ReadMarkdown(path)
-			if err != nil {
-				return err
-			}
+    if entry.IsDir() {
+      return nil
+    }
 
-			title, err := utils.GetFileTitle(lines)
-			if err != nil {
-				return err
-			}
+		exists, err := utils.FindInFile(path, q)
+
+		if exists {
+			title, err := utils.GetFileTitle(path)
+      if err != nil {
+        return err
+      }
+
 
 			result := &types.SearchResult{
 				Title: title,
 				Path:  filetree.NormalizePath(path, rootPath),
 			}
-
 			output = append(output, *result)
 		}
 

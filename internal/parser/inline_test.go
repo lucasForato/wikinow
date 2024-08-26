@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"html/template"
 	"testing"
 	"wikinow/internal/utils"
 
@@ -152,25 +151,6 @@ func (s *InlineSuite) Test_should_parse_inline_code_twice() {
 	s.Equal("<code>code</code> <code>code</code>", utils.RemoveClass(result))
 }
 
-func (s *InlineSuite) Test_should_parse_code_block() {
-	lines := []string{
-		"---",
-		"title: test",
-		"file: testdata/testfile.md",
-		"---",
-	}
-	if err := LoadCtx(s.ctx, &lines); err != nil {
-		s.Fail(err.Error())
-		return
-	}
-
-	str := "$code(file, 1, 2)"
-
-	result := parseCodeBlock(str, s.ctx, new(MockFileReader))
-
-	s.Equal("<pre><code>2</code></pre>", utils.RemoveClass(template.HTML(result)))
-}
-
 // Link to another file --------------------------------------------------------
 
 func (s *InlineSuite) Test_should_parse_link_to_another_file() {
@@ -187,13 +167,4 @@ func (s *InlineSuite) Test_should_parse_link_to_another_file() {
 	str := "$link(text, testdata/testfile.md)"
 	result := ParseInline(str, s.ctx, nil)
 	s.Equal("<a href=\"testdata/testfile.md\">text</a>", utils.RemoveClass(result))
-}
-
-// Mocks -----------------------------------------------------------------------
-
-type MockFileReader struct{}
-
-func (r MockFileReader) ReadFile(path string) ([]byte, error) {
-	str := "1\n2\n3\n4\n5"
-	return []byte(str), nil
 }

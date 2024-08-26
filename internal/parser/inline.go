@@ -6,10 +6,7 @@ import (
 	"os"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type Extra string
@@ -28,7 +25,6 @@ func ParseInline(str string, c *Ctx, extra *[]Extra) template.HTML {
 	str = parseRefLink(str, c)
 	str = parseVariable(str, c)
 	str = parseInlineCode(str)
-	str = parseCodeBlock(str, c, new(RealFileReader))
 	str = parseLinkToAnotherFile(str)
 	str = parseRefFootnote(str)
 
@@ -192,72 +188,6 @@ type RealFileReader struct{}
 
 func (r RealFileReader) ReadFile(path string) ([]byte, error) {
 	return os.ReadFile(path)
-}
-
-func parseCodeBlock(str string, c *Ctx, reader FileReader) string {
-	for {
-		fromStart := strings.Index(str, "$code(")
-		if fromStart == -1 {
-			break
-		}
-
-		fromEnd := strings.Index(str, ")")
-		if fromEnd == -1 {
-			break
-		}
-
-		within := str[fromStart+6 : fromEnd]
-		split := strings.Split(within, ",")
-
-		for i := range split {
-			split[i] = strings.TrimSpace(split[i])
-		}
-
-		path, ok := ReadCtx(c, split[0])
-		if !ok {
-			log.Fatal("Variable not found")
-		}
-
-		bytes, err := reader.ReadFile(path)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"source": path,
-			}).Fatal("Error reading documentation file.")
-		}
-		file := string(bytes)
-		lines := strings.Split(file, "\n")
-
-		if len(split) == 2 {
-			split = append(split, strconv.Itoa(len(lines)))
-		}
-
-		if len(split) == 1 {
-			split = append(split, "0")
-			split = append(split, strconv.Itoa(len(lines)))
-		}
-
-    if len(split) > 3 {
-      log.Fatal("Invalid number of arguments for $code()")
-    }
-
-		start, err := strconv.Atoi(split[1])
-		if err != nil {
-			log.Fatal("Error parsing start line")
-		}
-
-		end, err := strconv.Atoi(split[2])
-		if err != nil {
-			log.Fatal("Error parsing end line")
-		}
-
-		lines = lines[start:end]
-
-		code := strings.Join(lines, "\n")
-
-		html := fmt.Sprintf(`<pre class="bg-[#2D2D2D] p-1 rounded text-yellow-400"><code class="%s">%s</code></pre>`, getFileType(path), code)
-		return html
-	}
-	return str
 }
 
 func getFileType(path string) string {

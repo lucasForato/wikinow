@@ -47,7 +47,7 @@ func GetFileTitleAndContent(path string) (string, string, error) {
 		return "", "", err
 	}
 
-	title, err := GetFileTitle(lines)
+	title, err := GetFileTitle(path)
 	if err != nil {
 		return "", "", err
 	}
@@ -55,7 +55,12 @@ func GetFileTitleAndContent(path string) (string, string, error) {
 	return title, strings.Join(lines, "\n"), nil
 }
 
-func GetFileTitle(lines []string) (string, error) {
+func GetFileTitle(path string) (string, error) {
+	lines, err := ReadMarkdown(path)
+	if err != nil {
+		return "", err
+	}
+
 	iStart, iEnd, err := GetMetadataStartAndEnd(lines)
 	if err != nil {
 		return "", err
@@ -83,9 +88,26 @@ func GetMetadataStartAndEnd(lines []string) (int, int, error) {
 
 	for i, line := range lines[1:] {
 		if strings.Contains(line, "---") {
-			iEnd = i+1
+			iEnd = i + 1
 		}
 	}
 
 	return iStart, iEnd, nil
+}
+
+func FindInFile(path string, query string) (bool, error) {
+	if strings.Contains(strings.ToLower(path), strings.ToLower(query)) {
+		return true, nil
+	}
+
+	lines, err := ReadMarkdown(path)
+	if err != nil {
+		return false, err
+	}
+	for _, line := range lines {
+		if strings.Contains(Normalize(line), query) {
+			return true, nil
+		}
+	}
+	return false, nil
 }
