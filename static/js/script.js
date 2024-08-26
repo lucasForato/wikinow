@@ -15,15 +15,21 @@ document.addEventListener("htmx:replacedInHistory", function(evt) {
 });
 
 
-// Ctrl + K to focus search
-document.addEventListener('keydown', function(evt) {
+
+let isListenerAttached = false;
+function handleCtrlK(evt) {
   if (evt.ctrlKey && evt.key === 'k') {
     evt.preventDefault();
     const modal = document.getElementById("searchModal")
-    if (modal) return
+    if (modal) return;
     htmx.trigger(htmx.find('button'), 'ctrlK');
   }
-});
+}
+if (!isListenerAttached) {
+  document.addEventListener('keydown', handleCtrlK);
+  isListenerAttached = true;
+}
+
 
 // open search modal
 document.addEventListener('keydown', function(evt) {
@@ -45,9 +51,9 @@ function getSearchParams() {
 // search option trigger to change page
 document.addEventListener("htmx:afterRequest", function(evt) {
   const element = evt.detail.elt
-  console.log(element.classList)
 
   if (element.classList.contains("search-option")) {
+    console.log('got here')
     const modal = document.getElementById("searchModal")
     modal.remove()
   }

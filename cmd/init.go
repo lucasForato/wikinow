@@ -45,11 +45,11 @@ var initCmd = &cobra.Command{
 			log.WithError(err).Fatal("Error creating main documentation file.")
 		}
 
-		configFileOrigin, err := files.ReadFile("files/config.yml")
+		configFileOrigin, err := files.ReadFile("files/wikinow.yml")
 		if err != nil {
 			log.WithError(err).Fatal("Error reading config file.")
 		}
-		configFileDest := filepath.Join(wd, "config.yml")
+		configFileDest := filepath.Join(wd, "wikinow.yml")
 		err = os.WriteFile(configFileDest, configFileOrigin, 0644)
 		if err != nil {
 			log.WithError(err).Fatal("Error creating config file.")

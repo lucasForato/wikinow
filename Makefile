@@ -12,3 +12,8 @@ dev:
 
 test:
 	  go test -race -v -timeout 30s ./...
+
+install:
+	make templ-generate
+	make tailwind-build
+	go install .

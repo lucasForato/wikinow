@@ -12,7 +12,7 @@ func SetupConfig() error {
 		return err
 	}
 
-	viper.SetConfigName("config")
+	viper.SetConfigName("wikinow")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(wd)
 	if err := viper.ReadInConfig(); err != nil {
