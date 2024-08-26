@@ -11,10 +11,15 @@ templ SearchBar() {
 		hx-trigger="click, ctrlK"
 		hx-target="#body"
 		hx-swap="afterbegin"
-		class="w-full bg-white text-gray p-2 flex flex-row gap-2 border rounded-lg items-center text-sm"
+		class="w-full bg-white text-gray p-2 flex border rounded-lg justify-between items-center text-sm"
 	>
-		@icons.MagnifyingGlass("")
-		<span>Quick search...<span class="p-10 text-xs font-semibold">Ctrl K</span></span>
+		<span class="flex gap-2 items-center">
+			@icons.MagnifyingGlass("")
+			Quick search...
+		</span>
+		<span class="text-xs font-semibold">
+			Ctrl K
+		</span>
 	</button>
 }
 
