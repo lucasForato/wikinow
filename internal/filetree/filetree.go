@@ -2,12 +2,11 @@
 package filetree
 
 import (
-	"errors"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"slices"
 	"strings"
+	"wikinow/internal/utils"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -77,13 +76,13 @@ func buildNodes(input map[string]interface{}, keys []string, root string, curren
 			Path: k + "/" + "main.md",
 			Type: Dir,
 		}
-		title, order, err := GetFileTitleAndOrder(parent.Path)
+		title, order, err := utils.GetFileTitleAndOrder(parent.Path)
 		if err != nil {
 			return err
 		}
 		parent.Title = title
 		parent.Order = order
-		parent.Path = normalizePath(parent.Path, root)
+		parent.Path = NormalizePath(parent.Path, root)
 		parent.IsActive = isActive(parent, currentPath)
 
 		if files, ok := input[k].([]string); ok {
@@ -96,13 +95,13 @@ func buildNodes(input map[string]interface{}, keys []string, root string, curren
 					Path: k + "/" + file,
 					Type: File,
 				}
-				title, order, err := GetFileTitleAndOrder(child.Path)
+				title, order, err := utils.GetFileTitleAndOrder(child.Path)
 				if err != nil {
 					return err
 				}
 				child.Title = title
 				child.Order = order
-				child.Path = normalizePath(child.Path, root)
+				child.Path = NormalizePath(child.Path, root)
 				child.IsActive = isActive(child, currentPath)
 
 				parent.Children = append(parent.Children, *child)
@@ -119,7 +118,7 @@ func isActive(node *TreeNode, currentPath string) bool {
 	nodePath := node.Path
 	if node.Type == Dir {
 		if strings.HasSuffix(nodePath, "main") {
-      nodePath = strings.TrimRight(nodePath, "main")
+			nodePath = strings.TrimRight(nodePath, "main")
 		}
 
 		if strings.HasSuffix(currentPath, "main") {
@@ -127,11 +126,11 @@ func isActive(node *TreeNode, currentPath string) bool {
 		}
 	}
 
-  return nodePath == currentPath
+	return nodePath == currentPath
 }
 
 // Correct the path removing the .md extension and the root directory
-func normalizePath(input string, root string) string {
+func NormalizePath(input string, root string) string {
 	newPath := strings.ReplaceAll(input, root, "")
 	newPath = strings.ReplaceAll(newPath, ".md", "")
 	return "/wiki" + newPath
@@ -176,39 +175,6 @@ func walkDir(root string) (map[string]interface{}, error) {
 	}
 
 	return output, nil
-}
-
-func GetFileTitleAndOrder(path string) (string, int64, error) {
-	mainInput, err := os.ReadFile(path)
-	if err != nil {
-		log.WithError(err).Fatal("Error reading main documentation file.")
-	}
-
-	file := string(mainInput)
-	split := strings.Split(file, "---")
-	if len(split) < 2 {
-		return "", 0, errors.New("File format is incorrect")
-	}
-
-	info, err := os.Stat(path)
-	if err != nil {
-		return "", 0, errors.New("Could not retrieve last update date from file")
-	}
-	order := info.ModTime().Unix()
-	title := ""
-	metadata := strings.Split(split[1], "\n")
-	for _, line := range metadata {
-		line = strings.TrimSpace(line)
-		if strings.HasPrefix(line, "title: ") {
-			title = strings.TrimPrefix(line, "title: ")
-		}
-	}
-
-	if title == "" {
-		return title, 0, errors.New("Every file must contain a 'title'")
-	}
-
-	return title, order, nil
 }
 
 func GetRelativePath(url string, path string) string {
