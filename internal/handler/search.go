@@ -19,6 +19,9 @@ func GETSearch(c echo.Context) error {
 
 func POSTSearch(c echo.Context) error {
 	q := utils.Normalize(c.FormValue("q"))
+  if q == "" {
+    return utils.Render(c, http.StatusOK, component.SearchResults([]types.SearchResult{}))
+  }
 
 	wd, err := os.Getwd()
 	if err != nil {

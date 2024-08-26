@@ -25,34 +25,38 @@ templ SearchBar() {
 
 templ SearchModal() {
 	<div id="searchModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-		<div class="bg-gray-900 h-2/3 my-20 text-gray-300 rounded-lg shadow-lg w-1/2">
-			<input
-				id="searchInput"
-				hx-post="/api/search"
-				hx-trigger="keyup changed delay:500ms"
-				hx-vals="js:{q: getSearchParams()}"
-				autofocus
-				hx-swap="innerHTML"
-				hx-target="#searchResults"
-				type="text"
-				placeholder="Search documentation..."
-				class="w-full bg-gray-900 p-4 text-white rounded-lg placeholder-gray-400 focus:outline-none"
-			/>
-			<div id="searchResults"></div>
+		<div class="h-2/3 w-1/2 items-start">
+			<div class="bg-gray-900 w-full text-gray-300 rounded-lg shadow-lg">
+				<input
+					id="searchInput"
+					hx-post="/api/search"
+					hx-trigger="keyup changed delay:500ms"
+					hx-vals="js:{q: getSearchParams()}"
+					autofocus
+					hx-swap="innerHTML"
+					hx-target="#searchResults"
+					type="text"
+					placeholder="Search documentation..."
+					class="w-full bg-gray-900 p-4 text-white rounded-lg placeholder-gray-400 focus:outline-none"
+				/>
+				<div id="searchResults"></div>
+			</div>
 		</div>
 	</div>
 }
 
 templ SearchResults(result []types.SearchResult) {
-	<hr class="mb-2 mx-2 border-gray-600"/>
-	for _, r := range result {
-		<button
-			hx-get={ r.Path }
-			hx-trigger="click"
-			hx-target="#content"
-			hx-swap="outerHTML"
-			hx-replace-url="true"
-			class="block p-2 hover:bg-gray-800 search-option"
-		>{ r.Title }</button>
+	if len(result) > 0 {
+		<hr class="mx-2 border-gray-600"/>
+		for _, r := range result {
+			<div
+				hx-get={ r.Path }
+				hx-trigger="click"
+				hx-target="#content"
+				hx-swap="outerHTML"
+				hx-replace-url="true"
+				class="block p-2 w-full hover:bg-gray-800 cursor-pointer search-option"
+			>{ r.Title }</div>
+		}
 	}
 }
