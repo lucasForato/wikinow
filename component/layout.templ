@@ -2,8 +2,8 @@ package component
 
 import (
 	sitter "github.com/smacker/go-tree-sitter"
-	"wikinow/internal/parser"
 	"wikinow/internal/filetree"
+	"wikinow/internal/parser"
 )
 
 templ Layout(node *sitter.Node, lines *[]string, fileTree *filetree.TreeNode, c *parser.Ctx, url string, title string) {
@@ -13,9 +13,8 @@ templ Layout(node *sitter.Node, lines *[]string, fileTree *filetree.TreeNode, c 
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
-			<link href="/static/css/style.css?id=2" rel="stylesheet"/>
-			<link href="/static/css/globals.css?id=2" rel="stylesheet"/>
 			<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet"/>
+			<script src="https://cdn.tailwindcss.com"></script>
 			<title>{ title }</title>
 		</head>
 		<body id="body" class="bg-gray-900 scrollbar-dark w-full flex text-white">
@@ -33,11 +32,10 @@ templ Content(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 			@Parser(node, lines, c)
 		</main>
 		@Footer(c)
-		<script src="https://unpkg.com/htmx.org@2.0.2"></script>
-		<script src="/static/js/script.js?id=5"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-core.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-go.min.js"></script>
+		<script defer src="https://unpkg.com/htmx.org@2.0.2"></script>
+		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"></script>
+		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-core.min.js"></script>
+		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-go.min.js"></script>
 	</div>
 }

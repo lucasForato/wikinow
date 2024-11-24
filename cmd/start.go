@@ -24,7 +24,6 @@ var startCmd = &cobra.Command{
 		config.SetupConfig()
 
 		e := echo.New()
-		e.Static("/static", "static")
 		e.GET("/wiki/*", handler.Wiki)
 		e.GET("favicon.ico", handler.Favicon)
 		e.GET("/api/search", handler.GETSearch)
