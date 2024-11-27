@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"wikinow/internal/config"
 	"wikinow/internal/handler"
 
@@ -22,8 +23,10 @@ var startCmd = &cobra.Command{
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		config.SetupConfig()
-
 		e := echo.New()
+		e.HideBanner = true
+		e.HidePort = true
+
 		e.GET("/wiki/*", handler.Wiki)
 		e.GET("favicon.ico", handler.Favicon)
 		e.GET("/api/search", handler.GETSearch)
@@ -34,6 +37,19 @@ var startCmd = &cobra.Command{
 			log.Fatal("Error reading port from config file.")
 		}
 
+		fmt.Println(`
+/\ \  _ \ \   /\ \   /\ \/ /    /\ \   /\ "-.\ \   /\  __ \   /\ \  _ \ \   
+\ \ \/ ".\ \  \ \ \  \ \  _"-.  \ \ \  \ \ \-.  \  \ \ \/\ \  \ \ \/ ".\ \  
+ \ \__/".~\_\  \ \_\  \ \_\ \_\  \ \_\  \ \_\\"\_\  \ \_____\  \ \__/".~\_\ 
+  \/_/   \/_/   \/_/   \/_/\/_/   \/_/   \/_/ \/_/   \/_____/   \/_/   \/_/
+      
+      `)
+
+    if (port == ":") {
+      port = ":4000"
+    }
+		docUrl := fmt.Sprintf("http://localhost%s/wiki/", port)
+    fmt.Println("You can access the documentation at: ", docUrl)
 		e.Logger.Fatal(e.Start(port))
 	},
 }

@@ -11,7 +11,7 @@ templ SearchBar() {
 		hx-trigger="click, ctrlK"
 		hx-target="#body"
 		hx-swap="afterbegin"
-		class="w-full bg-white text-gray p-2 flex border rounded-lg justify-between items-center text-sm"
+		class="w-full bg-white text-[#282828] p-2 flex border rounded-lg justify-between items-center text-sm"
 	>
 		<span class="flex gap-2 items-center">
 			@icons.MagnifyingGlass("")
@@ -26,7 +26,7 @@ templ SearchBar() {
 templ SearchModal() {
 	<div id="searchModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 		<div class="h-2/3 w-1/2 items-start">
-			<div class="bg-gray-900 w-full text-gray-300 rounded-lg shadow-lg">
+			<div class="bg-[#1d2021] w-full text-[#928374] rounded-lg shadow-lg">
 				<input
 					id="searchInput"
 					hx-post="/api/search"
@@ -37,7 +37,7 @@ templ SearchModal() {
 					hx-target="#searchResults"
 					type="text"
 					placeholder="Search documentation..."
-					class="w-full bg-gray-900 p-4 text-white rounded-lg placeholder-gray-400 focus:outline-none"
+					class="w-full bg-[#1d2021] p-4 text-white rounded-lg placeholder-[#7c6f64] focus:outline-none"
 				/>
 				<div id="searchResults"></div>
 			</div>
@@ -47,7 +47,7 @@ templ SearchModal() {
 
 templ SearchResults(result []types.SearchResult) {
 	if len(result) > 0 {
-		<hr class="mx-2 border-gray-600"/>
+		<hr class="mx-2 border-[#504945]"/>
 		for _, r := range result {
 			<div
 				hx-get={ r.Path }
@@ -55,7 +55,7 @@ templ SearchResults(result []types.SearchResult) {
 				hx-target="#content"
 				hx-swap="outerHTML"
 				hx-replace-url="true"
-				class="block p-2 w-full hover:bg-gray-800 cursor-pointer search-option"
+				class="block p-2 w-full hover:bg-[#282828] cursor-pointer search-option"
 			>{ r.Title }</div>
 		}
 	}

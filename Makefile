@@ -16,5 +16,4 @@ test:
 
 install:
 	make templ-generate
-	make tailwind-build
 	go install .

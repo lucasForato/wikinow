@@ -10,9 +10,9 @@ var anchor = template.Must(template.New("inline").Parse("{{ . }}"))
 
 templ Sidebar(fileTree *filetree.TreeNode, title string) {
 	@changeActiveBtn()
-	<div class="flex flex-col overflow-y-auto bg-gray-800 fixed py-1 pl-2 pr-5 h-screen">
+	<div class="flex flex-col overflow-y-auto bg-[#282828] fixed py-1 pl-2 pr-5 h-screen">
 		<div class="pl-4 mt-4">
-			<h5 class="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+			<h5 class="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-[#b16286]">
 				{ title }
 			</h5>
 		</div>
@@ -67,7 +67,7 @@ templ ActiveNode(node *filetree.TreeNode, level int) {
 			hx-target="#content"
 			hx-swap="outerHTML"
 			hx-replace-url="true"
-			class="text-orange-400 sidebar-btn"
+			class="text-[#fe8019] sidebar-btn"
 		>{ node.Title }</button>
 	} else {
 		<button
@@ -88,14 +88,14 @@ script changeActiveBtn() {
   document.addEventListener("htmx:replacedInHistory", function(evt) {
     document.querySelectorAll(".sidebar-btn").forEach(btn => {
       btn.classList.add("text-white");
-      btn.classList.remove("text-orange-400");
+      btn.classList.remove("text-[#fe8019]");
     });
 
     const btn = document.querySelector(`[data-path='${evt.detail.path}']`)
 
     if (btn && btn.classList.contains("sidebar-btn")) {
       btn.classList.remove("text-white");
-      btn.classList.add("text-orange-400");
+      btn.classList.add("text-[#fe8019]");
     }
   });
 }

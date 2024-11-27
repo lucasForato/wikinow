@@ -12,35 +12,35 @@ templ Header(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 		case "setext_heading":
 			@Parser(node.NamedChild(int(node.NamedChildCount()-1)), lines, c)
 		case "atx_h1_marker":
-			<h1 class="text-3xl font-bold my-4 text-yellow hover:underline underline-offset-4">
+			<h1 class="text-3xl font-bold my-4 text-[#d79921] hover:underline underline-offset-4">
 				@Parser(node.NextNamedSibling(), lines, c)
 			</h1>
 		case "setext_h1_underline":
-			<h1 class="text-3xl font-bold my-4 text-yellow hover:underline underline-offset-4">
+			<h1 class="text-3xl font-bold my-4 text-[#d79921] hover:underline underline-offset-4">
 				@Parser(node.PrevSibling(), lines, c)
 			</h1>
 		case "atx_h2_marker":
-			<h2 class="text-2xl font-bold my-3 text-yellow hover:underline underline-offset-4">
+			<h2 class="text-2xl font-bold my-3 text-[#d79921] hover:underline underline-offset-4">
 				@Parser(node.NextNamedSibling(), lines, c)
 			</h2>
 		case "setext_h2_underline":
-			<h2 class="text-2xl font-bold my-3 text-yellow hover:underline underline-offset-4">
+			<h2 class="text-2xl font-bold my-3 text-[#d79921] hover:underline underline-offset-4">
 				@Parser(node.PrevSibling(), lines, c)
 			</h2>
 		case "atx_h3_marker":
-			<h3 class="text-xl font-bold my-2 text-yellow-400 hover:underline underline-offset-4">
+			<h3 class="text-xl font-bold my-2 text-[#fabd2f] hover:underline underline-offset-4">
 				@Parser(node.NextNamedSibling(), lines, c)
 			</h3>
 		case "atx_h4_marker":
-			<h4 class="text-lg font-bold my-2 text-yellow-400 hover:underline underline-offset-4">
+			<h4 class="text-lg font-bold my-2 text-[#fabd2f] hover:underline underline-offset-4">
 				@Parser(node.NextNamedSibling(), lines, c)
 			</h4>
 		case "atx_h5_marker":
-			<h5 class="text-lg font-bold my-2 text-yellow-400 hover:underline underline-offset-4">
+			<h5 class="text-lg font-bold my-2 text-[#fabd2f] hover:underline underline-offset-4">
 				@Parser(node.NextNamedSibling(), lines, c)
 			</h5>
 		case "atx_h6_marker":
-			<h6 class="font-bold my-2 text-yellow-400 hover:underline underline-offset-4">
+			<h6 class="font-bold my-2 text-[#fabd2f] hover:underline underline-offset-4">
 				@Parser(node.NextNamedSibling(), lines, c)
 			</h6>
 	}

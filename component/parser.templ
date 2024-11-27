@@ -12,7 +12,7 @@ templ Parser(node *sitter.Node, lines *[]string, c *parser.Ctx) {
 		case "section":
 			@Section(node, lines, c)
 		case "thematic_break":
-			<hr class="my-2 border-gray-600"/>
+			<hr class="my-2 border-[#504945]"/>
 		case "block_quote", 
       "block_quote_marker":
 			@BlockQuote(node, lines, c)
