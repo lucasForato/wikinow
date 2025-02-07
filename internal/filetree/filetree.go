@@ -6,9 +6,8 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"wikinow/infra/logger"
 	"wikinow/internal/utils"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type TreeNodeType string
@@ -180,7 +179,7 @@ func walkDir(root string) (map[string]interface{}, error) {
 func GetRelativePath(url string, path string) string {
 	relativePath, err := filepath.Rel(url, path)
 	if err != nil {
-		log.Fatal("Error while getting relative path")
+    logger.Error("Error while getting relative path")
 	}
 
 	return relativePath

@@ -7,13 +7,13 @@ import (
 	"path/filepath"
 	"strings"
 	"wikinow/component"
+	"wikinow/infra/logger"
 	"wikinow/internal/config"
 	"wikinow/internal/filetree"
 	"wikinow/internal/parser"
 	"wikinow/internal/utils"
 
 	"github.com/labstack/echo/v4"
-	log "github.com/sirupsen/logrus"
 	sitter "github.com/smacker/go-tree-sitter"
 	markdown "github.com/smacker/go-tree-sitter/markdown/tree-sitter-markdown"
 )
@@ -46,7 +46,7 @@ func Wiki(c echo.Context) error {
 	}
 	title, err := config.GetTitle()
 	if err != nil {
-		log.Fatal(err)
+		logger.Error(err)
 	}
 
 	return utils.Render(c, http.StatusOK, component.Layout(astRoot, &lines, filetreeRoot, ctx, c.Request().URL.Path, title))

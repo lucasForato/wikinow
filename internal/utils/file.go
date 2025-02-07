@@ -4,14 +4,13 @@ import (
 	"errors"
 	"os"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
+	"wikinow/infra/logger"
 )
 
 func GetFileTitleAndOrder(path string) (string, int64, error) {
 	mainInput, err := os.ReadFile(path)
 	if err != nil {
-		log.WithError(err).Fatal("Error reading main documentation file.")
+    logger.Error("Error reading main documentation file.", err)
 	}
 
 	file := string(mainInput)

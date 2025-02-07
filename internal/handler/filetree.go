@@ -1,15 +1,16 @@
 package handler
 
 import (
+	"fmt"
 	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
+	"wikinow/infra/logger"
 	"wikinow/internal/filetree"
 	"wikinow/internal/utils"
 
 	"github.com/labstack/echo/v4"
-	log "github.com/sirupsen/logrus"
 )
 
 func Filetree(c echo.Context) error {
@@ -21,12 +22,12 @@ func Filetree(c echo.Context) error {
 
 	wd, err := os.Getwd()
 	if err != nil {
-		log.Fatal("Error while retrieving the current directory.")
+		logger.Error("Error while retrieving the current directory.")
 	}
 
 	rootUrl := filepath.Join(wd, "wiki")
 	if err := os.MkdirAll(rootUrl, fs.ModePerm); err != nil {
-		log.Fatalf("Error creating directory: %s", rootUrl)
+		logger.Error(fmt.Sprintf("Error creating directory: %s", rootUrl))
 	}
 
 	treeRoot, _ := filetree.GetFileTree(rootUrl, body["path"].(string))

@@ -7,7 +7,6 @@ toolchain go1.23.6
 require (
 	github.com/a-h/templ v0.3.833
 	github.com/labstack/echo/v4 v4.12.0
-	github.com/sirupsen/logrus v1.9.3
 	github.com/smacker/go-tree-sitter v0.0.0-20240625050157-a31a98a7c0f6
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0

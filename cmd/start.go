@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"wikinow/infra/logger"
 	"wikinow/internal/config"
 	"wikinow/internal/handler"
 
 	"github.com/labstack/echo/v4"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -32,11 +32,11 @@ var startCmd = &cobra.Command{
 		e.GET("/api/search", handler.GETSearch)
 		e.POST("/api/search", handler.POSTSearch)
 
-    e.Static("/images", "images")
+		e.Static("/images", "images")
 
 		port, err := config.GetPort()
 		if err != nil {
-			log.Fatal("Error reading port from config file.")
+			logger.Error("Error reading port from config file.")
 		}
 
 		fmt.Println(`
@@ -46,11 +46,11 @@ var startCmd = &cobra.Command{
   \/_/   \/_/   \/_/   \/_/\/_/   \/_/   \/_/ \/_/   \/_____/   \/_/   \/_/
       `)
 
-    if (port == ":") {
-      port = ":4000"
-    }
+		if port == ":" {
+			port = ":4000"
+		}
 		docUrl := fmt.Sprintf("http://localhost%s/wiki/", port)
-    fmt.Println("You can access the documentation at: ", docUrl)
+		fmt.Println("You can access the documentation at: ", docUrl)
 		e.Logger.Fatal(e.Start(port))
 	},
 }
