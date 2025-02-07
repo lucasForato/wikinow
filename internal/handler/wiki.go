@@ -8,7 +8,7 @@ import (
 	"strings"
 	"wikinow/component"
 	"wikinow/infra/logger"
-	"wikinow/internal/config"
+	"wikinow/infra/config"
 	"wikinow/internal/filetree"
 	"wikinow/internal/parser"
 	"wikinow/internal/utils"

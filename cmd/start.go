@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"wikinow/infra/logger"
-	"wikinow/internal/config"
+	"wikinow/infra/config"
 	"wikinow/internal/handler"
 
 	"github.com/labstack/echo/v4"

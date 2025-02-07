@@ -35,7 +35,7 @@ var initCmd = &cobra.Command{
 		copyMainFile(wikidir)
     copyImgFile(imgdir)
 
-		logger.Info("Initialization completed ★")
+		logger.Info("Initialization completed ★ ")
 	},
 }
 
