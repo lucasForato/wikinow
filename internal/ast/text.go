@@ -22,6 +22,7 @@ func GetText(lines []string, node *sitter.Node) string {
 		text += lines[i]
 	}
 	text += lines[endRow][:endCol]
+
 	return text
 }
 
@@ -39,5 +40,6 @@ func SplitQuote(node *sitter.Node, lines []string) []string {
 		splits = append(splits, text[:index])
 		text = text[index+1:]
 	}
+
 	return splits
 }

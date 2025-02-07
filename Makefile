@@ -12,7 +12,13 @@ dev:
 	wikinow start
 
 test:
-	go test -race -v -timeout 30s ./...
+	go test -v ./...
+
+test-race:
+	go test -race -v ./...
+
+test-cover:
+	go test -v -cover ./...
 
 install:
 	make templ-generate

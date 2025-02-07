@@ -5,6 +5,7 @@ go 1.23
 toolchain go1.23.6
 
 require (
+	github.com/PuerkitoBio/goquery v1.10.1
 	github.com/a-h/templ v0.3.833
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/smacker/go-tree-sitter v0.0.0-20240625050157-a31a98a7c0f6
@@ -14,6 +15,7 @@ require (
 )
 
 require (
+	github.com/andybalholm/cascadia v1.3.3 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

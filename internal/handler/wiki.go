@@ -1,14 +1,15 @@
 package handler
 
 import (
+	"context"
 	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"wikinow/component"
-	"wikinow/infra/logger"
 	"wikinow/infra/config"
+	"wikinow/infra/logger"
 	"wikinow/internal/filetree"
 	"wikinow/internal/parser"
 	"wikinow/internal/utils"
@@ -57,6 +58,18 @@ func getAstTree(lines []string, c echo.Context) (*sitter.Node, error) {
 	astParser.SetLanguage(markdown.GetLanguage())
 	source := []byte(strings.Join(lines, "\n"))
 	astTree, err := astParser.ParseCtx(c.Request().Context(), nil, source)
+	if err != nil {
+		return nil, err
+	}
+	astRoot := astTree.RootNode()
+	return astRoot, nil
+}
+
+func TestAst(lines []string) (*sitter.Node, error) {
+	astParser := sitter.NewParser()
+	astParser.SetLanguage(markdown.GetLanguage())
+	source := []byte(strings.Join(lines, "\n"))
+	astTree, err := astParser.ParseCtx(context.Background(), nil, source)
 	if err != nil {
 		return nil, err
 	}
