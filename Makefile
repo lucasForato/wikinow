@@ -17,3 +17,6 @@ test:
 install:
 	make templ-generate
 	go install .
+
+build:
+	go build -o wikinow main.go

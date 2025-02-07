@@ -4,6 +4,8 @@ title: Say hello!
 
 # IMPORTANT!
 
+![Alt text](/images/example.jpeg)
+
 - Every directory within wikinow has to include a file called `main.md` which will serve as the entrypoint to that directory.
 - Files must include the metadata `title` as you can see above.
 - Every feature from CommonMark is supported. [You can check them here](https://commonmark.org/help/)

@@ -32,6 +32,8 @@ var startCmd = &cobra.Command{
 		e.GET("/api/search", handler.GETSearch)
 		e.POST("/api/search", handler.POSTSearch)
 
+    e.Static("/images", "images")
+
 		port, err := config.GetPort()
 		if err != nil {
 			log.Fatal("Error reading port from config file.")
@@ -42,7 +44,6 @@ var startCmd = &cobra.Command{
 \ \ \/ ".\ \  \ \ \  \ \  _"-.  \ \ \  \ \ \-.  \  \ \ \/\ \  \ \ \/ ".\ \  
  \ \__/".~\_\  \ \_\  \ \_\ \_\  \ \_\  \ \_\\"\_\  \ \_____\  \ \__/".~\_\ 
   \/_/   \/_/   \/_/   \/_/\/_/   \/_/   \/_/ \/_/   \/_____/   \/_/   \/_/
-      
       `)
 
     if (port == ":") {

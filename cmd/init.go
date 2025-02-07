@@ -5,8 +5,8 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"wikinow/infra/logger"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -25,40 +25,72 @@ var initCmd = &cobra.Command{
   `,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		wd, err := os.Getwd()
+		root, err := os.Getwd()
 		if err != nil {
-			log.WithError(err).Fatal("Error retrieving working directory.")
+			logger.Error("Error retrieving working directory.", err)
 		}
 
-		wikiDir := filepath.Join(wd, "wiki")
-		if err := os.MkdirAll(wikiDir, fs.ModePerm); err != nil {
-			log.WithError(err).Fatal("Error creating directory.")
-		}
+		wikidir := createWikidir(root)
+		imgdir := createImgdir(root)
+		copyMainFile(wikidir)
+    copyImgFile(imgdir)
 
-		mainFileOrigin, err := files.ReadFile("files/main.md")
-		if err != nil {
-			log.WithError(err).Fatal("Error retrieving main documentation file.")
-		}
-		mainFileDest := filepath.Join(wikiDir, "main.md")
-		err = os.WriteFile(mainFileDest, mainFileOrigin, 0644)
-		if err != nil {
-			log.WithError(err).Fatal("Error creating main documentation file.")
-		}
-
-		configFileOrigin, err := files.ReadFile("files/wikinow.yml")
-		if err != nil {
-			log.WithError(err).Fatal("Error reading config file.")
-		}
-		configFileDest := filepath.Join(wd, "wikinow.yml")
-		err = os.WriteFile(configFileDest, configFileOrigin, 0644)
-		if err != nil {
-			log.WithError(err).Fatal("Error creating config file.")
-		}
-
-		log.Info("Initialization complete.")
+		logger.Info("Initialization completed ★")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(initCmd)
+}
+
+func createWikidir(root string) string {
+	wikidir := filepath.Join(root, "wiki")
+	if err := os.MkdirAll(wikidir, fs.ModePerm); err != nil {
+		logger.Error("Error creating directory.", err)
+	}
+	return wikidir
+}
+
+func createImgdir(root string) string {
+	imgdir := filepath.Join(root, "images")
+	if err := os.MkdirAll(imgdir, fs.ModePerm); err != nil {
+		logger.Error("Error creating directory.", err)
+	}
+	return imgdir
+}
+
+func copyMainFile(wikidir string) {
+	mainFileOrigin, err := files.ReadFile("files/main.md")
+	if err != nil {
+		logger.Error("Error retrieving main documentation file.", err)
+	}
+	mainFileDest := filepath.Join(wikidir, "main.md")
+	err = os.WriteFile(mainFileDest, mainFileOrigin, 0644)
+	if err != nil {
+		logger.Error("Error creating main documentation file.", err)
+	}
+}
+
+func copyImgFile(imgdir string) {
+	imgOrigin, err := files.ReadFile("files/images/example.jpeg")
+	if err != nil {
+		logger.Error("Error retrieving main documentation file.", err)
+	}
+	imgDest := filepath.Join(imgdir, "example.jpeg")
+	err = os.WriteFile(imgDest, imgOrigin, 0644)
+	if err != nil {
+		logger.Error("Error creating main documentation file.", err)
+	}
+}
+
+func copyConfig(root string) {
+	configFileOrigin, err := files.ReadFile("files/wikinow.yml")
+	if err != nil {
+		logger.Error("Error reading config file.", err)
+	}
+	configFileDest := filepath.Join(root, "wikinow.yml")
+	err = os.WriteFile(configFileDest, configFileOrigin, 0644)
+	if err != nil {
+		logger.Error("Error creating config file.", err)
+	}
 }
